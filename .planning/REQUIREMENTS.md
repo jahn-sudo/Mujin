@@ -164,18 +164,86 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 through AUTH-12 | Phase 1 | Pending |
-| ONBO-01 through ONBO-07 | Phase 2 | Pending |
-| ATTN-01 through ATTN-07 | Phase 3 | Pending |
-| PNL-01 through PNL-10 | Phase 4 | Pending |
-| REFL-01 through REFL-06 | Phase 4 | Pending |
-| SCOR-01 through SCOR-08 | Phase 5 | Pending |
-| SDSH-01 through SDSH-05 | Phase 6 | Pending |
-| MDSH-01 through MDSH-04 | Phase 6 | Pending |
-| ADSH-01 through ADSH-05 | Phase 6 | Pending |
-| GRAD-01 through GRAD-07 | Phase 7 | Pending |
-| NOTF-01 through NOTF-05 | Phase 8 | Pending |
-| I18N-01 through I18N-04 | Phase 9 | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| AUTH-06 | Phase 1 | Pending |
+| AUTH-07 | Phase 1 | Pending |
+| AUTH-08 | Phase 1 | Pending |
+| AUTH-09 | Phase 1 | Pending |
+| AUTH-10 | Phase 1 | Pending |
+| AUTH-11 | Phase 1 | Pending |
+| AUTH-12 | Phase 1 | Pending |
+| ONBO-01 | Phase 2 | Pending |
+| ONBO-02 | Phase 2 | Pending |
+| ONBO-03 | Phase 2 | Pending |
+| ONBO-04 | Phase 2 | Pending |
+| ONBO-05 | Phase 2 | Pending |
+| ONBO-06 | Phase 2 | Pending |
+| ONBO-07 | Phase 2 | Pending |
+| ATTN-01 | Phase 3 | Pending |
+| ATTN-02 | Phase 3 | Pending |
+| ATTN-03 | Phase 3 | Pending |
+| ATTN-04 | Phase 3 | Pending |
+| ATTN-05 | Phase 3 | Pending |
+| ATTN-06 | Phase 3 | Pending |
+| ATTN-07 | Phase 3 | Pending |
+| PNL-01 | Phase 4 | Pending |
+| PNL-02 | Phase 4 | Pending |
+| PNL-03 | Phase 4 | Pending |
+| PNL-04 | Phase 4 | Pending |
+| PNL-05 | Phase 4 | Pending |
+| PNL-06 | Phase 4 | Pending |
+| PNL-07 | Phase 4 | Pending |
+| PNL-08 | Phase 4 | Pending |
+| PNL-09 | Phase 4 | Pending |
+| PNL-10 | Phase 4 | Pending |
+| REFL-01 | Phase 5 | Pending |
+| REFL-02 | Phase 5 | Pending |
+| REFL-03 | Phase 5 | Pending |
+| REFL-04 | Phase 5 | Pending |
+| REFL-05 | Phase 5 | Pending |
+| REFL-06 | Phase 5 | Pending |
+| SCOR-01 | Phase 6 | Pending |
+| SCOR-02 | Phase 6 | Pending |
+| SCOR-03 | Phase 6 | Pending |
+| SCOR-04 | Phase 6 | Pending |
+| SCOR-05 | Phase 6 | Pending |
+| SCOR-06 | Phase 6 | Pending |
+| SCOR-07 | Phase 6 | Pending |
+| SCOR-08 | Phase 6 | Pending |
+| SDSH-01 | Phase 7 | Pending |
+| SDSH-02 | Phase 7 | Pending |
+| SDSH-03 | Phase 7 | Pending |
+| SDSH-04 | Phase 7 | Pending |
+| SDSH-05 | Phase 7 | Pending |
+| MDSH-01 | Phase 7 | Pending |
+| MDSH-02 | Phase 7 | Pending |
+| MDSH-03 | Phase 7 | Pending |
+| MDSH-04 | Phase 7 | Pending |
+| ADSH-01 | Phase 7 | Pending |
+| ADSH-02 | Phase 7 | Pending |
+| ADSH-03 | Phase 7 | Pending |
+| ADSH-04 | Phase 7 | Pending |
+| ADSH-05 | Phase 7 | Pending |
+| GRAD-01 | Phase 8 | Pending |
+| GRAD-02 | Phase 8 | Pending |
+| GRAD-03 | Phase 8 | Pending |
+| GRAD-04 | Phase 8 | Pending |
+| GRAD-05 | Phase 8 | Pending |
+| GRAD-06 | Phase 8 | Pending |
+| GRAD-07 | Phase 8 | Pending |
+| NOTF-01 | Phase 9 | Pending |
+| NOTF-02 | Phase 9 | Pending |
+| NOTF-03 | Phase 9 | Pending |
+| NOTF-04 | Phase 9 | Pending |
+| NOTF-05 | Phase 9 | Pending |
+| I18N-01 | Phase 9 | Pending |
+| I18N-02 | Phase 9 | Pending |
+| I18N-03 | Phase 9 | Pending |
+| I18N-04 | Phase 9 | Pending |
 
 **Coverage:**
 - v1 requirements: 78 total
@@ -184,4 +252,4 @@
 
 ---
 *Requirements defined: 2026-03-16*
-*Last updated: 2026-03-16 after initial definition*
+*Last updated: 2026-03-16 — traceability updated after roadmap creation (REFL-01–06 corrected from Phase 4 to Phase 5)*
