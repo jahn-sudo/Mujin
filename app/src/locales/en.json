@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "inbox": "Inbox",
+    "plReviews": "P&L Reviews",
+    "signOut": "Sign out",
+    "langToggle": "日本語"
+  },
+  "common": {
+    "loading": "Loading…",
+    "noData": "—",
+    "back": "← Back"
+  },
+  "student": {
+    "dashboard": {
+      "title": "Hi, {{initial}} · {{venture}}",
+      "noVenture": "No venture yet",
+      "reflectionAlert": "Action Required",
+      "reflectionAlertBody": "Your reflection needs resubmission.",
+      "reflectionAlertLink": "View in Inbox",
+      "trustScore": "Trust Score",
+      "noScoreYet": "Your first Trust Score will appear after your initial check-in.",
+      "responsiveness": "Responsiveness",
+      "transparency": "Transparency",
+      "mutualism": "Mutualism",
+      "reflection": "Reflection",
+      "graduationProgress": "Graduation Progress",
+      "gate1": "Company incorporated + product live",
+      "gate2": "3 months non-negative cash flow ({{streak}}/3)",
+      "gate3": "Green score × 6 consecutive months ({{streak}}/6)",
+      "gate4": "Exit interview passed",
+      "upcoming": "Upcoming",
+      "plDue": "P&L due",
+      "noPLDue": "No P&L due this month",
+      "townHall": "Town Hall",
+      "noTownHall": "No upcoming Town Hall",
+      "myGroup": "My Group",
+      "error": "Failed to load dashboard"
+    },
+    "pl": {
+      "title": "Monthly Report",
+      "submitted": "Submitted — Status: {{status}}",
+      "completeness": "Completeness score: {{score}}/100",
+      "revenue": "Revenue (¥)",
+      "expenses": "Expenses (¥)",
+      "net": "Net",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "What happened this month?",
+      "receiptWarning": "Expenses ≥ ¥50,000 — receipts required. Use the receipt upload endpoint.",
+      "submit": "Submit Report",
+      "submitting": "Submitting…",
+      "noSubmission": "No submission found.",
+      "error": "Failed to load P&L submission"
+    },
+    "inbox": {
+      "title": "Inbox",
+      "empty": "No items requiring action.",
+      "windowClosed": "Resubmission window closed",
+      "actionRequired": "Action Required",
+      "flaggedBody": "Your reflection was flagged as not meaningful.",
+      "windowCountdown": "Window closes in {{time}}",
+      "privacyNote": "This check was done by an automated system — not your mentor or staff. Your text remains private.",
+      "tips": "Tips: Write at least 50 words. Share real struggles, learnings, or observations.",
+      "resubmit": "Resubmit Reflection →",
+      "expired": "Expired"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "needsAttention": "Needs Attention",
+      "noRedStudents": "No students in the Red zone.",
+      "actionsDue": "Actions Due",
+      "plReviewsPending": "P&L reviews pending",
+      "checkIn": "Check-in session — {{cohort}} on {{date}}",
+      "allStudents": "All Students",
+      "noCohorts": "No cohorts created yet.",
+      "noStudents": "No students yet.",
+      "error": "Failed to load dashboard"
+    },
+    "studentDetail": {
+      "scoreHistory": "Score History",
+      "noScores": "No scores yet.",
+      "breakdown": "Breakdown",
+      "breakdownMonth": "Breakdown — {{month}}",
+      "selectMonth": "Select a month to see breakdown.",
+      "overridden": "overridden",
+      "overrideLink": "Override score",
+      "attendance": "Attendance (All Sessions)",
+      "sessions": "{{attended}}/{{total}} sessions",
+      "plHistory": "P&L History",
+      "noPL": "No P&L submissions yet.",
+      "staffNotes": "Staff Notes (Internal)",
+      "overrideReason": "Override reason: {{reason}}",
+      "error": "Failed to load student",
+      "graduation": {
+        "title": "Graduation Tracking",
+        "bankIntroDate": "Bank introduction completed on {{date}}",
+        "interviewScheduled": "Interview scheduled: {{date}}",
+        "markPassed": "Mark Passed",
+        "markFailed": "Mark Failed",
+        "readyForBank": "Exit interview passed. Ready for bank introduction.",
+        "triggerBank": "Trigger Bank Introduction",
+        "schedulePrompt": "All graduation criteria met. Schedule exit interview.",
+        "schedule": "Schedule Interview",
+        "failNote": "Previous interview failed on {{date}}. Student must accumulate 6 new consecutive Green months to re-qualify."
+      }
+    }
+  }
+}

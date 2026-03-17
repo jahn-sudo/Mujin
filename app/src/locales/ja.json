@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "inbox": "受信ボックス",
+    "plReviews": "損益審査",
+    "signOut": "ログアウト",
+    "langToggle": "English"
+  },
+  "common": {
+    "loading": "読み込み中…",
+    "noData": "—",
+    "back": "← 戻る"
+  },
+  "student": {
+    "dashboard": {
+      "title": "こんにちは、{{initial}} · {{venture}}",
+      "noVenture": "ベンチャー未登録",
+      "reflectionAlert": "要対応",
+      "reflectionAlertBody": "振り返りの再提出が必要です。",
+      "reflectionAlertLink": "受信ボックスで確認",
+      "trustScore": "トラストスコア",
+      "noScoreYet": "最初のチェックイン後にトラストスコアが表示されます。",
+      "responsiveness": "応答性",
+      "transparency": "透明性",
+      "mutualism": "相互扶助",
+      "reflection": "振り返り",
+      "graduationProgress": "卒業進捗",
+      "gate1": "会社設立済み・製品稼働中",
+      "gate2": "3ヶ月連続非マイナスキャッシュフロー ({{streak}}/3)",
+      "gate3": "🟢 グリーンスコア6ヶ月連続 ({{streak}}/6)",
+      "gate4": "最終面接合格",
+      "upcoming": "予定",
+      "plDue": "損益報告期限",
+      "noPLDue": "今月の損益報告はありません",
+      "townHall": "タウンホール",
+      "noTownHall": "予定されているタウンホールはありません",
+      "myGroup": "マイグループ",
+      "error": "ダッシュボードの読み込みに失敗しました"
+    },
+    "pl": {
+      "title": "月次報告",
+      "submitted": "提出済み — ステータス: {{status}}",
+      "completeness": "完成度スコア: {{score}}/100",
+      "revenue": "収益（¥）",
+      "expenses": "経費（¥）",
+      "net": "純利益",
+      "notes": "メモ（任意）",
+      "notesPlaceholder": "今月の出来事を記入してください",
+      "receiptWarning": "経費が¥50,000以上 — 領収書が必要です。領収書アップロードをご利用ください。",
+      "submit": "レポートを提出",
+      "submitting": "送信中…",
+      "noSubmission": "提出データが見つかりません。",
+      "error": "損益報告の読み込みに失敗しました"
+    },
+    "inbox": {
+      "title": "受信ボックス",
+      "empty": "対応が必要な項目はありません。",
+      "windowClosed": "再提出ウィンドウが閉じました",
+      "actionRequired": "要対応",
+      "flaggedBody": "振り返りが不適切としてフラグが立てられました。",
+      "windowCountdown": "ウィンドウは{{time}}後に閉じます",
+      "privacyNote": "この確認は自動システムによるものです。メンターやスタッフはあなたのテキストを見ることができません。",
+      "tips": "ヒント：50語以上で記述し、実際の苦労・学び・観察を共有してください。",
+      "resubmit": "振り返りを再提出 →",
+      "expired": "期限切れ"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "管理ダッシュボード",
+      "needsAttention": "要注意",
+      "noRedStudents": "レッドゾーンの学生はいません。",
+      "actionsDue": "要対応",
+      "plReviewsPending": "損益審査待ち",
+      "checkIn": "チェックインセッション — {{cohort}} {{date}}",
+      "allStudents": "全学生",
+      "noCohorts": "コホートはまだ作成されていません。",
+      "noStudents": "学生はまだいません。",
+      "error": "ダッシュボードの読み込みに失敗しました"
+    },
+    "studentDetail": {
+      "scoreHistory": "スコア履歴",
+      "noScores": "スコアはまだありません。",
+      "breakdown": "内訳",
+      "breakdownMonth": "内訳 — {{month}}",
+      "selectMonth": "月を選択して内訳を確認してください。",
+      "overridden": "上書き済み",
+      "overrideLink": "スコアを上書き",
+      "attendance": "出席（全セッション）",
+      "sessions": "{{attended}}/{{total}} セッション",
+      "plHistory": "損益履歴",
+      "noPL": "損益提出データはまだありません。",
+      "staffNotes": "スタッフメモ（内部用）",
+      "overrideReason": "上書き理由: {{reason}}",
+      "error": "学生データの読み込みに失敗しました",
+      "graduation": {
+        "title": "卒業追跡",
+        "bankIntroDate": "銀行紹介完了日: {{date}}",
+        "interviewScheduled": "面接予定日: {{date}}",
+        "markPassed": "合格",
+        "markFailed": "不合格",
+        "readyForBank": "最終面接合格。銀行紹介の準備が整いました。",
+        "triggerBank": "銀行紹介を実施",
+        "schedulePrompt": "卒業基準をすべて満たしました。最終面接をスケジュールしてください。",
+        "schedule": "面接をスケジュール",
+        "failNote": "{{date}}に面接不合格。再度資格を得るには6ヶ月連続のグリーンスコアが必要です。"
+      }
+    }
+  }
+}

@@ -1,0 +1,419 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  STUDENT
+  MENTOR
+  STAFF
+  ORG_ADMIN
+  SUPER_ADMIN
+}
+
+enum VentureCategory {
+  FINTECH
+  EDTECH
+  HEALTHTECH
+  SOCIAL_ENTERPRISE
+  ECOMMERCE
+  FOOD_BEVERAGE
+  CREATIVE_MEDIA
+  OTHER
+}
+
+// ─── Core Tenant / Auth ───────────────────────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  cohorts      Cohort[]
+  inviteTokens InviteToken[]
+  townHalls    TownHall[]
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  role         Role
+  orgId        String
+  org          Organization @relation(fields: [orgId], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?    // soft delete — PII anonymisation on erasure
+
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  consentRecords      ConsentRecord[]
+  mentorAssignment    MentorCohortAssignment?
+  createdInviteTokens InviteToken[]           @relation("InviteTokenCreator")
+  studentProfile         StudentProfile?
+  pledgeRecord           PledgeRecord?
+  townHallSubmissions    TownHallSubmission[]   @relation("TownHallSubmitter")
+  plReviews              PLReview[]             @relation("PLReviewer")
+  trustScoreOverrides    TrustScoreOverride[]   @relation("TrustScoreOverrider")
+
+  @@index([orgId])
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  rotatedAt DateTime? // null = active; set on rotation (invalidates token)
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime? // null = unused; set on first use (one-time only)
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model ConsentRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tosVersion String
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ─── Cohort ───────────────────────────────────────────────────────────────────
+
+model Cohort {
+  id          String       @id @default(cuid())
+  name        String
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  maxStudents Int          @default(5)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  mentorAssignment  MentorCohortAssignment?
+  inviteTokens      InviteToken[]
+  students          StudentProfile[]
+  checkInSessions   CheckInSession[]
+}
+
+// ─── Invite Token (S2.2) ─────────────────────────────────────────────────────
+// Activation links for accepted applicants (students) and mentors.
+// role = STUDENT | MENTOR only.
+
+model InviteToken {
+  id          String    @id @default(cuid())
+  email       String
+  role        Role
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  cohortId    String?
+  cohort      Cohort?   @relation(fields: [cohortId], references: [id])
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdById String
+  createdBy   User      @relation("InviteTokenCreator", fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now())
+
+  @@index([email, role])
+  @@index([createdById])
+}
+
+// ─── Student Profile (S2.3) ──────────────────────────────────────────────────
+
+model StudentProfile {
+  id                   String           @id @default(cuid())
+  userId               String           @unique
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cohortId             String?
+  cohort               Cohort?          @relation(fields: [cohortId], references: [id])
+  ventureCategory      VentureCategory?
+  ventureCategoryOther String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  ventureProfile    VentureProfile?
+  attendanceRecords AttendanceRecord[]
+  plSubmissions     PLSubmission[]
+  trustScores       TrustScore[]
+  graduationRecord  GraduationRecord?
+
+  @@index([cohortId])
+}
+
+// ─── Venture Profile (S2.5) ──────────────────────────────────────────────────
+
+model VentureProfile {
+  id          String         @id @default(cuid())
+  studentId   String         @unique
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  coFounders  String[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+// ─── Pledge Record (S2.4) ────────────────────────────────────────────────────
+
+model PledgeRecord {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pledgeVersion String
+  ipAddress     String?
+  signedAt      DateTime @default(now())
+}
+
+// ─── Town Hall (S3.3 / S3.4 / S3.5) ─────────────────────────────────────────
+
+model TownHall {
+  id        String       @id @default(cuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  date      DateTime
+  createdAt DateTime     @default(now())
+
+  submissions TownHallSubmission[]
+
+  @@index([orgId])
+}
+
+model TownHallSubmission {
+  id             String   @id @default(cuid())
+  townHallId     String
+  townHall       TownHall @relation(fields: [townHallId], references: [id], onDelete: Cascade)
+  submittedById  String   // userId of student submitting
+  submittedBy    User     @relation("TownHallSubmitter", fields: [submittedById], references: [id], onDelete: Cascade)
+  attendeeIds    String[] // userIds of members marked present by this submitter
+  attended       Boolean? // majority-rule result; null until computed
+  reflectionText String   // NEVER returned in staff-facing queries
+  submittedAt    DateTime @default(now())
+
+  reflectionAssessment ReflectionAssessment?
+
+  @@unique([townHallId, submittedById])
+  @@index([townHallId])
+}
+
+// ─── Reflection Assessment (S3.6 / S3.7) ─────────────────────────────────────
+
+enum ReflectionResult {
+  MEANINGFUL
+  NOT_MEANINGFUL
+}
+
+enum ResubmissionState {
+  NONE
+  WINDOW_OPEN
+  WINDOW_EXPIRED
+  RESUBMITTED
+  LOCKED
+}
+
+model ReflectionAssessment {
+  id                String            @id @default(cuid())
+  submissionId      String            @unique
+  submission        TownHallSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  result            ReflectionResult
+  resubmissionState ResubmissionState @default(NONE)
+  windowExpiresAt   DateTime?         // set when WINDOW_OPEN
+  resubmittedAt     DateTime?
+  quarter           String            // e.g. "2026-Q1" for per-quarter quota tracking
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+// ─── Check-In Sessions (S3.1 / S3.2) ─────────────────────────────────────────
+
+model CheckInSession {
+  id                   String    @id @default(cuid())
+  cohortId             String
+  cohort               Cohort    @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  date                 DateTime
+  note                 String?
+  attendanceSubmittedAt DateTime? // set when mentor locks attendance
+  createdAt            DateTime  @default(now())
+
+  attendanceRecords AttendanceRecord[]
+
+  @@index([cohortId])
+}
+
+model AttendanceRecord {
+  id               String         @id @default(cuid())
+  studentProfileId String
+  studentProfile   StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  checkInSessionId String
+  checkInSession   CheckInSession @relation(fields: [checkInSessionId], references: [id], onDelete: Cascade)
+  present          Boolean
+  createdAt        DateTime       @default(now())
+
+  @@unique([studentProfileId, checkInSessionId])
+  @@index([checkInSessionId])
+}
+
+// ─── P&L Submission (S4.1 – S4.8) ────────────────────────────────────────────
+
+enum PLSubmissionStatus {
+  PENDING
+  SUBMITTED
+  APPROVED
+  FLAGGED
+  MORE_INFO
+}
+
+enum PLReviewAction {
+  APPROVED
+  FLAGGED
+  MORE_INFO
+  SCORE_OVERRIDE
+}
+
+model PLSubmission {
+  id          String             @id @default(cuid())
+  studentId   String
+  student     StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  month       String             // "YYYY-MM"
+  revenue     Int?
+  expenses    Int?
+  net         Int?               // auto-calculated server-side
+  notes       String?
+  receiptUrls String[]
+  submittedAt DateTime?
+  autoScore   Int?               // Layer B: 0-100
+  staffScore  Int?               // Layer C override
+  finalScore  Int?               // resolved: staffScore if set, else autoScore
+  status      PLSubmissionStatus @default(PENDING)
+  spotAudit   Boolean            @default(false)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  reviews PLReview[]
+
+  @@unique([studentId, month])
+  @@index([studentId])
+}
+
+model PLReview {
+  id             String         @id @default(cuid())
+  submissionId   String
+  submission     PLSubmission   @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  staffId        String
+  staff          User           @relation("PLReviewer", fields: [staffId], references: [id])
+  action         PLReviewAction
+  annotation     String?        // internal — never returned to student
+  scoreOverride  Int?
+  overrideReason String?        // required when action = SCORE_OVERRIDE
+  createdAt      DateTime       @default(now())
+
+  @@index([submissionId])
+}
+
+// ─── Trust Score (E5) ────────────────────────────────────────────────────────
+
+enum TrustScoreLabel {
+  GREEN
+  YELLOW
+  RED
+}
+
+model TrustScore {
+  id               String          @id @default(cuid())
+  studentId        String
+  student          StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  month            String          // "YYYY-MM"
+  score            Float           // 0–100 composite
+  label            TrustScoreLabel
+  responsivenessRaw Float          // 0–100 component
+  transparencyRaw   Float          // 0–100 component
+  mutualismRaw      Float          // 0–100 component
+  reflectionRaw     Float          // 0 or 100
+  isOverridden     Boolean         @default(false)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  override TrustScoreOverride?
+
+  @@unique([studentId, month])
+  @@index([studentId])
+}
+
+model TrustScoreOverride {
+  id         String     @id @default(cuid())
+  scoreId    String     @unique
+  trustScore TrustScore @relation(fields: [scoreId], references: [id], onDelete: Cascade)
+  staffId    String
+  staff      User       @relation("TrustScoreOverrider", fields: [staffId], references: [id])
+  newScore   Float
+  reason     String
+  createdAt  DateTime   @default(now())
+
+  @@index([staffId])
+}
+
+// ─── Graduation Tracking (E8) ────────────────────────────────────────────────
+
+enum GraduationStatus {
+  INELIGIBLE
+  ELIGIBLE
+  INTERVIEW_SCHEDULED
+  INTERVIEW_PASSED
+  INTERVIEW_FAILED
+  GRADUATED
+}
+
+model GraduationRecord {
+  id                   String           @id @default(cuid())
+  studentId            String           @unique
+  student              StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status               GraduationStatus @default(INELIGIBLE)
+  interviewScheduledAt DateTime?        // set when staff schedules interview
+  interviewDate        DateTime?        // the scheduled interview date/time
+  interviewConductedAt DateTime?        // set when result is recorded
+  interviewResult      String?          // "PASSED" | "FAILED"
+  lastInterviewFailedAt DateTime?       // set on FAILED — used to anchor the green streak window
+  bankIntroDate        DateTime?        // set when status → GRADUATED
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([status])
+}
+
+// ─── Mentor → Cohort Assignment (S1.2 / S1.9) ────────────────────────────────
+// 1:1 — a mentor owns exactly one cohort; a cohort has exactly one mentor.
+// Application layer enforces: assigning user must have role MENTOR.
+// DB-level: unique constraints on mentorId + cohortId enforce the 1:1.
+
+model MentorCohortAssignment {
+  id        String   @id @default(cuid())
+  mentorId  String   @unique
+  cohortId  String   @unique
+  mentor    User     @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  cohort    Cohort   @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
