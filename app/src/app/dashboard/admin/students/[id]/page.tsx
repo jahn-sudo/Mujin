@@ -57,6 +57,12 @@ interface GraduationRecord {
   lastInterviewFailedAt?: string | null;
 }
 
+interface CheckInMetrics {
+  totalSessions: number;
+  notesSubmitted: number;
+  avgMentorRating: number | null;
+}
+
 interface StudentDetail {
   profile: {
     id: string;
@@ -70,6 +76,7 @@ interface StudentDetail {
   attendanceSummary: { attended: number; total: number; pct: number | null };
   staffNotes: StaffNote[];
   graduationRecord: GraduationRecord;
+  checkInMetrics: CheckInMetrics;
 }
 
 export default function StudentDetailPage() {
@@ -320,6 +327,29 @@ export default function StudentDetailPage() {
               ))}
             </ul>
           )}
+        </div>
+      </div>
+
+      {/* Check-In Metrics (staff sees metrics only, not note content) */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+          {t("admin.studentDetail.checkInMetrics") ?? "Check-In Notes"}
+        </h3>
+        <div className="flex items-center gap-8 text-sm">
+          <div>
+            <p className="text-2xl font-bold font-mono text-gray-900">
+              {data.checkInMetrics.notesSubmitted}/{data.checkInMetrics.totalSessions}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Notes submitted</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold font-mono text-gray-900">
+              {data.checkInMetrics.avgMentorRating !== null
+                ? `${data.checkInMetrics.avgMentorRating}/5`
+                : "—"}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">Avg mentor rating</p>
+          </div>
         </div>
       </div>
 

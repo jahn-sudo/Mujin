@@ -66,7 +66,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </>
             )}
             {isMentor && (
-              <NavLink href="/dashboard/mentor" pathname={pathname}>{t("nav.dashboard")}</NavLink>
+              <>
+                <NavLink href="/dashboard/mentor" pathname={pathname}>{t("nav.dashboard")}</NavLink>
+              </>
             )}
             {isAdmin && (
               <>

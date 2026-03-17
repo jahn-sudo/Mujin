@@ -74,6 +74,19 @@ export async function GET(req: NextRequest) {
       select: { id: true, date: true },
     });
 
+    // Next check-in session for student's cohort where they haven't submitted notes yet
+    const nextCheckIn = student.cohortId
+      ? await prisma.checkInSession.findFirst({
+          where: {
+            cohortId: student.cohortId,
+            date: { lte: new Date() }, // session has occurred
+            checkInNotes: { none: { studentProfileId: student.id } }, // no note yet
+          },
+          orderBy: { date: "desc" },
+          select: { id: true, date: true },
+        })
+      : null;
+
     // Group view — cohort peers
     let group: Array<{ initial: string; score: number | null; label: string | null; isMe: boolean }> = [];
     if (student.cohortId) {
@@ -130,9 +143,8 @@ export async function GET(req: NextRequest) {
       },
       upcoming: {
         plDue,
-        nextTownHall: nextTownHall
-          ? { id: nextTownHall.id, date: nextTownHall.date }
-          : null,
+        nextTownHall: nextTownHall ? { id: nextTownHall.id, date: nextTownHall.date } : null,
+        nextCheckIn: nextCheckIn ? { id: nextCheckIn.id, date: nextCheckIn.date } : null,
       },
       group,
       openReflectionFlags: openFlags.map((f) => ({

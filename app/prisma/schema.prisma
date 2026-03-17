@@ -63,6 +63,7 @@ model User {
   townHallSubmissions    TownHallSubmission[]   @relation("TownHallSubmitter")
   plReviews              PLReview[]             @relation("PLReviewer")
   trustScoreOverrides    TrustScoreOverride[]   @relation("TrustScoreOverrider")
+  checkInGrades          CheckInGrade[]         @relation("CheckInGrader")
 
   @@index([orgId])
   @@index([email])
@@ -158,6 +159,7 @@ model StudentProfile {
 
   ventureProfile    VentureProfile?
   attendanceRecords AttendanceRecord[]
+  checkInNotes      CheckInNote[]
   plSubmissions     PLSubmission[]
   trustScores       TrustScore[]
   graduationRecord  GraduationRecord?
@@ -260,6 +262,7 @@ model CheckInSession {
   createdAt            DateTime  @default(now())
 
   attendanceRecords AttendanceRecord[]
+  checkInNotes      CheckInNote[]
 
   @@index([cohortId])
 }
@@ -275,6 +278,39 @@ model AttendanceRecord {
 
   @@unique([studentProfileId, checkInSessionId])
   @@index([checkInSessionId])
+}
+
+// ─── Check-In Notes (student structured submission post-meeting) ──────────────
+
+model CheckInNote {
+  id               String         @id @default(cuid())
+  checkInSessionId String
+  checkInSession   CheckInSession @relation(fields: [checkInSessionId], references: [id], onDelete: Cascade)
+  studentProfileId String
+  studentProfile   StudentProfile @relation(fields: [studentProfileId], references: [id], onDelete: Cascade)
+  agendaRecap      String         // what was discussed
+  actionItems      String         // commitments for next session
+  reflection       String         // how the student felt about the session
+  submittedAt      DateTime       @default(now())
+
+  grade CheckInGrade?
+
+  @@unique([checkInSessionId, studentProfileId])
+  @@index([checkInSessionId])
+  @@index([studentProfileId])
+}
+
+model CheckInGrade {
+  id         String      @id @default(cuid())
+  noteId     String      @unique
+  note       CheckInNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  mentorId   String
+  mentor     User        @relation("CheckInGrader", fields: [mentorId], references: [id])
+  rating     Int         // 1–5
+  feedback   String      // visible to student after grading
+  gradedAt   DateTime    @default(now())
+
+  @@index([mentorId])
 }
 
 // ─── P&L Submission (S4.1 – S4.8) ────────────────────────────────────────────

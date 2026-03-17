@@ -29,6 +29,7 @@ interface DashboardData {
   upcoming: {
     plDue: string | null;
     nextTownHall: { id: string; date: string } | null;
+    nextCheckIn: { id: string; date: string } | null;
   };
   group: Array<{ initial: string; score: number | null; label: string | null; isMe: boolean }>;
   openReflectionFlags: Array<{ townHallId: string; windowExpiresAt: string }>;
@@ -189,6 +190,25 @@ export default function StudentDashboard() {
               </li>
             ) : (
               <li className="text-gray-400">{t("student.dashboard.noTownHall")}</li>
+            )}
+            {data.upcoming.nextCheckIn && (
+              <li className="flex items-center gap-2">
+                <span>🤝</span>
+                <div>
+                  <Link
+                    href={`/dashboard/student/checkin/${data.upcoming.nextCheckIn.id}`}
+                    className="font-medium text-gray-900 hover:underline"
+                  >
+                    Submit check-in notes
+                  </Link>
+                  <span className="text-gray-500 ml-1">
+                    {new Date(data.upcoming.nextCheckIn.date).toLocaleDateString(
+                      i18n.language === "ja" ? "ja-JP" : "en-US",
+                      { month: "short", day: "numeric" }
+                    )}
+                  </span>
+                </div>
+              </li>
             )}
           </ul>
         </div>

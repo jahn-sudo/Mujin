@@ -101,6 +101,18 @@ export async function GET(
       },
     });
 
+    // Check-in metrics (staff sees counts + avg rating only — no note content)
+    const checkInNotes = await prisma.checkInNote.findMany({
+      where: { studentProfileId: studentId },
+      include: { grade: { select: { rating: true } } },
+    });
+    const gradedNotes = checkInNotes.filter((n) => n.grade);
+    const totalSessions = sessions.length;
+    const avgMentorRating =
+      gradedNotes.length > 0
+        ? Math.round((gradedNotes.reduce((sum, n) => sum + n.grade!.rating, 0) / gradedNotes.length) * 10) / 10
+        : null;
+
     return NextResponse.json({
       profile: {
         id: student.id,
@@ -120,6 +132,7 @@ export async function GET(
         createdAt: n.createdAt,
       })),
       graduationRecord: student.graduationRecord ?? { status: "INELIGIBLE" },
+      checkInMetrics: { totalSessions, notesSubmitted: checkInNotes.length, avgMentorRating },
     });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
