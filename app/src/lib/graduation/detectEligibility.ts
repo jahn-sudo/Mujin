@@ -26,7 +26,7 @@ export async function detectEligibility(studentId: string): Promise<void> {
   }
 
   // Only act when in a transitional state
-  const actionableStatuses = [GraduationStatus.INELIGIBLE, GraduationStatus.ELIGIBLE];
+  const actionableStatuses: GraduationStatus[] = [GraduationStatus.INELIGIBLE, GraduationStatus.ELIGIBLE];
   if (!actionableStatuses.includes(record.status)) return;
 
   const allMet = await checkAllGates(studentId, record.lastInterviewFailedAt);
