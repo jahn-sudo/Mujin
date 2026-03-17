@@ -60,6 +60,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <>
                 <NavLink href="/dashboard/student" pathname={pathname}>{t("nav.dashboard")}</NavLink>
                 <NavLink href="/dashboard/student/inbox" pathname={pathname}>{t("nav.inbox")}</NavLink>
+                <NavLink href="/dashboard/student/demo" pathname={pathname}>
+                  <span className="text-amber-600">[TEST]</span>
+                </NavLink>
               </>
             )}
             {isMentor && (
@@ -69,6 +72,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <>
                 <NavLink href="/dashboard/admin" pathname={pathname}>{t("nav.dashboard")}</NavLink>
                 <NavLink href="/dashboard/admin/pl-reviews" pathname={pathname}>{t("nav.plReviews")}</NavLink>
+                <NavLink href="/dashboard/admin/demo" pathname={pathname}>
+                  <span className="text-amber-600">[TEST]</span>
+                </NavLink>
               </>
             )}
           </div>
