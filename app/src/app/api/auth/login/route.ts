@@ -55,7 +55,8 @@ export async function POST(req: NextRequest) {
     response.headers.set("Authorization", `Bearer ${accessToken}`);
 
     return response;
-  } catch {
+  } catch (err) {
+    console.error("[login]", String(err));
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
