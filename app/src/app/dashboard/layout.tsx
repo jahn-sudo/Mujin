@@ -21,9 +21,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.replace("/login");
       return;
     }
+    // Alumni users go to their own portal
+    if (s.role === "ALUMNI" && !pathname.startsWith("/dashboard/alumni")) {
+      router.replace("/dashboard/alumni");
+      return;
+    }
     setSession(s);
     setReady(true);
-  }, [router]);
+  }, [router, pathname]);
 
   function handleLogout() {
     clearSession();
@@ -39,7 +44,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-        <div className="text-sm text-gray-400">{t("common.loading")}</div>
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <span className="inline-block w-3 h-3 rounded-full bg-gray-200 animate-pulse" />
+          {t("common.loading")}
+        </div>
       </div>
     );
   }
@@ -47,11 +55,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isAdmin = session && ["STAFF", "ORG_ADMIN", "SUPER_ADMIN"].includes(session.role);
   const isStudent = session?.role === "STUDENT";
   const isMentor = session?.role === "MENTOR";
+  const isAlumni = session?.role === "ALUMNI";
 
   return (
     <div className="min-h-screen bg-zinc-50">
       <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/" className="text-base font-semibold tracking-tight text-gray-900">
               Mujin
@@ -60,23 +69,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <>
                 <NavLink href="/dashboard/student" pathname={pathname}>{t("nav.dashboard")}</NavLink>
                 <NavLink href="/dashboard/student/inbox" pathname={pathname}>{t("nav.inbox")}</NavLink>
-                <NavLink href="/dashboard/student/demo" pathname={pathname}>
-                  <span className="text-amber-600">[TEST]</span>
-                </NavLink>
+                <NavLink href="/dashboard/student/demo" pathname={pathname}>Demo</NavLink>
+              </>
+            )}
+            {isAlumni && (
+              <>
+                <NavLink href="/dashboard/alumni" pathname={pathname}>Dashboard</NavLink>
+                <NavLink href="/dashboard/alumni/directory" pathname={pathname}>Community</NavLink>
+                <NavLink href="/dashboard/alumni/demo" pathname={pathname}>Demo</NavLink>
               </>
             )}
             {isMentor && (
               <>
                 <NavLink href="/dashboard/mentor" pathname={pathname}>{t("nav.dashboard")}</NavLink>
+                <NavLink href="/dashboard/mentor/demo" pathname={pathname}>Demo</NavLink>
               </>
             )}
             {isAdmin && (
               <>
                 <NavLink href="/dashboard/admin" pathname={pathname}>{t("nav.dashboard")}</NavLink>
                 <NavLink href="/dashboard/admin/pl-reviews" pathname={pathname}>{t("nav.plReviews")}</NavLink>
-                <NavLink href="/dashboard/admin/demo" pathname={pathname}>
-                  <span className="text-amber-600">[TEST]</span>
-                </NavLink>
+                <NavLink href="/dashboard/admin/applications" pathname={pathname}>Applications</NavLink>
+                <NavLink href="/dashboard/admin/cohorts" pathname={pathname}>Cohorts</NavLink>
+                <NavLink href="/dashboard/admin/demo" pathname={pathname}>Demo</NavLink>
               </>
             )}
           </div>
