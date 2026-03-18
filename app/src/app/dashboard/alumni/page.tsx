@@ -8,7 +8,6 @@ interface AlumniData {
   email: string;
   studentProfile: {
     cohort: { name: string } | null;
-    graduationRecord: { bankIntroDate: string | null } | null;
   } | null;
 }
 
@@ -28,8 +27,6 @@ export default function AlumniDashboard() {
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!data) return <div className="text-sm text-gray-400">Loading…</div>;
 
-  const grad = data.studentProfile?.graduationRecord;
-
   return (
     <div className="space-y-6">
       <div>
@@ -37,11 +34,6 @@ export default function AlumniDashboard() {
         <p className="text-sm text-gray-500 mt-0.5">
           {data.studentProfile?.cohort?.name ?? "Alumni"}
         </p>
-        {grad?.bankIntroDate && (
-          <p className="text-xs text-green-700 mt-1 font-medium">
-            Graduated {new Date(grad.bankIntroDate).toLocaleDateString()}
-          </p>
-        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
