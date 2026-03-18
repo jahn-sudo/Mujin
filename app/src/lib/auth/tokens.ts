@@ -16,20 +16,17 @@ function refreshExpiresAt(): Date {
 
 // Issue a new refresh token, store its hash in DB, return the signed JWT.
 export async function issueRefreshToken(userId: string): Promise<string> {
-  const record = await prisma.refreshToken.create({
-    data: {
-      userId,
-      tokenHash: "pending", // placeholder — updated below once we have the id
-      expiresAt: refreshExpiresAt(),
-    },
-  });
-
-  const raw = signRefreshToken({ sub: userId, jti: record.id });
+  const id = crypto.randomUUID();
+  const raw = signRefreshToken({ sub: userId, jti: id });
   const tokenHash = hashToken(raw);
 
-  await prisma.refreshToken.update({
-    where: { id: record.id },
-    data: { tokenHash },
+  await prisma.refreshToken.create({
+    data: {
+      id,
+      userId,
+      tokenHash,
+      expiresAt: refreshExpiresAt(),
+    },
   });
 
   return raw;
