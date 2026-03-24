@@ -103,7 +103,7 @@ export default function ProgramPage() {
                 className="text-xs tracking-[0.4em] uppercase mb-4"
                 style={{ color: "#C4ECCE", fontFamily: SG }}
               >
-                Protocol_Interface // V1.0
+                The Program // V1.0
               </div>
               <h1
                 className="text-7xl md:text-8xl font-bold tracking-tighter"
@@ -148,14 +148,14 @@ export default function ProgramPage() {
                       fontFamily: SG,
                     }}
                   >
-                    Grant_Active
+                    Active
                   </span>
                   <h2 className="text-4xl font-bold" style={{ fontFamily: NS }}>
                     The Recyclable Grant
                   </h2>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] uppercase mb-1" style={{ color: "#404040", fontFamily: SG }}>Grant_Total</div>
+                  <div className="text-[10px] uppercase mb-1" style={{ color: "#404040", fontFamily: SG }}>Grant Total</div>
                   <div className="text-2xl tracking-tighter" style={{ color: "#C4ECCE", fontFamily: "monospace" }}>
                     ¥500,000
                   </div>
@@ -181,7 +181,7 @@ export default function ProgramPage() {
                       color: "rgba(196,236,206,0.4)",
                     }}
                   >
-                    NON_BINDING
+                    Non-binding
                   </div>
                 </div>
 
@@ -226,7 +226,7 @@ export default function ProgramPage() {
                   className="text-[10px] uppercase tracking-[0.3em] mb-6"
                   style={{ color: "#525252", fontFamily: SG }}
                 >
-                  Program_State
+                  Status
                 </div>
                 <div className="space-y-6">
                   {[
@@ -383,13 +383,13 @@ export default function ProgramPage() {
                 className="text-[10px] uppercase tracking-widest mb-4"
                 style={{ color: "#404040", fontFamily: SG }}
               >
-                Program_Roadmap
+                Program Roadmap
               </div>
               <div className="text-[11px] space-y-1" style={{ color: "#525252", fontFamily: "monospace" }}>
-                <div>[Q2 2026] LEGAL_OPS: FINALIZED</div>
-                <div>[Q3 2026] FUNDRAISING: IN_PROGRESS ←</div>
-                <div>[Q1 2027] BANK_MOU: PENDING</div>
-                <div>[Q2 2027] PILOT_LAUNCH: SCHEDULED</div>
+                <div>[Q2 2026] Legal Ops: Finalized</div>
+                <div>[Q3 2026] Fundraising: In Progress ←</div>
+                <div>[Q1 2027] Bank MOU: Pending</div>
+                <div>[Q2 2027] Pilot Launch: Scheduled</div>
               </div>
             </div>
             <div className="w-full md:w-auto">

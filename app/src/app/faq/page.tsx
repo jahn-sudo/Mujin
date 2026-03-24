@@ -22,9 +22,9 @@ const SIDE_LINKS = [
 const FAQS = [
   {
     id: "eligibility",
-    label: "01_Eligibility",
+    label: "01 Eligibility",
     title: "Eligibility",
-    section: "Section_01",
+    section: "01",
     questions: [
       {
         q: "Who can apply to the pilot cohort?",
@@ -46,9 +46,9 @@ const FAQS = [
   },
   {
     id: "grant",
-    label: "02_The Grant",
+    label: "02 The Grant",
     title: "The Grant",
-    section: "Section_02",
+    section: "02",
     questions: [
       {
         q: "Is this a loan?",
@@ -70,9 +70,9 @@ const FAQS = [
   },
   {
     id: "trust",
-    label: "03_Trust Engine",
+    label: "03 Trust Engine",
     title: "The Trust Engine",
-    section: "Section_03",
+    section: "03",
     questions: [
       {
         q: "What is the Trust Score?",
@@ -98,9 +98,9 @@ const FAQS = [
   },
   {
     id: "graduation",
-    label: "04_Graduation & Banking",
+    label: "04 Graduation & Banking",
     title: "Graduation & Banking",
-    section: "Section_04",
+    section: "04",
     questions: [
       {
         q: "What does it mean to graduate?",
@@ -122,9 +122,9 @@ const FAQS = [
   },
   {
     id: "commons",
-    label: "05_The Commons",
+    label: "05 The Commons",
     title: "The Commons",
-    section: "Section_05",
+    section: "05",
     questions: [
       {
         q: "What is the Mujin Commons?",
@@ -253,10 +253,10 @@ export default function FAQPage() {
             </div>
             <div className="flex flex-col items-end text-right space-y-2">
               <div className="text-[10px] uppercase tracking-widest" style={{ color: "#A9D0B3", fontFamily: SG }}>
-                Status: Open_For_Applications
+                Status: Open for Applications
               </div>
               <div className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
-                Pilot_Cohort: Q2_2027
+                Pilot Cohort: Q2 2027
               </div>
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function FAQPage() {
                   className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 group hover:opacity-80 transition-opacity"
                   style={{ color: "#C4ECCE", fontFamily: SG }}
                 >
-                  Apply_Now
+                  Apply Now
                   <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
                     arrow_forward
                   </span>
@@ -434,7 +434,7 @@ export default function FAQPage() {
             className="mt-8 md:mt-0 text-[10px] hover:text-[#ffddb4] transition-all flex items-center gap-2 group"
             style={{ color: "#C4ECCE", fontFamily: SG }}
           >
-            BACK_TO_TOP
+            Back to Top
             <span className="material-symbols-outlined group-hover:-translate-y-1 transition-transform">
               arrow_upward
             </span>

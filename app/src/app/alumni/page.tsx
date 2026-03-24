@@ -26,17 +26,17 @@ const ILLUSTRATIVE_ALUMNI = [
     status: "Graduated",
     statusColor: "#C4ECCE",
     contributions: "—",
-    activity: "VENTURE: Online_Tutoring_Platform",
+    activity: "Venture: Online Tutoring Platform",
   },
   {
     id: "#OP_0002",
     name: "Japanese Founder, 24",
     initials: "JF",
     category: "Social Enterprise",
-    status: "In_Program",
+    status: "In Program",
     statusColor: "#ffddb4",
     contributions: "—",
-    activity: "TRUST_SCORE: GREEN_MONTH_4",
+    activity: "Trust Score: Green · Month 4",
   },
   {
     id: "#OP_0003",
@@ -46,15 +46,15 @@ const ILLUSTRATIVE_ALUMNI = [
     status: "Applicant",
     statusColor: "#b4cad6",
     contributions: "—",
-    activity: "STATUS: Pending_Cohort_2",
+    activity: "Status: Pending · Cohort 2",
   },
 ];
 
 const MILESTONE_LOG = [
-  { ts: "Q2_2027", operative: "COHORT_1",   type: "Grant Disbursed",     id: "GRANT_TRANCHE_1",  impact: "¥15M",   impactColor: "#C4ECCE" },
-  { ts: "Q4_2027", operative: "STUDENT_AVG", type: "Trust Score Review",  id: "TRUST_REVIEW_Q4", impact: "+84%",   impactColor: "#C4ECCE" },
-  { ts: "Q2_2028", operative: "GRADUATE_01", type: "Bank Intro Triggered", id: "BANK_INTRO_001",  impact: "Gate_4", impactColor: "#ffddb4" },
-  { ts: "Q4_2028", operative: "GRADUATE_01", type: "Pledge Returned",      id: "PLEDGE_RTN_001",  impact: "¥525K",  impactColor: "#C4ECCE" },
+  { ts: "Q2 2027", operative: "Cohort 1",     type: "Grant Disbursed",      id: "Grant Tranche 1",   impact: "¥15M",   impactColor: "#C4ECCE" },
+  { ts: "Q4 2027", operative: "Student Avg.", type: "Trust Score Review",   id: "Trust Review Q4",   impact: "+84%",   impactColor: "#C4ECCE" },
+  { ts: "Q2 2028", operative: "Graduate 01",  type: "Bank Intro Triggered", id: "Bank Intro 001",    impact: "Gate 4", impactColor: "#ffddb4" },
+  { ts: "Q4 2028", operative: "Graduate 01",  type: "Pledge Returned",      id: "Pledge Return 001", impact: "¥525K",  impactColor: "#C4ECCE" },
 ];
 
 function InitialsBox({ initials }: { initials: string }) {
@@ -158,7 +158,7 @@ export default function AlumniPage() {
               className="text-[10px] tracking-[0.3em] uppercase block mb-4"
               style={{ color: "#C4ECCE", fontFamily: SG }}
             >
-              Archive.Registry_001
+              Archive · Registry
             </span>
             <h1
               className="text-5xl md:text-7xl font-bold tracking-tighter leading-tight mb-6"
@@ -182,10 +182,10 @@ export default function AlumniPage() {
                   className="text-[10px] uppercase"
                   style={{ color: "rgba(196,236,206,0.6)", fontFamily: SG }}
                 >
-                  Cohort_Slots
+                  Cohort Slots
                 </span>
                 <span className="text-[10px]" style={{ color: "#ffddb4", fontFamily: SG }}>
-                  Filling_Q2_2027
+                  Filling — Q2 2027
                 </span>
               </div>
               <div className="text-3xl font-bold tracking-tighter" style={{ color: "#C4ECCE" }}>
@@ -243,7 +243,7 @@ export default function AlumniPage() {
                     style={{ width: "192px", borderLeft: "2px solid #C4ECCE" }}
                   >
                     <p className="text-[10px] font-bold mb-1" style={{ color: "#C4ECCE" }}>
-                      NODE_001: COHORT_1
+                      Node 001: Cohort 1
                     </p>
                     <p className="text-[8px] uppercase tracking-widest" style={{ color: "#b4cad6" }}>
                       Launching Q2 2027
@@ -258,7 +258,7 @@ export default function AlumniPage() {
                     style={{ width: "192px", borderLeft: "2px solid #ffddb4" }}
                   >
                     <p className="text-[10px] font-bold mb-1" style={{ color: "#ffddb4" }}>
-                      NODE_BANK: JFC_PARTNER
+                      Bank Node: JFC Partner
                     </p>
                     <p className="text-[8px] uppercase tracking-widest" style={{ color: "#b4cad6" }}>
                       MOU Pending Q1 2027
@@ -335,13 +335,13 @@ export default function AlumniPage() {
         <section className="mb-20">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
             <div className="max-w-md">
-              <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: NS }}>Registry_Access</h3>
+              <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: NS }}>Registry</h3>
               <p className="text-sm italic" style={{ color: "rgba(180,202,214,0.6)" }}>
                 Illustrative profiles. Real graduate stories replace these when the first cohort graduates.
               </p>
             </div>
             <div className="flex gap-2">
-              {["All_Nodes", "Graduated", "In_Program"].map((tab, i) => (
+              {["All", "Graduated", "In Program"].map((tab, i) => (
                 <button
                   key={tab}
                   className="px-6 py-2 text-[10px] font-bold tracking-widest uppercase transition-all"
@@ -415,7 +415,7 @@ export default function AlumniPage() {
                     className="text-[9px] uppercase tracking-[0.2em] mb-2"
                     style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}
                   >
-                    Activity_Log
+                    Activity
                   </p>
                   <p
                     className="text-[10px] leading-tight"
@@ -438,12 +438,12 @@ export default function AlumniPage() {
 
         {/* ── Milestone Log (table) ─────────────────────────────────────────── */}
         <section className="mb-20">
-          <h3 className="text-3xl font-bold mb-8" style={{ fontFamily: NS }}>Milestone_Log</h3>
+          <h3 className="text-3xl font-bold mb-8" style={{ fontFamily: NS }}>Milestone Log</h3>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr style={{ backgroundColor: "#0E0E0E", textAlign: "left" }}>
-                  {["Timestamp", "Event", "Type", "Protocol_ID", "Impact"].map((h, i) => (
+                  {["Timestamp", "Event", "Type", "Protocol ID", "Impact"].map((h, i) => (
                     <th
                       key={h}
                       className="py-4 px-6 text-[10px] uppercase tracking-[0.2em]"
@@ -547,7 +547,7 @@ export default function AlumniPage() {
           className="mt-8 md:mt-0 text-[10px] hover:text-[#ffddb4] transition-all flex items-center gap-2 group"
           style={{ color: "#C4ECCE", fontFamily: SG }}
         >
-          BACK_TO_TOP
+          Back to Top
           <span className="material-symbols-outlined group-hover:-translate-y-1 transition-transform">
             arrow_upward
           </span>

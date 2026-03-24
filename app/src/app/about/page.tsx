@@ -116,7 +116,7 @@ export default function AboutPage() {
                   className="text-[10px] tracking-[0.3em] uppercase"
                   style={{ fontFamily: SG, color: "#A9D0B3" }}
                 >
-                  Origin_Protocol
+                  Our Origin
                 </span>
               </div>
               <h1
@@ -220,7 +220,7 @@ export default function AboutPage() {
                       className="block text-[10px] uppercase tracking-[0.2em]"
                       style={{ color: "#C4ECCE", fontFamily: SG }}
                     >
-                      Read_The_Program
+                      Read the Program
                     </span>
                     <span className="block text-xs" style={{ color: "rgba(180,202,214,0.6)" }}>
                       How the Recyclable Grant works
@@ -250,7 +250,7 @@ export default function AboutPage() {
                 className="text-[10px] tracking-[0.3em] uppercase block mb-4"
                 style={{ color: "#C4ECCE", fontFamily: SG }}
               >
-                Chronological_Ledger
+                Timeline
               </span>
               <h2 className="text-4xl" style={{ fontFamily: NS, color: "#ffffff" }}>
                 System History
@@ -274,7 +274,7 @@ export default function AboutPage() {
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="w-full md:w-[45%] md:text-right">
                 <span className="text-xs tracking-widest block mb-2" style={{ color: "#C4ECCE", fontFamily: SG }}>
-                  OCT_2025
+                  Oct 2025
                 </span>
                 <h3 className="text-2xl mb-4" style={{ fontFamily: NS, color: "#ffffff" }}>
                   The Visa Crisis
@@ -334,7 +334,7 @@ export default function AboutPage() {
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 pb-12">
               <div className="w-full md:w-[45%] md:text-right">
                 <span className="text-xs tracking-widest block mb-2" style={{ color: "#ffddb4", fontFamily: SG }}>
-                  CURRENT_STATUS
+                  Current Status
                 </span>
                 <h3 className="text-2xl mb-4" style={{ fontFamily: NS, color: "#ffffff" }}>
                   Project: Pilot Cohort
@@ -354,7 +354,7 @@ export default function AboutPage() {
                   <div className="flex items-center gap-4 mb-4">
                     <span className="material-symbols-outlined" style={{ color: "#ffddb4" }}>settings_input_component</span>
                     <span className="text-[10px] uppercase tracking-widest" style={{ color: "#ffddb4", fontFamily: SG }}>
-                      Live_Diagnostic_Feed
+                      Live Diagnostic
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -387,7 +387,7 @@ export default function AboutPage() {
         >
           <div className="mb-16">
             <span className="text-[10px] tracking-[0.3em] uppercase block mb-4" style={{ color: "#C4ECCE", fontFamily: SG }}>
-              Operation_Directive
+              Mission
             </span>
             <h2 className="text-4xl" style={{ fontFamily: NS, color: "#ffffff" }}>The Four Pillars</h2>
           </div>
@@ -402,7 +402,7 @@ export default function AboutPage() {
             >
               <div>
                 <span className="text-[10px] uppercase block mb-8" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-                  Pillar_001
+                  01
                 </span>
                 <h3
                   className="text-3xl mb-4 transition-colors group-hover:text-[#C4ECCE]"

@@ -185,7 +185,7 @@ export default function TeamPage() {
                 className="text-[10px] uppercase tracking-widest"
                 style={{ color: "#8c938b", fontFamily: SG }}
               >
-                Team // Pilot_Capacity
+                Team // Pilot Capacity
               </div>
             </div>
           </div>
@@ -335,10 +335,10 @@ export default function TeamPage() {
           style={{ opacity: 0.4 }}
         >
           {[
-            { label: "Protocol",      value: "PLEDGE_NON_BINDING" },
-            { label: "Entity",        value: "RELIGIOUS_CORP_JP" },
-            { label: "Pilot_Launch",  value: "Q2_2027" },
-            { label: "Node_Location", value: "35.6895°N 139.6917°E" },
+            { label: "Protocol",     value: "Non-binding Pledge" },
+            { label: "Entity",       value: "Religious Corp., Japan" },
+            { label: "Pilot Launch", value: "Q2 2027" },
+            { label: "Location",     value: "35.6895°N 139.6917°E" },
           ].map((m) => (
             <div key={m.label} className="flex flex-col gap-1">
               <span className="text-[9px] uppercase tracking-widest" style={{ fontFamily: SG }}>

@@ -11,8 +11,6 @@ const SIDE_LINKS = [
   { icon: "dashboard",                label: "Home",        href: "/",          active: true },
   { icon: "info",                     label: "Mission",     href: "/about" },
   { icon: "settings_input_component", label: "The Program", href: "/program" },
-  { icon: "account_tree",             label: "Protocols",   href: "/protocols" },
-  { icon: "scatter_plot",             label: "Lattice",     href: "/lattice" },
   { icon: "groups",                   label: "Leadership",  href: "/team" },
   { icon: "hub",                      label: "Network",     href: "/alumni" },
   { icon: "quiz",                     label: "FAQ",         href: "/faq" },
@@ -449,12 +447,6 @@ export default function HomePage() {
           <div className="flex gap-8">
             <Link href="/program" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
               The Program
-            </Link>
-            <Link href="/protocols" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
-              Protocols
-            </Link>
-            <Link href="/lattice" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
-              Lattice
             </Link>
             <a
               href={APPLY_URL}
