@@ -1,224 +1,459 @@
-import PublicNav from "@/components/PublicNav";
+import Link from "next/link";
 
 const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScp7GNJ9T58mHrY_zfrcPbWj5i51dffLYVaM72xfH02sCghqw/viewform?usp=sharing&ouid=103224701688413762370";
 
+const SG = "var(--font-space-grotesk), sans-serif";
+const NS = "var(--font-noto-serif), serif";
+
+const IMG_FIBER =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCJUMxeGC00JrPLhAhC4zOBLi2GYcX5JYrKI54o2YID8B6ZzFCEBqZyUFdgXB6Zn864anWHlGvXLBDj1BbkJZ25YOIHV_OPr7gLKZYc4I2OblPsEe8mso-FKBVCRnTjrYCihEH7utXpx-LVCglYNdsvv5SVsNsyXkMMAfg5lLKUgPBwlYfDNqqLo9x5U89j8AQ7i-5fAahc9ugF94KSgPVQqUHCIPoiJ28UwpbUjwdXG8Yqm0PWjWs0f0KkLpk-RufVCoUhGXFk5bY";
+const IMG_MAP =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAZNcNAxdd3X2fzrqYShSNipgZu51_QEKWOa7QKuhTf6uI38V2HnUMRPUb0R3n0_tccM-Tr786U4_XbxcOfLg1nwnlrnztd8HMLmsEYGOZcsrJchY_pE9pE8Nne0rSI4EOSczUtN99zEKpWRR3wSzehrU16k8Arnc6eyYLKQm9AWoONw4e-rBa5NinCIxSqJ7-wzLKYjm6WFGhRTwZL2kRtFD_SxekMO0vifkA8DcaiaZGyVvsf2lAkpCwKKQk9JoUrCKMZaR837b0";
+
+
+const SIDE_LINKS = [
+  { icon: "dashboard",                label: "Home",     href: "/" },
+  { icon: "info",                     label: "Mission",     href: "/about" },
+  { icon: "settings_input_component", label: "The Program", href: "/program", active: true },
+  { icon: "groups",                   label: "Leadership",  href: "/team" },
+  { icon: "hub",                      label: "Network",     href: "/alumni" },
+  { icon: "quiz",                     label: "FAQ",   href: "/faq" },
+  { icon: "play_circle",              label: "Demo",        href: "/demo" },
+];
+
 export default function ProgramPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <PublicNav />
+    <div style={{ backgroundColor: "#131313", color: "#e5e2e1", fontFamily: SG }}>
 
-      {/* Header */}
-      <section className="max-w-5xl mx-auto px-6 pt-20 pb-16">
-        <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-4">
-          The program
-        </p>
-        <h1 className="text-4xl font-bold tracking-tight leading-snug max-w-2xl mb-6">
-          Everything you need to know before you apply.
-        </h1>
-        <p className="text-lg text-gray-500 leading-relaxed max-w-2xl">
-          Mujin is a 12–24 month program. You receive capital, mentorship, and a behavioral
-          track record — then graduate to a partner bank. Here&apos;s exactly how it works.
-        </p>
-      </section>
-
-      {/* The grant */}
-      <section className="border-y border-gray-100 bg-zinc-50">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <h2 className="text-2xl font-bold tracking-tight mb-2">The Recyclable Grant</h2>
-          <p className="text-gray-500 mb-10 max-w-xl">
-            A grant — not a loan. No interest. No repayment obligation. A voluntary pledge to
-            pay it forward when you succeed.
-          </p>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white border border-gray-100 rounded-xl p-6">
-              <p className="text-xs font-mono text-gray-400 mb-2">Tranche 1 · Day 1</p>
-              <p className="text-3xl font-bold mb-2">¥300,000</p>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Released on signing the Pledge of Honor. Use it for early venture
-                operations — incorporation fees, tools, hosting, travel, marketing.
-                Personal living expenses are not covered.
-              </p>
-            </div>
-            <div className="bg-white border border-gray-100 rounded-xl p-6">
-              <p className="text-xs font-mono text-gray-400 mb-2">Tranche 2 · Month 3</p>
-              <p className="text-3xl font-bold mb-2">¥200,000</p>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Released when your company is incorporated and your Trust Score was not Red
-                at months 2 or 3. This is earned — not automatic.
-              </p>
-            </div>
-          </div>
-          <div className="mt-6 bg-white border border-gray-100 rounded-xl p-6">
-            <h3 className="font-semibold mb-2">The Pledge of Honor</h3>
-            <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
-              Upon receiving the grant, every student signs a non-binding Pledge of Honor
-              (誓約書 · Seiyaku-sho). It is not a loan agreement. There is no debt collector.
-              The pledge is a moral commitment: if your venture succeeds and you graduate to
-              a bank, you voluntarily return the ¥500,000 plus a 5% success tithe — refilling
-              the fund for the student behind you. We designed this so that every graduation
-              makes the next one possible.
-            </p>
-          </div>
+      {/* ── Top App Bar ─────────────────────────────────────────────────────── */}
+      <header
+        className="fixed top-0 z-50 w-full flex justify-between items-center px-6 py-4"
+        style={{ backgroundColor: "rgba(9,9,11,0.6)", backdropFilter: "blur(24px)", borderBottom: "1px solid rgba(196,236,206,0.15)" }}
+      >
+        <Link href="/" className="text-2xl font-bold tracking-widest uppercase" style={{ fontFamily: NS, color: "#C4ECCE" }}>
+          MUJIN
+        </Link>
+        <div className="flex items-center gap-6">
+          <button className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG, background: "none", border: "none", cursor: "pointer" }}>EN</button>
+          <Link href="/login" className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG }}>Log in</Link>
         </div>
-      </section>
+      </header>
 
-      {/* The Trust Engine */}
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        <h2 className="text-2xl font-bold tracking-tight mb-2">The Trust Engine</h2>
-        <p className="text-gray-500 mb-10 max-w-xl">
-          Your Trust Score is computed monthly from four behavioral signals — each weighted
-          equally. This is the record you will bring to the bank.
-        </p>
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
-          {[
-            {
-              signal: "Responsiveness · 25%",
-              detail: "Bi-weekly in-person check-ins with your mentor. Show up consistently — consistency is character.",
-            },
-            {
-              signal: "Transparency · 25%",
-              detail: "Monthly P&L submitted on time, with revenue, expenses, and notes. Be honest about where your venture is.",
-            },
-            {
-              signal: "Mutualism · 25%",
-              detail: "Monthly peer Town Halls with your cohort. You grow together — your attendance signals your investment in each other.",
-            },
-            {
-              signal: "Reflection · 25%",
-              detail: "A private monthly reflection on your journey. It is anonymous — staff cannot read it. It is simply a space to think out loud.",
-            },
-          ].map((item) => (
-            <div key={item.signal} className="border border-gray-100 rounded-xl p-6">
-              <h3 className="font-semibold text-sm mb-2">{item.signal}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{item.detail}</p>
-            </div>
-          ))}
-        </div>
-        <div className="border border-gray-100 rounded-xl p-6 bg-zinc-50">
-          <h3 className="font-semibold mb-3">Traffic light system</h3>
-          <div className="flex flex-col sm:flex-row gap-4">
-            {[
-              { color: "bg-green-500", label: "Green · 75–100", desc: "On track" },
-              { color: "bg-yellow-400", label: "Yellow · 50–74", desc: "Staff review triggered" },
-              { color: "bg-red-500", label: "Red · 0–49", desc: "Intervention required" },
-            ].map((t) => (
-              <div key={t.label} className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full shrink-0 ${t.color}`} />
-                <div>
-                  <p className="text-sm font-medium">{t.label}</p>
-                  <p className="text-xs text-gray-500">{t.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── Side Nav ────────────────────────────────────────────────────────── */}
+      <aside
+        className="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-40"
+        style={{ width: "256px", backgroundColor: "#0E0E0E", borderRight: "1px solid rgba(196,236,206,0.1)" }}
+      >
+        <nav className="flex-1">
+          {SIDE_LINKS.map((l) => {
+            const inner = (
+              <>
+                <span className="material-symbols-outlined">{l.icon}</span>
+                <span className="text-[10px] uppercase tracking-[0.1em]" style={{ fontFamily: SG }}>{l.label}</span>
+              </>
+            );
+            const activeStyle = { color: "#C4ECCE", borderLeft: "4px solid #C4ECCE", backgroundColor: "rgba(196,236,206,0.1)" };
+            const idleStyle = { color: "#b4cad6", opacity: 0.7 };
 
-      {/* Graduation */}
-      <section className="border-y border-gray-100 bg-zinc-50">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <h2 className="text-2xl font-bold tracking-tight mb-2">Graduation</h2>
-          <p className="text-gray-500 mb-10 max-w-xl">
-            Four hard gates. No exceptions. When all four are met, the system triggers your
-            exit interview and — if passed — your bank introduction.
-          </p>
-          <div className="grid md:grid-cols-2 gap-4">
-            {[
-              { gate: "01", title: "Company incorporated", detail: "Your venture must be a registered legal entity in Japan." },
-              { gate: "02", title: "3 months non-negative cash flow", detail: "Or a clear, documented path to breakeven — assessed in your exit interview." },
-              { gate: "03", title: "Green Trust Score · 6 consecutive months", detail: "75+ for six months straight. The system tracks this automatically." },
-              { gate: "04", title: "Exit interview passed", detail: "Staff-conducted, triggered automatically when gates 1–3 are met. A complete dossier is prepared by the system." },
-            ].map((item) => (
-              <div key={item.gate} className="bg-white border border-gray-100 rounded-xl p-6 flex gap-4">
-                <p className="text-xs font-mono text-gray-400 shrink-0 pt-0.5">{item.gate}</p>
-                <div>
-                  <h3 className="font-semibold mb-1">{item.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* The Commons */}
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        <h2 className="text-2xl font-bold tracking-tight mb-2">The Mujin Commons</h2>
-        <p className="text-gray-500 leading-relaxed max-w-2xl mb-8">
-          Church-owned co-working spaces located within 15 minutes of major Tokyo universities.
-          Monday–Friday, the space operates as a secular co-working environment. Weekends, it
-          returns to the church community.
-        </p>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="border border-gray-100 rounded-xl p-6">
-            <h3 className="font-semibold mb-2">For your venture</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              A Usage Agreement (~¥10,000/month) provides a verified physical office address —
-              satisfying the Immigration Bureau&apos;s office requirement for Business Manager
-              Visa applications. Available to all cohorts, including refugees.
-            </p>
-          </div>
-          <div className="border border-gray-100 rounded-xl p-6">
-            <h3 className="font-semibold mb-2">For the church</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Lease income flows to church funds, making the Commons financially sustainable
-              for the church partner — and ensuring the space remains available for future cohorts.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="border-t border-gray-100 bg-zinc-50">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <h2 className="text-2xl font-bold tracking-tight mb-10">Program roadmap</h2>
-          <div className="space-y-6">
-            {[
-              { quarter: "Q2 2026", milestone: "Legal finalization + informal bank outreach" },
-              { quarter: "Q3 2026", milestone: "Fundraising · Secure church partner" },
-              { quarter: "Q1 2027", milestone: "Sign bank MOU · Final build" },
-              { quarter: "Q2 2027", milestone: "Pilot cohort launches — 50 students", highlight: true },
-            ].map((item) => (
-              <div key={item.quarter} className={`flex gap-6 items-start border rounded-xl px-6 py-4 ${item.highlight ? "border-gray-900 bg-white" : "border-gray-100 bg-white"}`}>
-                <p className={`text-sm font-mono shrink-0 w-20 pt-0.5 ${item.highlight ? "text-gray-900 font-semibold" : "text-gray-400"}`}>{item.quarter}</p>
-                <p className={`text-sm leading-relaxed ${item.highlight ? "font-semibold text-gray-900" : "text-gray-500"}`}>{item.milestone}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-gray-900 text-white">
-        <div className="max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <h2 className="text-xl font-bold mb-2">Applications are open.</h2>
-            <p className="text-gray-400 text-sm">Pilot cohort · 50 students · Q2 2027 launch</p>
-          </div>
+            return "external" in l && l.external ? (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
+                style={idleStyle}
+              >
+                {inner}
+              </a>
+            ) : (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
+                style={"active" in l && l.active ? activeStyle : idleStyle}
+              >
+                {inner}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="px-8 mt-auto">
           <a
             href={APPLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 bg-white text-gray-900 px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+            className="block w-full py-4 text-center text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#C4ECCE]/5 transition-all"
+            style={{ border: "1px solid rgba(196,236,206,0.2)", color: "#C4ECCE", fontFamily: SG }}
           >
-            Apply now
+            Apply to Pilot
           </a>
         </div>
-      </section>
+      </aside>
 
-      <footer className="border-t border-gray-100">
-        <div className="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between">
-          <span className="text-sm font-semibold text-gray-900">Mujin</span>
-          <p className="text-xs text-gray-400">
-            A{" "}
-            <a href="https://frontiercommons.org" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gray-600 transition-colors">
-              Frontier Commons
-            </a>{" "}
-            prototype · Tokyo, Japan
-          </p>
+      {/* ── Main ────────────────────────────────────────────────────────────── */}
+      <main className="lg:ml-64 pt-24 pb-20 min-h-screen scanline relative">
+        <div className="px-8 md:px-12 lg:px-20 max-w-7xl mx-auto">
+
+          {/* ── Hero Header ─────────────────────────────────────────────────── */}
+          <section className="mb-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
+            <div>
+              <div
+                className="text-xs tracking-[0.4em] uppercase mb-4"
+                style={{ color: "#C4ECCE", fontFamily: SG }}
+              >
+                Protocol_Interface // V1.0
+              </div>
+              <h1
+                className="text-7xl md:text-8xl font-bold tracking-tighter"
+                style={{ fontFamily: NS, color: "#e5e2e1" }}
+              >
+                The Program
+              </h1>
+            </div>
+            <div
+              className="text-sm leading-relaxed pl-6 mb-2 max-w-md"
+              style={{ color: "#525252", borderLeft: "1px solid rgba(66,72,66,1)" }}
+            >
+              A 12–24 month program. Capital, mentorship, and a behavioral track record —
+              then a warm introduction to a partner bank. No credit history required.
+            </div>
+          </section>
+
+          {/* ── Bento Grid ──────────────────────────────────────────────────── */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-12 gap-[1px]"
+            style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(66,72,66,0.1)" }}
+          >
+
+            {/* ── The Recyclable Grant (large) ────────────────────────────── */}
+            <div
+              className="md:col-span-8 p-8 relative overflow-hidden group"
+              style={{ backgroundColor: "#131313", borderRight: "1px solid rgba(66,72,66,0.1)" }}
+            >
+              {/* Ghost icon */}
+              <div className="absolute top-0 right-0 p-4" style={{ opacity: 0.08 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: "9rem" }}>savings</span>
+              </div>
+
+              <div className="flex justify-between items-start mb-12">
+                <div>
+                  <span
+                    className="inline-block px-2 py-0.5 text-[10px] uppercase tracking-widest mb-4"
+                    style={{
+                      backgroundColor: "rgba(196,236,206,0.1)",
+                      borderLeft: "2px solid #C4ECCE",
+                      color: "#C4ECCE",
+                      fontFamily: SG,
+                    }}
+                  >
+                    Grant_Active
+                  </span>
+                  <h2 className="text-4xl font-bold" style={{ fontFamily: NS }}>
+                    The Recyclable Grant
+                  </h2>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] uppercase mb-1" style={{ color: "#404040", fontFamily: SG }}>Grant_Total</div>
+                  <div className="text-2xl tracking-tighter" style={{ color: "#C4ECCE", fontFamily: "monospace" }}>
+                    ¥500,000
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-8 items-center">
+                {/* Circular diagram */}
+                <div className="w-48 h-48 flex items-center justify-center relative shrink-0" style={{ border: "1px solid rgba(196,236,206,0.2)" }}>
+                  <div className="absolute inset-2 rounded-full" style={{ border: "1px solid rgba(196,236,206,0.1)" }} />
+                  <div
+                    className="absolute inset-6 rounded-full rotate-45"
+                    style={{ border: "2px dashed rgba(196,236,206,0.3)" }}
+                  />
+                  <div className="w-12 h-12 flex items-center justify-center" style={{ backgroundColor: "rgba(196,236,206,0.2)" }}>
+                    <span className="material-symbols-outlined" style={{ color: "#C4ECCE" }}>currency_yen</span>
+                  </div>
+                  <div
+                    className="absolute -bottom-2 -right-2 px-2 py-1 text-[9px]"
+                    style={{
+                      backgroundColor: "#131313",
+                      border: "1px solid rgba(196,236,206,0.2)",
+                      color: "rgba(196,236,206,0.4)",
+                    }}
+                  >
+                    NON_BINDING
+                  </div>
+                </div>
+
+                <div className="flex-1 space-y-4">
+                  <p className="text-sm leading-relaxed max-w-sm" style={{ color: "#737373" }}>
+                    A grant — not a loan. Released in two tranches. Upon graduating to a partner bank,
+                    you voluntarily return the principal plus a 5% covenant gift, refilling the fund
+                    for the next student.
+                  </p>
+                  <div
+                    className="grid grid-cols-2 gap-4 pt-4"
+                    style={{ borderTop: "1px solid rgba(66,72,66,0.2)" }}
+                  >
+                    <div>
+                      <div className="text-[9px] uppercase mb-1" style={{ color: "#404040", fontFamily: SG }}>
+                        Tranche 1 · Day 1
+                      </div>
+                      <div className="text-xs" style={{ color: "#e5e2e1", fontFamily: SG }}>
+                        ¥300,000 on signing
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] uppercase mb-1" style={{ color: "#404040", fontFamily: SG }}>
+                        Tranche 2 · Month 3
+                      </div>
+                      <div className="text-xs" style={{ color: "#C4ECCE", fontFamily: SG }}>
+                        ¥200,000 · earned
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Status Panel ────────────────────────────────────────────── */}
+            <div
+              className="md:col-span-4 p-8 flex flex-col justify-between"
+              style={{ backgroundColor: "#0E0E0E" }}
+            >
+              <div>
+                <div
+                  className="text-[10px] uppercase tracking-[0.3em] mb-6"
+                  style={{ color: "#525252", fontFamily: SG }}
+                >
+                  Program_State
+                </div>
+                <div className="space-y-6">
+                  {[
+                    { label: "Applications",  value: "OPEN",        color: "#C4ECCE" },
+                    { label: "Tranche 2",      value: "CONDITIONAL", color: "#ffddb4" },
+                    { label: "Interest Rate",  value: "ZERO",        color: "#C4ECCE" },
+                  ].map((row) => (
+                    <div key={row.label} className="flex items-center justify-between">
+                      <span className="text-xs" style={{ color: "#737373", fontFamily: SG }}>{row.label}</span>
+                      <span className="text-xs font-bold" style={{ color: row.color, fontFamily: SG }}>{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="pt-8">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={IMG_FIBER}
+                  alt="Circuit detail"
+                  className="w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                  style={{ height: "128px", opacity: 0.5 }}
+                />
+              </div>
+            </div>
+
+            {/* ── The Trust Engine ────────────────────────────────────────── */}
+            <div
+              className="md:col-span-6 p-8 group"
+              style={{ backgroundColor: "#131313", borderTop: "1px solid rgba(66,72,66,0.1)" }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="material-symbols-outlined text-2xl" style={{ color: "#C4ECCE" }}>analytics</span>
+                <h2 className="text-2xl font-bold" style={{ fontFamily: NS }}>The Trust Engine</h2>
+              </div>
+              <p className="text-sm mb-8 leading-relaxed" style={{ color: "#737373" }}>
+                Four behavioral signals, weighted equally. Computed monthly. Six consecutive Green
+                months triggers your bank introduction.
+              </p>
+
+              {/* Signal bars */}
+              <div className="space-y-4 mb-8">
+                {[
+                  { label: "Responsiveness",  detail: "Bi-weekly mentor check-ins", pct: "25%" },
+                  { label: "Transparency",    detail: "Monthly P&L submitted",       pct: "25%" },
+                  { label: "Mutualism",       detail: "Town Hall attendance",         pct: "25%" },
+                  { label: "Reflection",      detail: "Monthly written reflection",   pct: "25%" },
+                ].map((s) => (
+                  <div key={s.label}>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-[10px] uppercase tracking-widest" style={{ color: "#e5e2e1", fontFamily: SG }}>
+                        {s.label}
+                      </span>
+                      <span className="text-[10px]" style={{ color: "#525252", fontFamily: SG }}>{s.detail}</span>
+                    </div>
+                    <div className="h-1 w-full" style={{ backgroundColor: "#2a2a2a" }}>
+                      <div className="h-full" style={{ width: s.pct, backgroundColor: "#C4ECCE" }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Traffic light */}
+              <div
+                className="p-4 flex flex-wrap gap-6"
+                style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(66,72,66,0.2)" }}
+              >
+                {[
+                  { label: "Green  75–100", color: "#4ade80", desc: "On track" },
+                  { label: "Yellow 50–74",  color: "#facc15", desc: "Review triggered" },
+                  { label: "Red    0–49",   color: "#f87171", desc: "Intervention" },
+                ].map((t) => (
+                  <div key={t.label} className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: t.color }} />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest" style={{ fontFamily: SG, color: "#e5e2e1" }}>
+                        {t.label}
+                      </p>
+                      <p className="text-[9px]" style={{ color: "#525252" }}>{t.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Graduation Gates ────────────────────────────────────────── */}
+            <div
+              className="md:col-span-6 p-8 group"
+              style={{
+                backgroundColor: "#131313",
+                borderTop: "1px solid rgba(66,72,66,0.1)",
+                borderLeft: "1px solid rgba(66,72,66,0.1)",
+              }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="material-symbols-outlined text-2xl" style={{ color: "#ffddb4" }}>school</span>
+                <h2 className="text-2xl font-bold" style={{ fontFamily: NS }}>Graduation Gates</h2>
+              </div>
+              <p className="text-sm mb-8 leading-relaxed" style={{ color: "#737373" }}>
+                Four hard gates. All four must pass before your exit interview is triggered and
+                your bank introduction is issued.
+              </p>
+              <div className="space-y-3">
+                {[
+                  { gate: "01", title: "Company incorporated",            status: "Required",    color: "#C4ECCE" },
+                  { gate: "02", title: "3 months non-negative cash flow", status: "Required",    color: "#C4ECCE" },
+                  { gate: "03", title: "Green Trust Score · 6 months",   status: "Auto-tracked", color: "#ffddb4" },
+                  { gate: "04", title: "Exit interview passed",           status: "Final gate",  color: "#ffddb4" },
+                ].map((item) => (
+                  <div
+                    key={item.gate}
+                    className="flex items-center gap-4 p-4"
+                    style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(66,72,66,0.1)" }}
+                  >
+                    <span
+                      className="text-[10px] shrink-0 pt-0.5"
+                      style={{ color: "#404040", fontFamily: "monospace" }}
+                    >
+                      {item.gate}
+                    </span>
+                    <span className="text-sm flex-1" style={{ color: "#e5e2e1" }}>{item.title}</span>
+                    <span
+                      className="text-[9px] uppercase tracking-widest shrink-0"
+                      style={{ color: item.color, fontFamily: SG }}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <a
+                href={APPLY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 w-full py-4 block text-center text-xs uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all"
+                style={{
+                  background: "linear-gradient(135deg, #C4ECCE, #A9D0B3)",
+                  color: "#143723",
+                  fontFamily: SG,
+                  fontWeight: 700,
+                }}
+              >
+                Apply to the Pilot
+              </a>
+            </div>
+          </div>
+
+          {/* ── Footer Meta ─────────────────────────────────────────────────── */}
+          <div
+            className="mt-12 flex flex-wrap gap-12 pt-12"
+            style={{ borderTop: "1px solid rgba(66,72,66,0.2)" }}
+          >
+            <div className="flex-1">
+              <div
+                className="text-[10px] uppercase tracking-widest mb-4"
+                style={{ color: "#404040", fontFamily: SG }}
+              >
+                Program_Roadmap
+              </div>
+              <div className="text-[11px] space-y-1" style={{ color: "#525252", fontFamily: "monospace" }}>
+                <div>[Q2 2026] LEGAL_OPS: FINALIZED</div>
+                <div>[Q3 2026] FUNDRAISING: IN_PROGRESS ←</div>
+                <div>[Q1 2027] BANK_MOU: PENDING</div>
+                <div>[Q2 2027] PILOT_LAUNCH: SCHEDULED</div>
+              </div>
+            </div>
+            <div className="w-full md:w-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={IMG_MAP}
+                alt="Network map"
+                className="object-cover grayscale"
+                style={{ width: "192px", height: "96px", border: "1px solid rgba(66,72,66,1)", opacity: 0.4 }}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* ── Footer ────────────────────────────────────────────────────────── */}
+      <footer
+        className="w-full py-8 px-12 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-[0.2em] uppercase z-50"
+        style={{ backgroundColor: "#0E0E0E", borderTop: "1px solid rgba(38,38,38,0.3)", fontFamily: SG }}
+      >
+        <div className="mb-4 md:mb-0" style={{ color: "#404040" }}>
+          © 2026 MUJIN · A Frontier Commons Prototype
+        </div>
+        <div className="flex gap-8">
+          <Link href="/about" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>About</Link>
+          <a href={APPLY_URL} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "#C4ECCE" }}>Apply</a>
+          <Link href="/faq" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>FAQ</Link>
         </div>
       </footer>
+
+      {/* ── Mobile Bottom Nav ───────────────────────────────────────────────── */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-3 px-6 z-50"
+        style={{ backgroundColor: "#0E0E0E", borderTop: "1px solid rgba(66,72,66,0.2)" }}
+      >
+        {[
+          { icon: "memory",   label: "Core",    href: "/" },
+          { icon: "security", label: "Program", href: "/program", active: true },
+        ].map((l) => {
+          const content = (
+            <>
+              <span
+                className="material-symbols-outlined"
+                style={"active" in l && l.active ? { fontVariationSettings: "'FILL' 1" } : {}}
+              >
+                {l.icon}
+              </span>
+              <span className="text-[8px] uppercase tracking-tighter" style={{ fontFamily: SG }}>{l.label}</span>
+            </>
+          );
+          return "external" in l && l.external ? (
+            <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
+              className="flex flex-col items-center gap-1" style={{ color: "#525252" }}>
+              {content}
+            </a>
+          ) : (
+            <Link key={l.label} href={l.href}
+              className="flex flex-col items-center gap-1"
+              style={{ color: "active" in l && l.active ? "#C4ECCE" : "#525252" }}>
+              {content}
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

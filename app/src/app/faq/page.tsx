@@ -1,11 +1,30 @@
-import PublicNav from "@/components/PublicNav";
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
 
 const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScp7GNJ9T58mHrY_zfrcPbWj5i51dffLYVaM72xfH02sCghqw/viewform?usp=sharing&ouid=103224701688413762370";
 
+const SG = "var(--font-space-grotesk), sans-serif";
+const NS = "var(--font-noto-serif), serif";
+
+const SIDE_LINKS = [
+  { icon: "dashboard",               label: "Home",    href: "/" },
+  { icon: "info",                    label: "Mission",    href: "/about" },
+  { icon: "settings_input_component",label: "The Program",href: "/program" },
+  { icon: "groups",                  label: "Leadership", href: "/team" },
+  { icon: "hub",                     label: "Network",    href: "/alumni" },
+  { icon: "quiz",                    label: "FAQ",  href: "/faq",    active: true },
+  { icon: "play_circle",             label: "Demo",       href: "/demo" },
+];
+
 const FAQS = [
   {
-    category: "Eligibility",
+    id: "eligibility",
+    label: "01_Eligibility",
+    title: "Eligibility",
+    section: "Section_01",
     questions: [
       {
         q: "Who can apply to the pilot cohort?",
@@ -26,7 +45,10 @@ const FAQS = [
     ],
   },
   {
-    category: "The Grant",
+    id: "grant",
+    label: "02_The Grant",
+    title: "The Grant",
+    section: "Section_02",
     questions: [
       {
         q: "Is this a loan?",
@@ -47,7 +69,10 @@ const FAQS = [
     ],
   },
   {
-    category: "The Trust Engine",
+    id: "trust",
+    label: "03_Trust Engine",
+    title: "The Trust Engine",
+    section: "Section_03",
     questions: [
       {
         q: "What is the Trust Score?",
@@ -72,7 +97,10 @@ const FAQS = [
     ],
   },
   {
-    category: "Graduation & Banking",
+    id: "graduation",
+    label: "04_Graduation & Banking",
+    title: "Graduation & Banking",
+    section: "Section_04",
     questions: [
       {
         q: "What does it mean to graduate?",
@@ -93,7 +121,10 @@ const FAQS = [
     ],
   },
   {
-    category: "The Commons",
+    id: "commons",
+    label: "05_The Commons",
+    title: "The Commons",
+    section: "Section_05",
     questions: [
       {
         q: "What is the Mujin Commons?",
@@ -108,72 +139,326 @@ const FAQS = [
 ];
 
 export default function FAQPage() {
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+
+  function toggle(key: string) {
+    setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <PublicNav />
+    <div style={{ backgroundColor: "#131313", color: "#e5e2e1", fontFamily: SG }}>
 
-      {/* Header */}
-      <section className="max-w-5xl mx-auto px-6 pt-20 pb-16">
-        <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-4">FAQ</p>
-        <h1 className="text-4xl font-bold tracking-tight leading-snug max-w-2xl mb-6">
-          Frequently asked questions.
-        </h1>
-        <p className="text-lg text-gray-500 max-w-2xl">
-          Everything you need to know about the grant, the program, and what to expect.
-        </p>
-      </section>
-
-      {/* Questions */}
-      <section className="max-w-5xl mx-auto px-6 pb-24">
-        <div className="space-y-16">
-          {FAQS.map((section) => (
-            <div key={section.category}>
-              <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-6">
-                {section.category}
-              </h2>
-              <div className="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
-                {section.questions.map((item) => (
-                  <div key={item.q} className="px-6 py-5 bg-white">
-                    <p className="font-semibold text-gray-900 mb-2 text-sm">{item.q}</p>
-                    <p className="text-sm text-gray-500 leading-relaxed">{item.a}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+      {/* ── Top App Bar ─────────────────────────────────────────────────────── */}
+      <header
+        className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4"
+        style={{
+          backgroundColor: "rgba(19,19,19,0.6)",
+          backdropFilter: "blur(24px)",
+          borderBottom: "1px solid rgba(196,236,206,0.1)",
+        }}
+      >
+        <Link href="/" className="text-2xl font-bold tracking-tighter" style={{ fontFamily: NS, color: "#C4ECCE" }}>
+          MUJIN
+        </Link>
+        <div className="flex items-center gap-6">
+          <button className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG, background: "none", border: "none", cursor: "pointer" }}>EN</button>
+          <Link href="/login" className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG }}>Log in</Link>
         </div>
-      </section>
+      </header>
 
-      {/* CTA */}
-      <section className="bg-gray-900 text-white">
-        <div className="max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <h2 className="text-xl font-bold mb-2">Still have questions?</h2>
-            <p className="text-gray-400 text-sm">Apply and we will follow up directly.</p>
-          </div>
+      {/* ── Side Nav ────────────────────────────────────────────────────────── */}
+      <aside
+        className="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-40"
+        style={{ width: "256px", backgroundColor: "#0E0E0E", borderRight: "1px solid rgba(196,236,206,0.1)" }}
+      >
+        <nav className="flex-1">
+          {SIDE_LINKS.map((l) => {
+            const inner = (
+              <>
+                <span className="material-symbols-outlined">{l.icon}</span>
+                <span className="text-[10px] uppercase tracking-[0.1em]" style={{ fontFamily: SG }}>{l.label}</span>
+              </>
+            );
+            const activeStyle = {
+              color: "#C4ECCE",
+              borderLeft: "4px solid #C4ECCE",
+              backgroundColor: "rgba(196,236,206,0.1)",
+            };
+            const idleStyle = { color: "#b4cad6", opacity: 0.7 };
+
+            return "external" in l && l.external ? (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
+                style={idleStyle}
+              >
+                {inner}
+              </a>
+            ) : (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
+                style={"active" in l && l.active ? activeStyle : idleStyle}
+              >
+                {inner}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="px-8 mt-auto">
           <a
             href={APPLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 bg-white text-gray-900 px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+            className="block w-full py-4 text-center text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#C4ECCE]/5 transition-all"
+            style={{ border: "1px solid rgba(196,236,206,0.2)", color: "#C4ECCE", fontFamily: SG }}
           >
-            Apply now
+            Apply to Pilot
           </a>
         </div>
-      </section>
+      </aside>
 
-      <footer className="border-t border-gray-100">
-        <div className="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between">
-          <span className="text-sm font-semibold text-gray-900">Mujin</span>
-          <p className="text-xs text-gray-400">
-            A{" "}
-            <a href="https://frontiercommons.org" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gray-600 transition-colors">
-              Frontier Commons
-            </a>{" "}
-            prototype · Tokyo, Japan
-          </p>
-        </div>
-      </footer>
+      {/* ── Main ────────────────────────────────────────────────────────────── */}
+      <main className="lg:ml-64 pt-24 min-h-screen seigaiha-pattern">
+
+        {/* ── Hero ────────────────────────────────────────────────────────── */}
+        <section
+          className="px-8 py-12"
+          style={{ borderBottom: "1px solid rgba(66,72,66,0.15)" }}
+        >
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8 max-w-7xl">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 animate-pulse" style={{ backgroundColor: "#C4ECCE", display: "inline-block" }} />
+                <span
+                  className="text-[10px] uppercase tracking-[0.3em]"
+                  style={{ color: "#C4ECCE", fontFamily: SG }}
+                >
+                  System Documentation // Knowledge Retrieval
+                </span>
+              </div>
+              <h1
+                className="text-5xl md:text-6xl font-bold tracking-tighter"
+                style={{ fontFamily: NS }}
+              >
+                Frequently Asked Questions
+              </h1>
+              <p className="text-sm leading-relaxed max-w-xl" style={{ color: "#b4cad6", opacity: 0.8 }}>
+                Everything you need to know about the grant, the Trust Engine, and what to expect from the program.
+              </p>
+            </div>
+            <div className="flex flex-col items-end text-right space-y-2">
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: "#A9D0B3", fontFamily: SG }}>
+                Status: Open_For_Applications
+              </div>
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
+                Pilot_Cohort: Q2_2027
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Body ────────────────────────────────────────────────────────── */}
+        <section className="p-8 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            {/* ── Category Sidebar ────────────────────────────────────────── */}
+            <div className="lg:col-span-3 space-y-8">
+              <div className="space-y-4">
+                <div
+                  className="text-[10px] uppercase tracking-[0.2em] pl-3"
+                  style={{ color: "#C4ECCE", fontFamily: SG, borderLeft: "2px solid #C4ECCE" }}
+                >
+                  Directory
+                </div>
+                <ul className="space-y-1">
+                  {FAQS.map((s) => (
+                    <li key={s.id}>
+                      <a
+                        href={`#${s.id}`}
+                        className="block py-2 text-xs font-medium transition-transform hover:translate-x-1"
+                        style={{ color: "#b4cad6", fontFamily: SG }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "#C4ECCE")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "#b4cad6")}
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div
+                className="p-6 space-y-4"
+                style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid rgba(180,202,214,0.3)" }}
+              >
+                <h4 className="text-sm" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+                  Still have questions?
+                </h4>
+                <p className="text-[11px] leading-relaxed" style={{ color: "#b4cad6" }}>
+                  Apply and we will follow up directly before the cohort opens.
+                </p>
+                <a
+                  href={APPLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 group hover:opacity-80 transition-opacity"
+                  style={{ color: "#C4ECCE", fontFamily: SG }}
+                >
+                  Apply_Now
+                  <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
+                    arrow_forward
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            {/* ── FAQ Accordion Body ───────────────────────────────────────── */}
+            <div className="lg:col-span-9 space-y-16">
+              {FAQS.map((section) => (
+                <div key={section.id} id={section.id} className="scroll-mt-32">
+                  {/* Section header */}
+                  <div className="flex items-center gap-4 mb-8">
+                    <span className="text-2xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+                      {section.title}
+                    </span>
+                    <div className="h-px flex-1" style={{ backgroundColor: "rgba(66,72,66,0.2)" }} />
+                    <span
+                      className="text-[10px] uppercase tracking-[0.2em]"
+                      style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
+                    >
+                      {section.section}
+                    </span>
+                  </div>
+
+                  {/* Questions */}
+                  <div className="space-y-0">
+                    {section.questions.map((item, i) => {
+                      const key = `${section.id}-${i}`;
+                      const isOpen = !!openItems[key];
+                      const qNum = `Q${String(i + 1).padStart(2, "0")}`;
+
+                      return (
+                        <div
+                          key={key}
+                          className="group"
+                          style={{ borderBottom: "1px solid rgba(66,72,66,0.1)" }}
+                        >
+                          <button
+                            onClick={() => toggle(key)}
+                            className="w-full flex justify-between items-center py-6 px-4 text-left transition-colors hover:bg-[#1c1b1b]/30"
+                          >
+                            <div className="flex gap-4 items-start">
+                              <span
+                                className="text-[10px] mt-1 shrink-0"
+                                style={{ color: "#C4ECCE", fontFamily: SG }}
+                              >
+                                {qNum}
+                              </span>
+                              <span
+                                className="text-lg transition-colors"
+                                style={{
+                                  fontFamily: NS,
+                                  color: isOpen ? "#C4ECCE" : "#e5e2e1",
+                                }}
+                              >
+                                {item.q}
+                              </span>
+                            </div>
+                            <span
+                              className="material-symbols-outlined shrink-0 ml-4 transition-transform"
+                              style={{
+                                color: isOpen ? "#C4ECCE" : "rgba(180,202,214,0.4)",
+                                transform: isOpen ? "rotate(45deg)" : "none",
+                              }}
+                            >
+                              add
+                            </span>
+                          </button>
+
+                          {isOpen && (
+                            <div className="px-14 pb-8">
+                              <p className="text-sm leading-relaxed" style={{ color: "#b4cad6" }}>
+                                {item.a}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Footer ──────────────────────────────────────────────────────── */}
+        <footer
+          className="lg:ml-0 w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center mt-24"
+          style={{ borderTop: "1px solid rgba(196,236,206,0.05)", backgroundColor: "#0E0E0E" }}
+        >
+          <div className="mb-8 md:mb-0">
+            <span className="text-lg italic" style={{ fontFamily: NS, color: "#C4ECCE" }}>
+              MUJIN
+            </span>
+            <p
+              className="text-[10px] tracking-widest uppercase mt-2"
+              style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
+            >
+              © 2026 · A Frontier Commons Prototype
+            </p>
+          </div>
+          <div className="flex gap-8">
+            {[
+              { label: "The Program", href: "/program" },
+              { label: "Team",        href: "/team" },
+              { label: "Alumni",      href: "/alumni" },
+            ].map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="text-[10px] tracking-widest uppercase hover:text-[#ffddb4] transition-colors"
+                style={{ color: "#b4cad6", fontFamily: SG }}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+          <a
+            href="#"
+            className="mt-8 md:mt-0 text-[10px] hover:text-[#ffddb4] transition-all flex items-center gap-2 group"
+            style={{ color: "#C4ECCE", fontFamily: SG }}
+          >
+            BACK_TO_TOP
+            <span className="material-symbols-outlined group-hover:-translate-y-1 transition-transform">
+              arrow_upward
+            </span>
+          </a>
+        </footer>
+      </main>
+
+      {/* ── FAB ─────────────────────────────────────────────────────────────── */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <a
+          href={APPLY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-14 h-14 flex items-center justify-center shadow-2xl hover:opacity-90 active:scale-95 transition-all group"
+          style={{ backgroundColor: "#C4ECCE" }}
+        >
+          <span
+            className="material-symbols-outlined group-hover:rotate-90 transition-transform"
+            style={{ color: "#143723" }}
+          >
+            help
+          </span>
+        </a>
+      </div>
     </div>
   );
 }

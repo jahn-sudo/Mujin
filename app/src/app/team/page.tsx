@@ -1,118 +1,396 @@
-import PublicNav from "@/components/PublicNav";
+import Link from "next/link";
 
 const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScp7GNJ9T58mHrY_zfrcPbWj5i51dffLYVaM72xfH02sCghqw/viewform?usp=sharing&ouid=103224701688413762370";
 
+const SG = "var(--font-space-grotesk), sans-serif";
+const NS = "var(--font-noto-serif), serif";
+
+const SIDE_LINKS = [
+  { icon: "dashboard",                label: "Home",     href: "/" },
+  { icon: "info",                     label: "Mission",     href: "/about" },
+  { icon: "settings_input_component", label: "The Program", href: "/program" },
+  { icon: "groups",                   label: "Leadership",  href: "/team", active: true },
+  { icon: "hub",                      label: "Network",     href: "/alumni" },
+  { icon: "quiz",                     label: "FAQ",   href: "/faq" },
+  { icon: "play_circle",              label: "Demo",        href: "/demo" },
+];
+
 const TEAM = [
   {
     name: "Jonathan Ahn",
-    title: "Founder",
-    bio: [
-      "Jonathan founded Mujin after watching people who worked harder than anyone around them get turned away from the financial system — not because they lacked capability, but because no system had been designed to see them. His background spans international development, venture operations, and community organizing across Japan and Southeast Asia. Mujin is his wager that social trust, measured carefully and transparently, is more predictive of success than credit history.",
-    ],
+    initials: "JA",
+    role: "Founder / System Architect",
+    secLevel: "FOUNDER",
+    secColor: "#C4ECCE",
+    id: "MJN-01-ALPHA",
+    specialization: "Financial Inclusion",
+    status: "ACTIVE",
+    statusColor: "#C4ECCE",
+    quote:
+      "I started Mujin because I watched people who worked harder than anyone I knew get turned away from every door — not because they weren't capable, but because no one had ever given them a chance to prove it.",
+    icon: "qr_code_2",
   },
   {
     name: "Andrew Feng",
-    title: "Director of Programs",
-    bio: [
-      "Andrew brings corporate discipline and mission-driven execution to Mujin. He built his early career at Yahoo and KPMG before founding the U.S. chapter of Indigitous and serving as Chief Program Officer at International Friendships, Inc. He spent five years living and working in East Asia — an experience that sharpened his understanding of the structural barriers facing international students. At Mujin, he leads program operations, mentor network development, and church partnership strategy.",
-    ],
+    initials: "AF",
+    role: "Director / Programs",
+    secLevel: "DIRECTOR",
+    secColor: "#b4cad6",
+    id: "MJN-02-SIGMA",
+    specialization: "Community Operations",
+    status: "ACTIVE",
+    statusColor: "#C4ECCE",
+    quote:
+      "The church already had the trust. The community already existed. We just needed to build the rails.",
+    icon: "hub",
   },
 ];
 
+function InitialsAvatar({ initials }: { initials: string }) {
+  return (
+    <div
+      className="w-32 h-40 flex items-center justify-center relative"
+      style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(196,236,206,0.1)" }}
+    >
+      <span
+        className="text-3xl font-bold"
+        style={{ fontFamily: NS, color: "rgba(196,236,206,0.2)" }}
+      >
+        {initials}
+      </span>
+      {/* Corner bracket */}
+      <div
+        className="absolute -top-2 -left-2 w-6 h-6"
+        style={{ borderTop: "1px solid #C4ECCE", borderLeft: "1px solid #C4ECCE" }}
+      />
+    </div>
+  );
+}
+
 export default function TeamPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <PublicNav />
+    <div style={{ backgroundColor: "#131313", color: "#e5e2e1", fontFamily: SG }}>
 
-      {/* Header */}
-      <section className="max-w-5xl mx-auto px-6 pt-20 pb-16">
-        <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-4">
-          The team
-        </p>
-        <h1 className="text-4xl font-bold tracking-tight leading-snug max-w-2xl mb-6">
-          Built by people who have seen the problem firsthand.
-        </h1>
-        <p className="text-lg text-gray-500 leading-relaxed max-w-2xl">
-          Mujin is a small, deliberate team. We work at the intersection of faith, technology,
-          and financial inclusion — because we believe the solution to exclusion has to be
-          deeply relational, not just transactional.
-        </p>
-      </section>
-
-      {/* Team members */}
-      <section className="max-w-5xl mx-auto px-6 pb-24 space-y-16">
-        {TEAM.map((member) => (
-          <div key={member.name} className="grid md:grid-cols-4 gap-8 border-t border-gray-100 pt-12">
-            {/* Identity */}
-            <div className="md:col-span-1">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <span className="text-xl font-semibold text-gray-400">
-                  {member.name.split(" ").map((n) => n[0]).join("")}
-                </span>
-              </div>
-              <h2 className="font-semibold text-gray-900">{member.name}</h2>
-              <p className="text-sm text-gray-500 mt-0.5">{member.title}</p>
-            </div>
-
-            {/* Bio */}
-            <div className="md:col-span-3 space-y-4">
-              {member.bio.map((paragraph, i) => (
-                <p key={i} className="text-gray-600 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* Join section */}
-      <section className="border-y border-gray-100 bg-zinc-50">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <h2 className="text-2xl font-bold tracking-tight mb-4">Join the team</h2>
-          <p className="text-gray-500 leading-relaxed max-w-2xl mb-8">
-            We are looking for mentors, advisors, and operational partners who believe in
-            what we are building. If you have experience working with international students,
-            Japan&apos;s startup ecosystem, or financial inclusion — we want to talk.
-          </p>
-          <a
-            href="mailto:hello@mujin.jp"
-            className="inline-block bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
-          >
-            Get in touch
-          </a>
+      {/* ── Top App Bar ─────────────────────────────────────────────────────── */}
+      <header
+        className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4"
+        style={{
+          backgroundColor: "rgba(19,19,19,0.6)",
+          backdropFilter: "blur(24px)",
+          borderBottom: "1px solid rgba(196,236,206,0.1)",
+        }}
+      >
+        <Link href="/" className="text-2xl font-bold tracking-tighter" style={{ fontFamily: NS, color: "#C4ECCE" }}>
+          MUJIN
+        </Link>
+        <div className="flex items-center gap-6">
+          <button className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG, background: "none", border: "none", cursor: "pointer" }}>EN</button>
+          <Link href="/login" className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG }}>Log in</Link>
         </div>
-      </section>
+      </header>
 
-      {/* CTA */}
-      <section className="bg-gray-900 text-white">
-        <div className="max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <h2 className="text-xl font-bold mb-2">Believe in what we&apos;re building?</h2>
-            <p className="text-gray-400 text-sm">Applications for the pilot cohort are open now.</p>
-          </div>
+      {/* ── Side Nav ────────────────────────────────────────────────────────── */}
+      <aside
+        className="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-40"
+        style={{ width: "256px", backgroundColor: "#0E0E0E", borderRight: "1px solid rgba(196,236,206,0.1)" }}
+      >
+        <nav className="flex-1">
+          {SIDE_LINKS.map((l) => {
+            const inner = (
+              <>
+                <span className="material-symbols-outlined">{l.icon}</span>
+                <span className="text-[10px] uppercase tracking-[0.1em]" style={{ fontFamily: SG }}>{l.label}</span>
+              </>
+            );
+            const activeStyle = { color: "#C4ECCE", borderLeft: "4px solid #C4ECCE", backgroundColor: "rgba(196,236,206,0.1)" };
+            const idleStyle = { color: "#b4cad6", opacity: 0.7 };
+
+            return "external" in l && l.external ? (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
+                style={idleStyle}
+              >
+                {inner}
+              </a>
+            ) : (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
+                style={"active" in l && l.active ? activeStyle : idleStyle}
+              >
+                {inner}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="px-8 mt-auto">
           <a
             href={APPLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 bg-white text-gray-900 px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+            className="block w-full py-4 text-center text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#C4ECCE]/5 transition-all"
+            style={{ border: "1px solid rgba(196,236,206,0.2)", color: "#C4ECCE", fontFamily: SG }}
           >
-            Apply now
+            Apply to Pilot
           </a>
         </div>
-      </section>
+      </aside>
 
-      <footer className="border-t border-gray-100">
-        <div className="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between">
-          <span className="text-sm font-semibold text-gray-900">Mujin</span>
-          <p className="text-xs text-gray-400">
-            A{" "}
-            <a href="https://frontiercommons.org" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gray-600 transition-colors">
-              Frontier Commons
-            </a>{" "}
-            prototype · Tokyo, Japan
-          </p>
+      {/* ── Main ────────────────────────────────────────────────────────────── */}
+      <main className="lg:ml-64 pt-24 pb-12 px-8 min-h-screen relative overflow-hidden">
+        <div className="absolute inset-0 seigaiha-pattern pointer-events-none" />
+
+        {/* ── Hero ──────────────────────────────────────────────────────────── */}
+        <section className="max-w-7xl mx-auto mb-16 relative z-10">
+          <div
+            className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-12"
+            style={{ borderBottom: "1px solid rgba(66,72,66,0.2)" }}
+          >
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-12 h-px" style={{ backgroundColor: "#C4ECCE" }} />
+                <span
+                  className="text-[10px] uppercase tracking-[0.3em]"
+                  style={{ color: "#C4ECCE", fontFamily: SG }}
+                >
+                  Operative Directory
+                </span>
+              </div>
+              <h1
+                className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-none"
+                style={{ fontFamily: NS }}
+              >
+                Command Structure.
+              </h1>
+              <p className="max-w-md leading-relaxed" style={{ color: "#b4cad6", opacity: 0.8 }}>
+                Built by people who have seen the problem firsthand. Mujin runs at the
+                intersection of faith, technology, and financial inclusion — because the
+                solution to exclusion has to be relational, not just transactional.
+              </p>
+            </div>
+            <div className="hidden md:block text-right">
+              <div
+                className="text-[48px] italic leading-none"
+                style={{ fontFamily: NS, color: "#2a2a2a" }}
+              >
+                02 // 50
+              </div>
+              <div
+                className="text-[10px] uppercase tracking-widest"
+                style={{ color: "#8c938b", fontFamily: SG }}
+              >
+                Team // Pilot_Capacity
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Personnel Grid ──────────────────────────────────────────────────── */}
+        <section
+          className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10"
+          style={{ gap: "2px", backgroundColor: "rgba(66,72,66,0.1)", border: "1px solid rgba(66,72,66,0.1)" }}
+        >
+          {TEAM.map((member) => (
+            <div
+              key={member.name}
+              className="group p-8 flex flex-col h-full transition-all duration-500"
+              style={{ backgroundColor: "#1c1b1b" }}
+            >
+              {/* Header row */}
+              <div className="flex justify-between items-start mb-8">
+                <InitialsAvatar initials={member.initials} />
+                <div className="text-right">
+                  <div
+                    className="text-[9px] font-bold tracking-[0.2em] px-2 py-1 mb-2 inline-block"
+                    style={{
+                      backgroundColor: `${member.secColor}18`,
+                      color: member.secColor,
+                      fontFamily: SG,
+                    }}
+                  >
+                    {member.secLevel}
+                  </div>
+                  <div
+                    className="text-[10px] uppercase tracking-widest block"
+                    style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
+                  >
+                    ID: {member.id}
+                  </div>
+                </div>
+              </div>
+
+              {/* Name + role */}
+              <h3 className="text-2xl font-bold mb-1" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+                {member.name}
+              </h3>
+              <div
+                className="text-[11px] uppercase tracking-widest mb-6 pl-3"
+                style={{
+                  color: "#C4ECCE",
+                  borderLeft: "2px solid #C4ECCE",
+                  fontFamily: SG,
+                }}
+              >
+                {member.role}
+              </div>
+
+              {/* Spec grid */}
+              <div
+                className="grid grid-cols-2 gap-4 pt-4 mb-4 flex-grow"
+                style={{ borderTop: "1px solid rgba(66,72,66,0.2)" }}
+              >
+                <div>
+                  <span
+                    className="block text-[9px] uppercase tracking-widest mb-1"
+                    style={{ color: "#8c938b", fontFamily: SG }}
+                  >
+                    Specialization
+                  </span>
+                  <span className="block text-xs" style={{ color: "#e5e2e1", fontFamily: SG }}>
+                    {member.specialization}
+                  </span>
+                </div>
+                <div>
+                  <span
+                    className="block text-[9px] uppercase tracking-widest mb-1"
+                    style={{ color: "#8c938b", fontFamily: SG }}
+                  >
+                    Status
+                  </span>
+                  <span
+                    className="block text-xs font-bold"
+                    style={{ color: member.statusColor, fontFamily: SG }}
+                  >
+                    {member.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Quote / bio */}
+              <p
+                className="text-[13px] leading-relaxed italic mb-8"
+                style={{ color: "rgba(229,226,225,0.7)" }}
+              >
+                &ldquo;{member.quote}&rdquo;
+              </p>
+
+              {/* Footer row */}
+              <div className="flex justify-between items-center mt-auto">
+                <span className="material-symbols-outlined text-sm" style={{ color: "#C4ECCE" }}>
+                  {member.icon}
+                </span>
+                <button
+                  className="transition-colors hover:text-[#C4ECCE]"
+                  style={{ color: "rgba(229,226,225,0.4)" }}
+                >
+                  <span className="material-symbols-outlined">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* Recruitment card */}
+          <div
+            className="p-8 flex flex-col justify-center items-center text-center"
+            style={{
+              backgroundColor: "#0E0E0E",
+              border: "2px dashed rgba(66,72,66,0.3)",
+            }}
+          >
+            <span
+              className="material-symbols-outlined text-4xl mb-6"
+              style={{ color: "rgba(196,236,206,0.3)" }}
+            >
+              add_moderator
+            </span>
+            <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+              Join the Network
+            </h3>
+            <p
+              className="text-xs mb-8 max-w-xs uppercase tracking-widest leading-loose"
+              style={{ color: "#b4cad6" }}
+            >
+              We are seeking mentors, advisors, and church partners who believe
+              in what we are building.
+            </p>
+            <a
+              href="mailto:hello@mujin.jp"
+              className="px-8 py-3 text-[10px] font-bold tracking-[0.3em] uppercase hover:text-[#143723] transition-all"
+              style={{ border: "1px solid #C4ECCE", color: "#C4ECCE", fontFamily: SG }}
+            >
+              Get In Touch
+            </a>
+          </div>
+        </section>
+
+        {/* ── Technical Metadata ────────────────────────────────────────────── */}
+        <section
+          className="max-w-7xl mx-auto mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10"
+          style={{ opacity: 0.4 }}
+        >
+          {[
+            { label: "Protocol",      value: "PLEDGE_NON_BINDING" },
+            { label: "Entity",        value: "RELIGIOUS_CORP_JP" },
+            { label: "Pilot_Launch",  value: "Q2_2027" },
+            { label: "Node_Location", value: "35.6895°N 139.6917°E" },
+          ].map((m) => (
+            <div key={m.label} className="flex flex-col gap-1">
+              <span className="text-[9px] uppercase tracking-widest" style={{ fontFamily: SG }}>
+                {m.label}
+              </span>
+              <span className="text-[11px] font-bold" style={{ fontFamily: SG }}>
+                {m.value}
+              </span>
+            </div>
+          ))}
+        </section>
+      </main>
+
+      {/* ── Footer ────────────────────────────────────────────────────────── */}
+      <footer
+        className="w-full py-12 px-8 relative z-50"
+        style={{ backgroundColor: "#0E0E0E", borderTop: "1px solid rgba(196,236,206,0.05)" }}
+      >
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <span className="text-xl italic" style={{ fontFamily: NS, color: "#C4ECCE" }}>
+              MUJIN
+            </span>
+            <p
+              className="text-xs tracking-widest uppercase"
+              style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
+            >
+              © 2026 · A Frontier Commons Prototype
+            </p>
+          </div>
+          <nav className="flex gap-8">
+            {[
+              { label: "The Program", href: "/program" },
+              { label: "About",       href: "/about" },
+              { label: "FAQ",         href: "/faq" },
+            ].map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="text-xs tracking-widest uppercase hover:text-[#ffddb4] transition-colors"
+                style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#C4ECCE", boxShadow: "0 0 8px #c4ecce" }} />
+            <span className="text-[10px] uppercase tracking-[0.2em]" style={{ color: "#C4ECCE", fontFamily: SG }}>
+              All Systems Nominal
+            </span>
+          </div>
         </div>
       </footer>
     </div>
