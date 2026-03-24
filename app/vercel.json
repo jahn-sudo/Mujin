@@ -1,4 +1,5 @@
 {
+  "alias": ["mujin2.vercel.app"],
   "crons": [
     {
       "path": "/api/cron/send-notifications",
