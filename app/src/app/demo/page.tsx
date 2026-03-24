@@ -1438,10 +1438,256 @@ function MentorView({ onRoleChange }: { onRoleChange: (r: Role) => void }) {
   );
 }
 
+// ── Protocols View ─────────────────────────────────────────────────────────────
+
+function ProtocolsView() {
+  const sections = [
+    {
+      num: "01",
+      title: "The Recyclable Grant",
+      icon: "savings",
+      color: "#C4ECCE",
+      rows: [
+        { label: "Tranche 1",  value: "¥300,000 on signing",    note: "Released day one when the Pledge of Honor is signed" },
+        { label: "Tranche 2",  value: "¥200,000 at Month 3",    note: "Conditional: company incorporated + no RED score at months 2–3" },
+        { label: "Return",     value: "Principal + 5% tithe",   note: "Voluntary upon graduating to a bank. Non-binding. Nothing owed on failure." },
+        { label: "Use of Funds", value: "Venture ops only",     note: "Incorporation, tools, hosting, co-working, marketing. No personal living expenses." },
+      ],
+    },
+    {
+      num: "02",
+      title: "The Trust Engine",
+      icon: "analytics",
+      color: "#C4ECCE",
+      rows: [
+        { label: "Responsiveness", value: "25%", note: "Bi-weekly mentor check-in attendance" },
+        { label: "Transparency",   value: "25%", note: "Monthly P&L submitted on time" },
+        { label: "Mutualism",      value: "25%", note: "Monthly Town Hall attendance" },
+        { label: "Reflection",     value: "25%", note: "Written monthly reflection — anonymous, AI-assessed for meaningfulness only" },
+      ],
+      thresholds: [
+        { label: "Green",  range: "75–100", color: "#4ade80", note: "On track. 6 consecutive months triggers bank introduction." },
+        { label: "Yellow", range: "50–74",  color: "#facc15", note: "Automatic mentor review triggered." },
+        { label: "Red",    range: "0–49",   color: "#f87171", note: "Staff intervention. Tranche 2 withheld if RED at months 2–3." },
+      ],
+    },
+    {
+      num: "03",
+      title: "Graduation Gates",
+      icon: "school",
+      color: "#FFDDB4",
+      gates: [
+        { n: "01", title: "Company incorporated",               note: "Legal entity registered in Japan" },
+        { n: "02", title: "3 months non-negative cash flow",    note: "Verified via P&L submissions. No hard revenue floor." },
+        { n: "03", title: "Green Trust Score — 6 consecutive months", note: "Auto-tracked. Cannot be waived. Triggers bank introduction." },
+        { n: "04", title: "Exit interview passed",              note: "Final gate. Mujin issues a warm bank introduction letter." },
+      ],
+    },
+    {
+      num: "04",
+      title: "Privacy Rules",
+      icon: "shield",
+      color: "#b4cad6",
+      rows: [
+        { label: "Reflections",   value: "Anonymous",       note: "Staff see meaningful/not-meaningful only. The text is never accessible to humans." },
+        { label: "Trust Score",   value: "Cohort-scoped",   note: "Visible to your group of 5 and program staff only. Not public, not bank-facing." },
+        { label: "Overrides",     value: "Audited",         note: "All staff score adjustments require a written reason and create a permanent audit trail." },
+        { label: "Bank Dossier",  value: "6-month snapshot", note: "Trust Score history, P&L summary, attendance record, and aggregated staff notes." },
+      ],
+    },
+  ];
+
+  return (
+    <div className="p-8 md:p-12 space-y-16">
+      <div style={{ borderBottom: "1px solid rgba(196,236,206,0.08)", paddingBottom: "2rem" }}>
+        <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: "#C4ECCE", fontFamily: SG }}>
+          System Document // V1.0
+        </p>
+        <h1 className="text-6xl font-bold tracking-tight mb-4" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+          PROTOCOLS
+        </h1>
+        <p className="text-sm max-w-2xl leading-relaxed" style={{ color: "#737373" }}>
+          The operating rules of Mujin — how capital flows, how trust is measured, how graduation works, and what the covenant means. These rules apply to all cohorts.
+        </p>
+      </div>
+
+      {sections.map((s) => (
+        <section key={s.num} className="space-y-6">
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] font-bold tracking-[0.3em]" style={{ color: "rgba(196,236,206,0.25)", fontFamily: SG }}>{s.num}</span>
+            <span className="material-symbols-outlined" style={{ color: s.color }}>{s.icon}</span>
+            <h2 className="text-2xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>{s.title}</h2>
+            <div className="flex-1 h-px" style={{ backgroundColor: "rgba(66,72,66,0.3)" }} />
+          </div>
+
+          {"rows" in s && s.rows && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
+              {s.rows.map((r) => (
+                <div key={r.label} className="p-6" style={{ backgroundColor: "#131313" }}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-[10px] uppercase tracking-widest" style={{ color: "#525252", fontFamily: SG }}>{r.label}</span>
+                    <span className="text-sm font-bold" style={{ color: s.color, fontFamily: SG }}>{r.value}</span>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: "#737373" }}>{r.note}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {"thresholds" in s && s.thresholds && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
+              {s.thresholds.map((t) => (
+                <div key={t.label} className="p-6 flex gap-4" style={{ backgroundColor: "#131313" }}>
+                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: t.color }} />
+                  <div>
+                    <div className="text-xs font-bold mb-1" style={{ color: t.color, fontFamily: SG }}>{t.label} {t.range}</div>
+                    <p className="text-xs leading-relaxed" style={{ color: "#737373" }}>{t.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {"gates" in s && s.gates && (
+            <div className="space-y-2">
+              {s.gates.map((g) => (
+                <div key={g.n} className="flex items-start gap-4 p-4" style={{ backgroundColor: "#131313", border: "1px solid rgba(66,72,66,0.2)" }}>
+                  <span className="text-[10px] font-bold pt-0.5 shrink-0" style={{ color: "#404040", fontFamily: "monospace" }}>{g.n}</span>
+                  <div className="flex-1">
+                    <p className="text-sm" style={{ color: "#e5e2e1" }}>{g.title}</p>
+                    <p className="text-[10px] mt-1" style={{ color: "#525252" }}>{g.note}</p>
+                  </div>
+                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#FFDDB4" }} />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      ))}
+    </div>
+  );
+}
+
+// ── Lattice View ───────────────────────────────────────────────────────────────
+
+function LatticeView() {
+  const cohort = COHORT_DATA.students;
+
+  const mentorships = [
+    { mentor: "Andrew Feng", role: "Director / Programs",   students: ["tanaka.r", "kim.j"],  color: "#C4ECCE" },
+    { mentor: "Keiko Mori",  role: "Community Mentor",      students: ["liu.m", "patel.a"],   color: "#b4cad6" },
+    { mentor: "Yuki Sato",   role: "Advisor / Operations",  students: ["santos.e"],            color: "#FFDDB4" },
+  ];
+
+  const layers = [
+    { label: "Ministry",  icon: "church",      count: "3 partners",    color: "#A9D0B3", desc: "ICF Tokyo · ISM Keio · Rikkyo Fellowship" },
+    { label: "Mentors",   icon: "handshake",   count: "3 active",      color: "#b4cad6", desc: "Bi-weekly 1:1 sessions. Source of Responsiveness signal." },
+    { label: "Cohort",    icon: "groups",      count: "5 students",    color: "#C4ECCE", desc: "Cohort A — Spring 2027. Shared accountability." },
+    { label: "Alumni",    icon: "history_edu", count: "Opens Q2 2027", color: "#525252", desc: "Registry populates as cohorts graduate and enter banking." },
+  ];
+
+  return (
+    <div className="p-8 md:p-12 space-y-16">
+      <div style={{ borderBottom: "1px solid rgba(196,236,206,0.08)", paddingBottom: "2rem" }}>
+        <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: "#C4ECCE", fontFamily: SG }}>
+          Community Network // Cohort A
+        </p>
+        <h1 className="text-6xl font-bold tracking-tight mb-4" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+          LATTICE
+        </h1>
+        <p className="text-sm max-w-2xl leading-relaxed" style={{ color: "#737373" }}>
+          The web of people behind Mujin. Every node is a real relationship. Social collateral is the collateral.
+        </p>
+      </div>
+
+      {/* Network layers */}
+      <section className="space-y-4">
+        <h2 className="text-[10px] uppercase tracking-[0.3em]" style={{ color: "#C4ECCE", fontFamily: SG }}>Network Layers</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
+          {layers.map((l) => (
+            <div key={l.label} className="p-6 space-y-3" style={{ backgroundColor: "#131313" }}>
+              <span className="material-symbols-outlined block" style={{ color: l.color }}>{l.icon}</span>
+              <div className="text-xs font-bold uppercase tracking-widest" style={{ color: l.color, fontFamily: SG }}>{l.label}</div>
+              <div className="text-xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>{l.count}</div>
+              <p className="text-[10px] leading-relaxed" style={{ color: "#525252" }}>{l.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Mentorship pairs */}
+      <section className="space-y-4">
+        <h2 className="text-[10px] uppercase tracking-[0.3em]" style={{ color: "#C4ECCE", fontFamily: SG }}>Mentorship Pairs</h2>
+        <div className="space-y-2">
+          {mentorships.map((m) => (
+            <div key={m.mentor} className="flex flex-col md:flex-row md:items-center gap-4 p-6" style={{ backgroundColor: "#131313", border: "1px solid rgba(66,72,66,0.2)" }}>
+              <div className="flex items-center gap-3 shrink-0" style={{ minWidth: "200px" }}>
+                <div className="w-8 h-8 flex items-center justify-center text-xs font-bold shrink-0" style={{ backgroundColor: `${m.color}18`, border: `1px solid ${m.color}40`, color: m.color, fontFamily: SG }}>
+                  {m.mentor.split(" ").map((n) => n[0]).join("")}
+                </div>
+                <div>
+                  <p className="text-xs font-bold" style={{ color: m.color, fontFamily: SG }}>{m.mentor}</p>
+                  <p className="text-[9px] uppercase tracking-widest" style={{ color: "#525252" }}>{m.role}</p>
+                </div>
+              </div>
+              <div className="hidden md:flex items-center gap-2 shrink-0">
+                <div style={{ width: "32px", height: "1px", backgroundColor: `${m.color}30` }} />
+                <span className="material-symbols-outlined" style={{ color: `${m.color}40`, fontSize: "14px" }}>arrow_forward</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {m.students.map((sid) => {
+                  const s = cohort.find((c) => c.name === sid);
+                  if (!s) return null;
+                  return (
+                    <div key={sid} className="flex items-center gap-2 px-3 py-2" style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(66,72,66,0.3)" }}>
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: labelColor(s.label) }} />
+                      <span className="text-xs" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</span>
+                      <span className="text-[9px] font-bold" style={{ color: labelColor(s.label), fontFamily: SG }}>{s.score}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Cohort node map */}
+      <section className="space-y-4">
+        <h2 className="text-[10px] uppercase tracking-[0.3em]" style={{ color: "#C4ECCE", fontFamily: SG }}>Cohort A — Node Map</h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
+          {cohort.map((s) => {
+            const c = labelColor(s.label);
+            return (
+              <div key={s.id} className="p-5 space-y-3" style={{ backgroundColor: "#131313" }}>
+                <div className="flex justify-between items-start">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c, boxShadow: `0 0 6px ${c}80` }} />
+                  <span className="text-[9px] uppercase tracking-widest" style={{ color: c, fontFamily: SG }}>{s.label}</span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</p>
+                  <p className="text-[9px] uppercase tracking-widest mt-0.5" style={{ color: "#525252" }}>{s.venture}</p>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold" style={{ fontFamily: NS, color: c }}>{s.score}</div>
+                  <div className="h-1 mt-1 w-full" style={{ backgroundColor: "#2a2a2a" }}>
+                    <div className="h-full" style={{ width: `${s.score}%`, backgroundColor: c }} />
+                  </div>
+                </div>
+                <p className="text-[9px]" style={{ color: "#525252" }}>Attendance {s.attendance.attended}/{s.attendance.total}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // ── Sidebar nav ────────────────────────────────────────────────────────────────
 
 const SIDE_LINKS = [
-  { icon: "grid_view",    label: "Dashboard", active: true },
+  { icon: "grid_view",    label: "Dashboard" },
   { icon: "tsunami",      label: "Protocols" },
   { icon: "account_tree", label: "Lattice" },
   { icon: "history_edu",  label: "Archive" },
@@ -1451,9 +1697,13 @@ const SIDE_LINKS = [
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 type Role = "student" | "mentor" | "admin";
+type View = "dashboard" | "protocols" | "lattice";
+
+const VIEW_LABELS: Record<View, string> = { dashboard: "Dashboard", protocols: "Protocols", lattice: "Lattice" };
 
 export default function DemoPage() {
   const [role, setRole] = useState<Role>("student");
+  const [view, setView] = useState<View>("dashboard");
 
   return (
     <div
@@ -1473,24 +1723,22 @@ export default function DemoPage() {
             MUJIN_CORE
           </span>
           <nav className="hidden md:flex gap-8">
-            <span
-              className="text-xs uppercase tracking-widest border-b-2 py-1"
-              style={{ color: "#C4ECCE", borderColor: "#C4ECCE", fontFamily: SG }}
-            >
-              Dashboard
-            </span>
-            <span
-              className="text-xs uppercase tracking-widest py-1"
-              style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}
-            >
-              Protocols
-            </span>
-            <span
-              className="text-xs uppercase tracking-widest py-1"
-              style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}
-            >
-              Lattice
-            </span>
+            {(Object.keys(VIEW_LABELS) as View[]).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className="text-xs uppercase tracking-widest py-1 transition-colors"
+                style={{
+                  color: view === v ? "#C4ECCE" : "rgba(180,202,214,0.5)",
+                  borderBottom: view === v ? "2px solid #C4ECCE" : "2px solid transparent",
+                  fontFamily: SG,
+                  background: "none",
+                  cursor: "pointer",
+                }}
+              >
+                {VIEW_LABELS[v]}
+              </button>
+            ))}
           </nav>
         </div>
         <div className="flex items-center gap-6">
@@ -1532,20 +1780,26 @@ export default function DemoPage() {
           </p>
         </div>
         <nav className="flex-1 space-y-1">
-          {SIDE_LINKS.map((l) => (
-            <div
-              key={l.label}
-              className="flex items-center gap-4 py-4 px-6 text-sm tracking-[0.1em] uppercase cursor-default transition-all"
-              style={
-                l.active
-                  ? { backgroundColor: "#C4ECCE", color: "#131313", fontFamily: SG, fontWeight: "700", borderLeft: "4px solid #FFDDB4" }
-                  : { color: "#b4cad6", fontFamily: SG }
-              }
-            >
-              <span className="material-symbols-outlined">{l.icon}</span>
-              {l.label}
-            </div>
-          ))}
+          {SIDE_LINKS.map((l) => {
+            const key = l.label.toLowerCase() as View | string;
+            const isNav = key === "dashboard" || key === "protocols" || key === "lattice";
+            const isActive = isNav && key === view;
+            return (
+              <div
+                key={l.label}
+                onClick={isNav ? () => setView(key as View) : undefined}
+                className="flex items-center gap-4 py-4 px-6 text-sm tracking-[0.1em] uppercase transition-all"
+                style={
+                  isActive
+                    ? { backgroundColor: "#C4ECCE", color: "#131313", fontFamily: SG, fontWeight: "700", borderLeft: "4px solid #FFDDB4", cursor: "pointer" }
+                    : { color: "#b4cad6", fontFamily: SG, opacity: isNav ? 1 : 0.35, cursor: isNav ? "pointer" : "default" }
+                }
+              >
+                <span className="material-symbols-outlined">{l.icon}</span>
+                {l.label}
+              </div>
+            );
+          })}
         </nav>
         <div className="p-6 space-y-4">
           <Link
@@ -1553,7 +1807,7 @@ export default function DemoPage() {
             className="block w-full py-3 text-center text-xs font-bold tracking-widest uppercase transition-colors hover:bg-[#FFDDB4]"
             style={{ backgroundColor: "#C4ECCE", color: "#143723", fontFamily: SG }}
           >
-            View_Program
+            View Program
           </Link>
           <div className="pt-4 flex flex-col gap-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
             <Link
@@ -1578,7 +1832,11 @@ export default function DemoPage() {
 
       {/* ── Main ──────────────────────────────────────────────────────────── */}
       <main className="lg:pl-64 pt-16 min-h-screen" style={{ backgroundColor: "#0e0e0e" }}>
-        {role === "student" ? (
+        {view === "protocols" ? (
+          <ProtocolsView />
+        ) : view === "lattice" ? (
+          <LatticeView />
+        ) : role === "student" ? (
           <StudentView onRoleChange={setRole} />
         ) : role === "mentor" ? (
           <MentorView onRoleChange={setRole} />
