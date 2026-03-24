@@ -47,7 +47,12 @@ export default function AdminDashboard() {
   }, []);
 
   if (error) return <p className="text-sm text-red-600">{error}</p>;
-  if (!data) return <div className="text-sm text-gray-400">{t("common.loading")}</div>;
+  if (!data) return (
+    <div className="flex items-center gap-2 text-sm text-gray-400">
+      <span className="inline-block w-3 h-3 rounded-full bg-gray-200 animate-pulse" />
+      {t("common.loading")}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -87,28 +92,29 @@ export default function AdminDashboard() {
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
             {t("admin.dashboard.actionsDue")}
           </h3>
-          <ul className="space-y-3 text-sm">
-            <li className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span>📋</span>
-                <Link href="/dashboard/admin/pl-reviews" className="text-gray-900 hover:underline">
-                  {t("admin.dashboard.plReviewsPending")}
-                </Link>
-              </div>
-              <span className="font-mono font-medium text-gray-900">{data.pendingPLReviews}</span>
+          <ul className="space-y-3 text-sm divide-y divide-gray-50">
+            <li className="pt-2 first:pt-0 flex items-center justify-between">
+              <Link href="/dashboard/admin/pl-reviews" className="text-gray-900 hover:underline font-medium">
+                {t("admin.dashboard.plReviewsPending")}
+              </Link>
+              <span className="font-mono font-medium text-gray-900 bg-gray-100 rounded px-2 py-0.5 text-xs">
+                {data.pendingPLReviews}
+              </span>
+            </li>
+            <li className="pt-2">
+              <Link href="/dashboard/admin/applications" className="text-gray-900 hover:underline font-medium">
+                {t("admin.dashboard.applications")}
+              </Link>
             </li>
             {data.nextCheckIn && (
-              <li className="flex items-center gap-2 text-gray-600">
-                <span>📅</span>
-                <span>
-                  {t("admin.dashboard.checkIn", {
-                    cohort: data.nextCheckIn.cohortName,
-                    date: new Date(data.nextCheckIn.date).toLocaleDateString(
-                      i18n.language === "ja" ? "ja-JP" : "en-US",
-                      { month: "short", day: "numeric" }
-                    ),
-                  })}
-                </span>
+              <li className="pt-2 text-gray-600">
+                {t("admin.dashboard.checkIn", {
+                  cohort: data.nextCheckIn.cohortName,
+                  date: new Date(data.nextCheckIn.date).toLocaleDateString(
+                    i18n.language === "ja" ? "ja-JP" : "en-US",
+                    { month: "short", day: "numeric" }
+                  ),
+                })}
               </li>
             )}
           </ul>

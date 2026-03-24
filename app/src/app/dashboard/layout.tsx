@@ -69,29 +69,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <>
                 <NavLink href="/dashboard/student" pathname={pathname}>{t("nav.dashboard")}</NavLink>
                 <NavLink href="/dashboard/student/inbox" pathname={pathname}>{t("nav.inbox")}</NavLink>
-                <NavLink href="/dashboard/student/demo" pathname={pathname}>Demo</NavLink>
+                <NavLink href="/dashboard/student/demo" pathname={pathname}>{t("nav.demo")}</NavLink>
               </>
             )}
             {isAlumni && (
               <>
-                <NavLink href="/dashboard/alumni" pathname={pathname}>Dashboard</NavLink>
-                <NavLink href="/dashboard/alumni/directory" pathname={pathname}>Community</NavLink>
-                <NavLink href="/dashboard/alumni/demo" pathname={pathname}>Demo</NavLink>
+                <NavLink href="/dashboard/alumni" pathname={pathname}>{t("nav.dashboard")}</NavLink>
+                <NavLink href="/dashboard/alumni/directory" pathname={pathname}>{t("nav.community")}</NavLink>
+                <NavLink href="/dashboard/alumni/demo" pathname={pathname}>{t("nav.demo")}</NavLink>
               </>
             )}
             {isMentor && (
               <>
                 <NavLink href="/dashboard/mentor" pathname={pathname}>{t("nav.dashboard")}</NavLink>
-                <NavLink href="/dashboard/mentor/demo" pathname={pathname}>Demo</NavLink>
+                <NavLink href="/dashboard/mentor/demo" pathname={pathname}>{t("nav.demo")}</NavLink>
               </>
             )}
             {isAdmin && (
               <>
                 <NavLink href="/dashboard/admin" pathname={pathname}>{t("nav.dashboard")}</NavLink>
                 <NavLink href="/dashboard/admin/pl-reviews" pathname={pathname}>{t("nav.plReviews")}</NavLink>
-                <NavLink href="/dashboard/admin/applications" pathname={pathname}>Applications</NavLink>
-                <NavLink href="/dashboard/admin/cohorts" pathname={pathname}>Cohorts</NavLink>
-                <NavLink href="/dashboard/admin/demo" pathname={pathname}>Demo</NavLink>
+                <NavLink href="/dashboard/admin/applications" pathname={pathname}>{t("nav.applications")}</NavLink>
+                <NavLink href="/dashboard/admin/cohorts" pathname={pathname}>{t("nav.cohorts")}</NavLink>
+                <NavLink href="/dashboard/admin/demo" pathname={pathname}>{t("nav.demo")}</NavLink>
               </>
             )}
           </div>

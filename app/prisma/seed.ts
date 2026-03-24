@@ -368,6 +368,91 @@ async function main() {
   }
   console.log("Check-in sessions + attendance seeded");
 
+  // ── Check-in notes + grades (Cohort Alpha demo content) ──────────────────
+
+  const alphaId      = COHORTS[0].id; // "cohort-alpha"
+  const alphaMentor  = await prisma.user.findUnique({ where: { email: "mentor.alpha@demo.mujin.jp" } });
+  const alphaStudents = STUDENTS.filter(s => s.cohortIdx === 0);
+
+  const noteContent: Record<string, [{ agendaRecap: string; actionItems: string; reflection: string }, { agendaRecap: string; actionItems: string; reflection: string }]> = {
+    "kai.watanabe@demo.mujin.jp": [
+      { agendaRecap: "Reviewed PayRoute's Q3 transaction volumes and payment success rates.", actionItems: "Optimise the FX margin calculator by Dec 15. Schedule 3 B2B partnership calls.", reflection: "Really good session — I can see the path to Series A more clearly now. The bottleneck is regulatory approval, not product." },
+      { agendaRecap: "Discussed regulatory timeline with JFSA and licensing strategy.", actionItems: "File updated compliance documentation by Nov 30. Draft partnership MOU with regional bank.", reflection: "Feeling confident but stretched thin. Need to delegate compliance tasks to our legal advisor." },
+    ],
+    "amara.osei@demo.mujin.jp": [
+      { agendaRecap: "Mapped out StudyBridge's tutor acquisition funnel for university partnerships.", actionItems: "Reach out to 5 university career centres before end of year. Launch referral programme.", reflection: "I underestimated how long B2B sales cycles take in Japan. Adjusting expectations and building in more lead time." },
+      { agendaRecap: "Reviewed tutor quality ratings and student satisfaction survey results.", actionItems: "Improve tutor onboarding flow based on feedback. Add video intro option.", reflection: "The data is clear — quality drives retention. I'm going to double down on tutor vetting." },
+    ],
+    "minjun.lee@demo.mujin.jp": [
+      { agendaRecap: "Discussed PharmaLink's delayed app launch and team capacity issues.", actionItems: "Hire one part-time frontend developer. Push launch to Jan 15.", reflection: "Frustrating month. Scope creep has been hurting us. I need to cut features and ship what we have." },
+      { agendaRecap: "Reviewed MVP feature set and made hard decisions about what to cut.", actionItems: "Finalise MVP feature list (max 5 screens). Conduct 3 user testing sessions.", reflection: "Cutting features was painful but right. I feel clearer about what the app actually needs to do." },
+    ],
+    "sofia.martins@demo.mujin.jp": [
+      { agendaRecap: "GiveChain milestone — first verified donor round completed. Reviewed impact reporting.", actionItems: "Publish first transparency report on website. Onboard 2 new NGO partners.", reflection: "This was a big moment for us. Seeing real money reach real causes through our platform — it's why I started this." },
+      { agendaRecap: "Planned year-end fundraising campaign and donor communication strategy.", actionItems: "Launch email campaign to 200 registered donors. Set target of ¥500k raised by Dec 31.", reflection: "Momentum is building. I need to be careful not to overpromise to NGO partners before we have capacity." },
+    ],
+    "yuki.tanaka2@demo.mujin.jp": [
+      { agendaRecap: "SakuraShop holiday season prep — inventory management and fulfilment logistics.", actionItems: "Confirm stock levels with 8 artisan suppliers. Set up pre-order system for December.", reflection: "Excited about the holiday season but nervous about fulfilment. This is our first real stress test." },
+      { agendaRecap: "Reviewed Q3 revenue and gross margin. Discussed graduation eligibility criteria.", actionItems: "Submit updated financials for graduation review. Prepare exit interview talking points.", reflection: "I didn't expect to be thinking about graduation already. It feels real. I want to make sure I leave the programme with clean documentation." },
+    ],
+  };
+
+  const gradeContent: Record<string, { rating: number; feedback: string }> = {
+    "kai.watanabe@demo.mujin.jp":   { rating: 5, feedback: "Exceptional clarity on the regulatory pathway. Kai is operating at a post-graduation level — the JFSA timeline is realistic and the bank partnership angle is smart." },
+    "amara.osei@demo.mujin.jp":     { rating: 4, feedback: "Good self-awareness about B2B cycle length. The referral programme idea is strong. Push to close one university partnership before year-end." },
+    "minjun.lee@demo.mujin.jp":     { rating: 3, feedback: "Progress is slow but the decision to cut scope was the right call. I'd like to see more urgency in the next session — the Jan 15 deadline is not far." },
+    "sofia.martins@demo.mujin.jp":  { rating: 5, feedback: "The first verified donor round is a genuine milestone. Sofia's impact reporting is exemplary — this is exactly the transparency model the programme is built for." },
+    "yuki.tanaka2@demo.mujin.jp":   { rating: 4, feedback: "Smart preparation for the holiday season. The graduation timeline is realistic — make sure the financials submitted for review are audit-ready." },
+  };
+
+  if (alphaMentor) {
+    for (const sd of alphaStudents) {
+      const pid = profileIds.get(sd.email);
+      if (!pid) continue;
+      const templates = noteContent[sd.email];
+      if (!templates) continue;
+
+      // Most recent session (Dec 8) — ungraded
+      const s0Id    = `session-${alphaId}-2027-12-0`;
+      const note0Id = `note-${s0Id}-${pid}`;
+      await prisma.checkInNote.upsert({
+        where: { checkInSessionId_studentProfileId: { checkInSessionId: s0Id, studentProfileId: pid } },
+        update: {},
+        create: {
+          id: note0Id, checkInSessionId: s0Id, studentProfileId: pid,
+          agendaRecap: templates[0].agendaRecap, actionItems: templates[0].actionItems, reflection: templates[0].reflection,
+          submittedAt: new Date("2027-12-09"),
+        },
+      });
+
+      // Previous session (Nov 22) — graded
+      const s1Id    = `session-${alphaId}-2027-11-1`;
+      const note1Id = `note-${s1Id}-${pid}`;
+      await prisma.checkInNote.upsert({
+        where: { checkInSessionId_studentProfileId: { checkInSessionId: s1Id, studentProfileId: pid } },
+        update: {},
+        create: {
+          id: note1Id, checkInSessionId: s1Id, studentProfileId: pid,
+          agendaRecap: templates[1].agendaRecap, actionItems: templates[1].actionItems, reflection: templates[1].reflection,
+          submittedAt: new Date("2027-11-23"),
+        },
+      });
+
+      const gt = gradeContent[sd.email];
+      if (gt) {
+        await prisma.checkInGrade.upsert({
+          where: { noteId: note1Id },
+          update: {},
+          create: {
+            id: `grade-${note1Id}`, noteId: note1Id, mentorId: alphaMentor.id,
+            rating: gt.rating, feedback: gt.feedback, gradedAt: new Date("2027-11-24"),
+          },
+        });
+      }
+    }
+  }
+  console.log("Check-in notes + grades seeded for Cohort Alpha");
+
   // ── Town halls + submissions + reflection assessments ─────────────────────
 
   const allMonths = monthRange("2027-04", DEMO_END);

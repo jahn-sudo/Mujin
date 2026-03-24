@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { apiFetch, loadSession } from "@/lib/auth/client";
+import { useTranslation } from "react-i18next";
 
 interface GroupMember {
   userId: string;
@@ -12,6 +13,7 @@ interface GroupMember {
 export default function TownHallPage() {
   const { id: townHallId } = useParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [cohortMembers, setCohortMembers] = useState<GroupMember[]>([]);
   const [attendeeIds, setAttendeeIds] = useState<string[]>([]);
@@ -25,20 +27,13 @@ export default function TownHallPage() {
     const session = loadSession();
     if (!session) return;
 
-    // Load cohort members via the student/me endpoint
     apiFetch("/api/student/me", {}, session)
       .then((r) => r.json())
-      .then((data) => {
-        // group contains current cohort members
-        const members = data.group ?? [];
-        // Fetch full cohort member userIds — we need them for the submission
-        // The group contains initials only; we need actual userIds
-        // We'll derive from the user's own ID for self-inclusion
+      .then(() => {
         setCohortMembers([]);
-        // Set self as checked by default
         setAttendeeIds([session.userId]);
       })
-      .catch(() => setError("Failed to load group"))
+      .catch(() => setError(t("student.townhall.error")))
       .finally(() => setLoading(false));
   }, [townHallId]);
 
@@ -53,7 +48,7 @@ export default function TownHallPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (wordCount < 50) {
-      setError("Reflection must be at least 50 words");
+      setError(t("student.townhall.tooShort"));
       return;
     }
     setError(null);
@@ -76,7 +71,7 @@ export default function TownHallPage() {
       if (res.status === 409) {
         setAlreadySubmitted(true);
       } else {
-        setError(body.error ?? "Submission failed");
+        setError(body.error ?? t("student.townhall.submissionFailed"));
       }
       setSubmitting(false);
       return;
@@ -85,16 +80,14 @@ export default function TownHallPage() {
     router.push("/dashboard/student?submitted=townhall");
   }
 
-  if (loading) return <div className="text-sm text-gray-400">Loading…</div>;
+  if (loading) return <div className="text-sm text-gray-400">{t("common.loading")}</div>;
 
   if (alreadySubmitted) {
     return (
       <div className="max-w-lg">
         <div className="border border-green-200 bg-green-50 rounded-xl p-6 text-center">
-          <p className="text-green-700 font-medium">✅ Already submitted</p>
-          <p className="text-sm text-green-600 mt-1">
-            You have already submitted your Town Hall form.
-          </p>
+          <p className="text-green-700 font-medium">{t("student.townhall.alreadyTitle")}</p>
+          <p className="text-sm text-green-600 mt-1">{t("student.townhall.alreadyBody")}</p>
         </div>
       </div>
     );
@@ -103,26 +96,23 @@ export default function TownHallPage() {
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Town Hall</h2>
-        <p className="text-sm text-gray-500 mt-0.5">Anonymous Submission</p>
+        <h2 className="text-lg font-semibold text-gray-900">{t("student.townhall.title")}</h2>
+        <p className="text-sm text-gray-500 mt-0.5">{t("student.townhall.anonymous")}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-          <h3 className="text-sm font-medium text-gray-900">
-            Part 1 — Who was present today?
-          </h3>
-          <p className="text-xs text-gray-500">
-            Check all members who attended. Your own attendance is included by default.
-          </p>
+          <h3 className="text-sm font-medium text-gray-900">{t("student.townhall.part1Title")}</h3>
+          <p className="text-xs text-gray-500">{t("student.townhall.part1Help")}</p>
 
           <div className="space-y-2">
-            {/* Self always checked */}
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-default">
-              <span className="w-4 h-4 rounded border-2 border-gray-900 bg-gray-900 flex items-center justify-center">
-                <span className="text-white text-xs">✓</span>
+              <span className="w-4 h-4 rounded border-2 border-gray-900 bg-gray-900 flex items-center justify-center shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 10" fill="none">
+                  <path d="M1.5 5.5L3.5 7.5L8.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </span>
-              <span className="font-medium">[You]</span>
+              <span className="font-medium">{t("student.townhall.youLabel")}</span>
             </label>
 
             {cohortMembers.map((member) => (
@@ -138,21 +128,14 @@ export default function TownHallPage() {
             ))}
 
             {cohortMembers.length === 0 && (
-              <p className="text-xs text-gray-400">
-                Loading group members… You can still submit your own attendance.
-              </p>
+              <p className="text-xs text-gray-400">{t("student.townhall.loadingMembers")}</p>
             )}
           </div>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-          <h3 className="text-sm font-medium text-gray-900">
-            Part 2 — Monthly Reflection
-          </h3>
-          <p className="text-xs text-gray-500">
-            Share your honest thoughts. This is anonymous — staff cannot read this.
-            An automated system checks that your response is meaningful (not staff).
-          </p>
+          <h3 className="text-sm font-medium text-gray-900">{t("student.townhall.part2Title")}</h3>
+          <p className="text-xs text-gray-500">{t("student.townhall.part2Help")}</p>
 
           <textarea
             value={reflectionText}
@@ -160,14 +143,14 @@ export default function TownHallPage() {
             rows={6}
             required
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
-            placeholder="Share your reflections on this month — your venture progress, struggles, learnings, and what you observed in your peers…"
+            placeholder={t("student.townhall.placeholder")}
           />
 
           <div className="flex items-center justify-between text-xs">
             <span className={wordCount >= 50 ? "text-green-600" : "text-gray-400"}>
-              {wordCount} / 50 minimum words
+              {t("student.townhall.wordCount", { count: wordCount })}
             </span>
-            {wordCount >= 50 && <span className="text-green-600">✓ Minimum met</span>}
+            {wordCount >= 50 && <span className="text-green-600">{t("student.townhall.wordCountMet")}</span>}
           </div>
         </div>
 
@@ -182,7 +165,7 @@ export default function TownHallPage() {
           disabled={submitting || wordCount < 50}
           className="w-full bg-gray-900 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
         >
-          {submitting ? "Submitting…" : "Submit"}
+          {submitting ? t("common.submitting") : t("common.submit")}
         </button>
       </form>
     </div>

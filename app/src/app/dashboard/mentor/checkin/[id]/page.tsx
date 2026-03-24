@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { apiFetch, loadSession } from "@/lib/auth/client";
+import { useTranslation } from "react-i18next";
 import Link from "next/link";
 
 interface Grade { rating: number; feedback: string; gradedAt: string; }
@@ -42,6 +43,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 function GradeForm({ noteId, sessionId, existingGrade, onGraded }: {
   noteId: string; sessionId: string; existingGrade: Grade | null; onGraded: () => void;
 }) {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(existingGrade?.rating ?? 0);
   const [feedback, setFeedback] = useState(existingGrade?.feedback ?? "");
   const [submitting, setSubmitting] = useState(false);
@@ -50,7 +52,7 @@ function GradeForm({ noteId, sessionId, existingGrade, onGraded }: {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (rating === 0) { setError("Please select a rating"); return; }
+    if (rating === 0) { setError(t("mentor.checkin.ratingRequired")); return; }
     setError(null);
     setSubmitting(true);
     const session = loadSession();
@@ -61,7 +63,7 @@ function GradeForm({ noteId, sessionId, existingGrade, onGraded }: {
       session
     );
     setSubmitting(false);
-    if (!res.ok) { const d = await res.json(); setError(d.error ?? "Failed"); return; }
+    if (!res.ok) { const d = await res.json(); setError(d.error ?? t("common.error")); return; }
     setOpen(false);
     onGraded();
   }
@@ -76,7 +78,9 @@ function GradeForm({ noteId, sessionId, existingGrade, onGraded }: {
             : "border-gray-200 text-gray-600 bg-gray-50 hover:bg-gray-100"
         }`}
       >
-        {existingGrade ? `Graded ${existingGrade.rating}/5 — Edit` : "Grade"}
+        {existingGrade
+          ? t("mentor.checkin.gradedBtn").replace("{{rating}}", String(existingGrade.rating))
+          : t("mentor.checkin.gradeBtn")}
       </button>
     );
   }
@@ -84,27 +88,27 @@ function GradeForm({ noteId, sessionId, existingGrade, onGraded }: {
   return (
     <form onSubmit={handleSubmit} className="mt-4 border-t border-gray-100 pt-4 space-y-3">
       <div>
-        <label className="text-xs font-medium text-gray-700 block mb-1">Rating</label>
+        <label className="text-xs font-medium text-gray-700 block mb-1">{t("mentor.checkin.rating")}</label>
         <StarRating value={rating} onChange={setRating} />
       </div>
       <div>
-        <label className="text-xs font-medium text-gray-700 block mb-1">Feedback for student</label>
+        <label className="text-xs font-medium text-gray-700 block mb-1">{t("mentor.checkin.feedbackLabel")}</label>
         <textarea
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
           rows={3}
           required
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
-          placeholder="Specific, actionable feedback the student will see…"
+          placeholder={t("mentor.checkin.feedbackPlaceholder")}
         />
       </div>
       {error && <p className="text-xs text-red-600">{error}</p>}
       <div className="flex gap-2">
         <button type="submit" disabled={submitting} className="text-sm px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50">
-          {submitting ? "Saving…" : existingGrade ? "Update Grade" : "Submit Grade"}
+          {submitting ? t("common.saving") : existingGrade ? t("mentor.checkin.updateGrade") : t("mentor.checkin.saveGrade")}
         </button>
         <button type="button" onClick={() => setOpen(false)} className="text-sm px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
-          Cancel
+          {t("common.cancel")}
         </button>
       </div>
     </form>
@@ -113,6 +117,7 @@ function GradeForm({ noteId, sessionId, existingGrade, onGraded }: {
 
 export default function MentorCheckInNotesPage() {
   const { id: sessionId } = useParams<{ id: string }>();
+  const { t, i18n } = useTranslation();
   const [data, setData] = useState<SessionData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,35 +127,35 @@ export default function MentorCheckInNotesPage() {
     apiFetch(`/api/mentor/checkin-sessions/${sessionId}/notes`, {}, session)
       .then((r) => r.json())
       .then(setData)
-      .catch(() => setError("Failed to load"));
+      .catch(() => setError(t("mentor.checkin.error")));
   }
 
   useEffect(() => { load(); }, [sessionId]);
 
   if (error) return <p className="text-sm text-red-600">{error}</p>;
-  if (!data) return <div className="text-sm text-gray-400">Loading…</div>;
+  if (!data) return <div className="text-sm text-gray-400">{t("common.loading")}</div>;
 
   const { session, notes, pendingStudents } = data;
+  const locale = i18n.language === "ja" ? "ja-JP" : "en-US";
 
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Check-In Notes</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t("mentor.checkin.title")}</h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            {new Date(session.date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+            {new Date(session.date).toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric" })}
             {session.note && <span className="ml-2 text-gray-400">· {session.note}</span>}
           </p>
         </div>
-        <Link href="/dashboard/mentor" className="text-sm text-gray-500 hover:text-gray-900">← Back</Link>
+        <Link href="/dashboard/mentor" className="text-sm text-gray-500 hover:text-gray-900">{t("common.back")}</Link>
       </div>
 
-      {/* Summary bar */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "Submitted", value: notes.length },
-          { label: "Graded", value: notes.filter((n) => n.grade).length },
-          { label: "Pending", value: pendingStudents.length },
+          { label: t("mentor.checkin.submitted"), value: notes.length },
+          { label: t("mentor.checkin.graded"), value: notes.filter((n) => n.grade).length },
+          { label: t("mentor.checkin.pending"), value: pendingStudents.length },
         ].map((s) => (
           <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
             <p className="text-2xl font-bold font-mono text-gray-900">{s.value}</p>
@@ -159,10 +164,9 @@ export default function MentorCheckInNotesPage() {
         ))}
       </div>
 
-      {/* Notes list */}
       {notes.length === 0 && (
         <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-sm text-gray-400">
-          No notes submitted yet.
+          {t("mentor.checkin.noNotes")}
         </div>
       )}
 
@@ -174,38 +178,34 @@ export default function MentorCheckInNotesPage() {
                 {note.studentProfile.user.email.split("@")[0]}
               </span>
               <span className="text-xs text-gray-400 ml-2">
-                Submitted {new Date(note.submittedAt).toLocaleDateString()}
+                {t("mentor.checkin.submittedOn", {
+                  date: new Date(note.submittedAt).toLocaleDateString(locale),
+                })}
               </span>
             </div>
-            <GradeForm
-              noteId={note.id}
-              sessionId={sessionId}
-              existingGrade={note.grade}
-              onGraded={load}
-            />
+            <GradeForm noteId={note.id} sessionId={sessionId} existingGrade={note.grade} onGraded={load} />
           </div>
 
           <div className="space-y-3 text-sm">
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Agenda Recap</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t("mentor.checkin.agendaRecap")}</p>
               <p className="text-gray-800 whitespace-pre-wrap">{note.agendaRecap}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Action Items</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t("mentor.checkin.actionItems")}</p>
               <p className="text-gray-800 whitespace-pre-wrap">{note.actionItems}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Reflection</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t("mentor.checkin.reflection")}</p>
               <p className="text-gray-800 whitespace-pre-wrap">{note.reflection}</p>
             </div>
           </div>
         </div>
       ))}
 
-      {/* Pending students */}
       {pendingStudents.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-          <h3 className="text-sm font-medium text-amber-800 mb-2">Not yet submitted</h3>
+          <h3 className="text-sm font-medium text-amber-800 mb-2">{t("mentor.checkin.notSubmitted")}</h3>
           <ul className="space-y-1">
             {pendingStudents.map((s) => (
               <li key={s.id} className="text-sm text-amber-700">{s.user.email.split("@")[0]}</li>

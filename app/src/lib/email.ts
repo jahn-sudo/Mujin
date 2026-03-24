@@ -44,6 +44,65 @@ export async function sendPasswordResetEmail(
   });
 }
 
+// ── Application status emails ──────────────────────────────────────────────────
+
+export async function sendApplicationAcceptedEmail(
+  to: string,
+  activationUrl: string
+): Promise<void> {
+  await getResend().emails.send({
+    from: FROM,
+    to,
+    subject: "Congratulations — You've been accepted into the Mujin Programme",
+    html: `
+      <p>Dear applicant,</p>
+      <p>We are delighted to inform you that your application to the <strong>Mujin Venture Scholarship Programme</strong> has been accepted.</p>
+      <p>Please click the link below to activate your account and begin your onboarding:</p>
+      <p><a href="${activationUrl}">Activate your Mujin account →</a></p>
+      <p>This link expires in 7 days. If you have any questions, please reply to this email.</p>
+      <p>We look forward to walking this journey with you.</p>
+      <p>— The Mujin Team</p>
+    `,
+  });
+}
+
+export async function sendApplicationRejectedEmail(
+  to: string,
+  note?: string
+): Promise<void> {
+  await getResend().emails.send({
+    from: FROM,
+    to,
+    subject: "Mujin Programme — Application Update",
+    html: `
+      <p>Dear applicant,</p>
+      <p>Thank you for taking the time to apply to the Mujin Venture Scholarship Programme.</p>
+      <p>After careful review, we are unable to offer you a place in the current cohort.</p>
+      ${note ? `<p><strong>Note from our team:</strong> ${note}</p>` : ""}
+      <p>We encourage you to apply again in a future cohort. Thank you for your interest in Mujin.</p>
+      <p>— The Mujin Team</p>
+    `,
+  });
+}
+
+export async function sendApplicationWaitlistedEmail(
+  to: string,
+  note?: string
+): Promise<void> {
+  await getResend().emails.send({
+    from: FROM,
+    to,
+    subject: "Mujin Programme — You've been waitlisted",
+    html: `
+      <p>Dear applicant,</p>
+      <p>Thank you for applying to the Mujin Venture Scholarship Programme.</p>
+      <p>We are pleased to let you know that you have been placed on our <strong>waitlist</strong> for the current cohort. We will contact you if a place becomes available.</p>
+      ${note ? `<p><strong>Note from our team:</strong> ${note}</p>` : ""}
+      <p>— The Mujin Team</p>
+    `,
+  });
+}
+
 // ── S9.1 — P&L submission reminder (student, 7 days before month end) ─────────
 
 export async function sendPLReminderEmail(to: string, month: string): Promise<void> {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_COHORT_IDS } from "@/lib/demo";
 
 // S2.1 — Create cohort (STAFF / ORG_ADMIN / SUPER_ADMIN)
 export async function POST(req: NextRequest) {
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
     }
 
     const cohorts = await prisma.cohort.findMany({
-      where: { orgId },
+      where: { orgId, id: { notIn: [...DEMO_COHORT_IDS] } },
       orderBy: { createdAt: "asc" },
     });
 

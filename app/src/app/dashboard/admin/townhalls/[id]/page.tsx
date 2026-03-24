@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { apiFetch, loadSession } from "@/lib/auth/client";
+import { useTranslation } from "react-i18next";
 
 interface GroupData {
   cohortId: string;
@@ -18,6 +19,7 @@ interface GroupData {
 
 export default function TownHallMonitoringPage() {
   const { id: townHallId } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const [groups, setGroups] = useState<GroupData[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,11 +30,11 @@ export default function TownHallMonitoringPage() {
     apiFetch(`/api/admin/townhalls/${townHallId}/monitoring`, {}, session)
       .then((r) => r.json())
       .then(setGroups)
-      .catch(() => setError("Failed to load monitoring data"));
+      .catch(() => setError(t("admin.townhall.error")));
   }, [townHallId]);
 
   if (error) return <p className="text-sm text-red-600">{error}</p>;
-  if (!groups) return <div className="text-sm text-gray-400">Loading…</div>;
+  if (!groups) return <div className="text-sm text-gray-400">{t("common.loading")}</div>;
 
   const totalSubmissions = groups.reduce((sum, g) => sum + g.submittedCount, 0);
 
@@ -40,20 +42,21 @@ export default function TownHallMonitoringPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Town Hall Monitoring</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t("admin.townhall.title")}</h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            {totalSubmissions} submission{totalSubmissions !== 1 ? "s" : ""} received
+            {totalSubmissions === 1
+              ? t("admin.townhall.submissions", { count: totalSubmissions })
+              : t("admin.townhall.submissionsPlural", { count: totalSubmissions })}
           </p>
         </div>
         <Link href="/dashboard/admin" className="text-sm text-gray-500 hover:text-gray-900">
-          ← Back
+          {t("common.back")}
         </Link>
       </div>
 
-      {/* Attendance summary per group */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-          Attendance Summary
+          {t("admin.townhall.attendanceSummary")}
         </h3>
 
         {groups.map((group) => {
@@ -71,7 +74,6 @@ export default function TownHallMonitoringPage() {
                 </span>
               </div>
 
-              {/* Progress bar */}
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${
@@ -81,7 +83,6 @@ export default function TownHallMonitoringPage() {
                 />
               </div>
 
-              {/* Member dots */}
               <div className="flex gap-2">
                 {group.members.map((member) => (
                   <div
@@ -93,11 +94,7 @@ export default function TownHallMonitoringPage() {
                   >
                     <span className="text-xs text-gray-400">[{member.initial}]</span>
                     <span className="text-xs">
-                      {!member.submitted
-                        ? "⚪"
-                        : member.attended
-                        ? "🟢"
-                        : "🔴"}
+                      {!member.submitted ? "⚪" : member.attended ? "🟢" : "🔴"}
                     </span>
                   </div>
                 ))}
@@ -107,15 +104,11 @@ export default function TownHallMonitoringPage() {
         })}
       </div>
 
-      {/* Sentiment summary placeholder — E9/Sprint 7 */}
       <div className="bg-white border border-gray-200 rounded-xl p-6">
         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
-          Group Sentiment
+          {t("admin.townhall.groupSentiment")}
         </h3>
-        <p className="text-sm text-gray-400">
-          AI-structured sentiment summaries will be available in Sprint 7 (E9 — Notifications).
-          Reflections are collected but text is never surfaced here.
-        </p>
+        <p className="text-sm text-gray-400">{t("admin.townhall.sentimentNote")}</p>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 const ALUMNI = {
   venture: "YenWise",
@@ -64,15 +66,6 @@ const DIRECTORY = [
   },
 ];
 
-function DemoBanner() {
-  return (
-    <div className="bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3">
-      <span className="text-gray-500 font-semibold text-xs uppercase tracking-wide">Demo</span>
-      <p className="text-sm text-gray-500">Sample data — no real accounts are shown.</p>
-    </div>
-  );
-}
-
 function Milestone({
   label,
   met,
@@ -111,11 +104,16 @@ function MilestoneDot({ met }: { met: boolean }) {
 type View = "dashboard" | "directory";
 
 export default function DemoAlumniDashboard() {
+  const { t } = useTranslation();
   const [view, setView] = React.useState<View>("dashboard");
 
   return (
     <div className="space-y-6">
-      <DemoBanner />
+      {/* Demo banner */}
+      <div className="bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3">
+        <span className="text-gray-500 font-semibold text-xs uppercase tracking-wide">{t("nav.demo")}</span>
+        <p className="text-sm text-gray-500">{t("demo.banner")}</p>
+      </div>
 
       {view === "dashboard" && (
         <>
@@ -135,20 +133,20 @@ export default function DemoAlumniDashboard() {
               onClick={() => setView("directory")}
               className="text-sm text-gray-500 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
             >
-              Community Directory
+              {t("alumni.dashboard.communityDirectory")}
             </button>
           </div>
 
           {/* Venture */}
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Venture</h3>
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">{t("alumni.dashboard.venture")}</h3>
             <p className="text-sm text-gray-700 leading-relaxed">{ALUMNI.description}</p>
           </div>
 
           {/* Trust score chart */}
           <div className="bg-white border border-gray-200 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Trust Score Journey</h3>
+              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">{t("alumni.dashboard.trustScoreJourney")}</h3>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 <span className="text-sm font-mono text-gray-500">96 · GREEN</span>
@@ -166,36 +164,17 @@ export default function DemoAlumniDashboard() {
                 );
               })}
             </div>
-            <p className="text-xs text-gray-400 mt-3">6 consecutive GREEN months — graduation threshold met.</p>
+            <p className="text-xs text-gray-400 mt-3">{t("alumni.dashboard.trustScoreNote")}</p>
           </div>
 
           {/* Bank journey */}
           <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">Bank Introduction Journey</h3>
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">{t("alumni.dashboard.bankJourney")}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <Milestone
-                label="Bank Introduced"
-                met={true}
-                date={BANK.bankIntroDate}
-                detail={BANK.bankName}
-              />
-              <Milestone
-                label="First Meeting"
-                met={true}
-                date={BANK.firstMeetingDate}
-                detail="COMPLETED"
-              />
-              <Milestone
-                label="Account Opened"
-                met={true}
-                date={BANK.accountOpenedAt}
-              />
-              <Milestone
-                label="Loan Secured"
-                met={true}
-                date={BANK.loanSecuredAt}
-                detail={`¥${BANK.loanAmountYen.toLocaleString()}`}
-              />
+              <Milestone label={t("alumni.dashboard.bankIntroduced")} met={true} date={BANK.bankIntroDate} detail={BANK.bankName} />
+              <Milestone label={t("alumni.dashboard.firstMeeting")} met={true} date={BANK.firstMeetingDate} detail="COMPLETED" />
+              <Milestone label={t("alumni.dashboard.accountOpened")} met={true} date={BANK.accountOpenedAt} />
+              <Milestone label={t("alumni.dashboard.loanSecured")} met={true} date={BANK.loanSecuredAt} detail={`¥${BANK.loanAmountYen.toLocaleString()}`} />
             </div>
           </div>
         </>
@@ -205,22 +184,26 @@ export default function DemoAlumniDashboard() {
         <>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">Alumni Community</h1>
-              <p className="text-sm text-gray-500 mt-0.5">{DIRECTORY.length} graduates</p>
+              <h1 className="text-xl font-semibold text-gray-900">{t("alumni.directory.title")}</h1>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {DIRECTORY.length !== 1
+                  ? t("alumni.directory.graduates_other", { count: DIRECTORY.length })
+                  : t("alumni.directory.graduates_one", { count: DIRECTORY.length })}
+              </p>
             </div>
             <button onClick={() => setView("dashboard")} className="text-sm text-gray-500 hover:text-gray-900">
-              Back
+              {t("alumni.directory.back")}
             </button>
           </div>
 
           <div className="flex items-center gap-4 text-xs text-gray-400">
             <div className="flex items-center gap-1.5">
               <MilestoneDot met={true} />
-              <span>Milestone completed</span>
+              <span>{t("alumni.directory.milestoneMet")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <MilestoneDot met={false} />
-              <span>In progress</span>
+              <span>{t("alumni.directory.milestoneInProgress")}</span>
             </div>
           </div>
 
@@ -235,16 +218,18 @@ export default function DemoAlumniDashboard() {
                   <span className="text-[11px] bg-gray-100 text-gray-500 rounded px-2 py-0.5 shrink-0">{a.category}</span>
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{a.description}</p>
-                <p className="text-xs text-green-700 mb-3">Graduated {new Date(a.graduatedAt).toLocaleDateString()}</p>
+                <p className="text-xs text-green-700 mb-3">
+                  {t("alumni.directory.graduated", { date: new Date(a.graduatedAt).toLocaleDateString() })}
+                </p>
                 <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
-                  <span className="text-[11px] text-gray-400">Journey</span>
+                  <span className="text-[11px] text-gray-400">{t("alumni.directory.journey")}</span>
                   <div className="flex items-center gap-2">
                     {[
-                      { key: "intro", label: "Intro" },
-                      { key: "meeting", label: "Meeting" },
-                      { key: "account", label: "Account" },
-                      { key: "loan", label: "Loan" },
-                      { key: "visa", label: "BM Visa" },
+                      { key: "intro", label: t("alumni.directory.milestoneIntro") },
+                      { key: "meeting", label: t("alumni.directory.milestoneMeeting") },
+                      { key: "account", label: t("alumni.directory.milestoneAccount") },
+                      { key: "loan", label: t("alumni.directory.milestoneLoan") },
+                      { key: "visa", label: t("alumni.directory.milestoneVisa") },
                     ].map(({ key, label }) => (
                       <div key={key} className="flex items-center gap-1" title={label}>
                         <MilestoneDot met={a.milestones[key as keyof typeof a.milestones]} />
@@ -261,11 +246,9 @@ export default function DemoAlumniDashboard() {
 
       <div className="pt-2 border-t border-gray-100">
         <Link href="/dashboard/alumni" className="text-sm text-gray-400 hover:text-gray-700">
-          Back to live dashboard
+          {t("demo.backToLive")}
         </Link>
       </div>
     </div>
   );
 }
-
-import React from "react";

@@ -82,7 +82,7 @@ export default function DemoAdminDashboard() {
 
   useEffect(() => {
     if (!session) return;
-    apiFetch("/api/admin/dashboard", {}, session)
+    apiFetch("/api/admin/demo/dashboard", {}, session)
       .then((r) => r.json())
       .then((d) => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));

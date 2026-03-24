@@ -16,6 +16,10 @@ const PROTECTED_ROUTES: Array<{ pattern: RegExp; roles: Role[] }> = [
     pattern: /^\/api\/student/,
     roles: [Role.STUDENT, Role.STAFF, Role.ORG_ADMIN, Role.SUPER_ADMIN],
   },
+  {
+    pattern: /^\/api\/alumni/,
+    roles: [Role.ALUMNI, Role.STAFF, Role.ORG_ADMIN, Role.SUPER_ADMIN],
+  },
 ];
 
 // Routes that never require auth

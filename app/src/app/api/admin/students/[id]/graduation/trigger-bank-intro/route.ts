@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { GraduationStatus } from "@/generated/prisma/enums";
+import { GraduationStatus, Role } from "@/generated/prisma/enums";
 
 /**
  * POST /api/admin/students/[id]/graduation/trigger-bank-intro
@@ -22,7 +22,7 @@ export async function POST(
 
     const student = await prisma.studentProfile.findUnique({
       where: { id: studentId },
-      select: { user: { select: { orgId: true } }, graduationRecord: true },
+      select: { userId: true, user: { select: { orgId: true } }, graduationRecord: true },
     });
 
     if (!student) return NextResponse.json({ error: "Student not found" }, { status: 404 });
@@ -36,13 +36,19 @@ export async function POST(
       );
     }
 
-    const updated = await prisma.graduationRecord.update({
-      where: { studentId },
-      data: {
-        status: GraduationStatus.GRADUATED,
-        bankIntroDate: new Date(),
-      },
-    });
+    const [updated] = await prisma.$transaction([
+      prisma.graduationRecord.update({
+        where: { studentId },
+        data: {
+          status: GraduationStatus.GRADUATED,
+          bankIntroDate: new Date(),
+        },
+      }),
+      prisma.user.update({
+        where: { id: student.userId },
+        data: { role: Role.ALUMNI },
+      }),
+    ]);
 
     return NextResponse.json({ graduationRecord: updated });
   } catch {

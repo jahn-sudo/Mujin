@@ -8,10 +8,10 @@ const COLOR: Record<string, string> = {
   RED: "bg-red-500",
 };
 
-const EMOJI: Record<string, string> = {
-  GREEN: "🟢",
-  YELLOW: "🟡",
-  RED: "🔴",
+const TEXT: Record<string, string> = {
+  GREEN: "Green",
+  YELLOW: "Yellow",
+  RED: "Red",
 };
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 
 export function TrafficLight({ label, score, size = "md" }: Props) {
   const color = label ? (COLOR[label] ?? "bg-gray-300") : "bg-gray-200";
-  const emoji = label ? (EMOJI[label] ?? "⚪") : "⚪";
+  const text = label ? (TEXT[label] ?? label) : "No data";
 
   const dot =
     size === "sm" ? "w-3 h-3" : size === "lg" ? "w-6 h-6" : "w-4 h-4";
@@ -39,7 +39,7 @@ export function TrafficLight({ label, score, size = "md" }: Props) {
   return (
     <span className="inline-flex items-center gap-1 text-sm">
       <span className={`inline-block rounded-full ${dot} ${color}`} />
-      <span className="sr-only">{emoji}</span>
+      <span className="sr-only">{text}</span>
     </span>
   );
 }

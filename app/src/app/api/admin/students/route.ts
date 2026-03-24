@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_EMAIL_DOMAIN } from "@/lib/demo";
 
 // List all activated students in the org with cohort assignment status
 export async function GET(req: NextRequest) {
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     const students = await prisma.studentProfile.findMany({
-      where: { user: { orgId, role: "STUDENT" } },
+      where: { user: { orgId, role: "STUDENT", email: { not: { endsWith: DEMO_EMAIL_DOMAIN } } } },
       include: {
         user: { select: { id: true, email: true } },
         ventureProfile: { select: { name: true } },

@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { apiFetch, loadSession } from "@/lib/auth/client";
 import { TrafficLight } from "@/components/ui/TrafficLight";
 import { ScoreBar } from "@/components/ui/ScoreBar";
 import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n/config";
 
 interface DashboardData {
   user: { id: string; email: string };
@@ -36,6 +38,7 @@ interface DashboardData {
 }
 
 export default function StudentDashboard() {
+  const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
@@ -44,14 +47,35 @@ export default function StudentDashboard() {
     const session = loadSession();
     if (!session) return;
 
-    apiFetch("/api/student/me", {}, session)
+    // Pledge guard — redirect if not yet signed
+    apiFetch("/api/student/pledge", {}, session)
       .then((r) => r.json())
-      .then(setData)
-      .catch(() => setError(t("student.dashboard.error")));
+      .then((d) => {
+        if (!d.signed) {
+          router.replace("/dashboard/student/pledge");
+          return;
+        }
+        apiFetch("/api/student/me", {}, session)
+          .then((r) => r.json())
+          .then(setData)
+          .catch(() => setError(t("student.dashboard.error")));
+      })
+      .catch(() => {
+        // If pledge check fails, proceed normally (don't block on network error)
+        apiFetch("/api/student/me", {}, session)
+          .then((r) => r.json())
+          .then(setData)
+          .catch(() => setError(t("student.dashboard.error")));
+      });
   }, []);
 
   if (error) return <p className="text-sm text-red-600">{error}</p>;
-  if (!data) return <div className="text-sm text-gray-400">{t("common.loading")}</div>;
+  if (!data) return (
+    <div className="flex items-center gap-2 text-sm text-gray-400">
+      <span className="inline-block w-3 h-3 rounded-full bg-gray-200 animate-pulse" />
+      {t("common.loading")}
+    </div>
+  );
 
   const emailInitial = data.user.email[0]?.toUpperCase() ?? "?";
   const currentMonth = new Date().toISOString().slice(0, 7);
@@ -74,7 +98,7 @@ export default function StudentDashboard() {
       {/* Reflection flag alert */}
       {data.openReflectionFlags.length > 0 && (
         <div className="border border-red-200 bg-red-50 rounded-xl p-4">
-          <p className="text-sm font-medium text-red-700">🔴 {t("student.dashboard.reflectionAlert")}</p>
+          <p className="text-sm font-medium text-red-700">{t("student.dashboard.reflectionAlert")}</p>
           <p className="text-sm text-red-600 mt-1">
             {t("student.dashboard.reflectionAlertBody")}{" "}
             <Link href="/dashboard/student/inbox" className="underline font-medium">
@@ -148,18 +172,17 @@ export default function StudentDashboard() {
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
             {t("student.dashboard.upcoming")}
           </h3>
-          <ul className="space-y-3 text-sm">
+          <ul className="space-y-3 text-sm divide-y divide-gray-50">
             {data.upcoming.plDue ? (
-              <li className="flex items-center gap-2">
-                <span>📋</span>
-                <div>
+              <li className="pt-2 first:pt-0">
+                <div className="flex items-center justify-between">
                   <Link
                     href={`/dashboard/student/pl/${currentMonth}`}
                     className="font-medium text-gray-900 hover:underline"
                   >
                     {t("student.dashboard.plDue")}
                   </Link>
-                  <span className="text-gray-500 ml-1">
+                  <span className="text-xs text-gray-400">
                     {new Date(data.upcoming.plDue + "T00:00:00").toLocaleDateString(
                       i18n.language === "ja" ? "ja-JP" : "en-US",
                       { month: "short", day: "numeric" }
@@ -168,19 +191,18 @@ export default function StudentDashboard() {
                 </div>
               </li>
             ) : (
-              <li className="text-gray-400">{t("student.dashboard.noPLDue")}</li>
+              <li className="pt-2 first:pt-0 text-gray-400">{t("student.dashboard.noPLDue")}</li>
             )}
             {data.upcoming.nextTownHall ? (
-              <li className="flex items-center gap-2">
-                <span>📅</span>
-                <div>
+              <li className="pt-2">
+                <div className="flex items-center justify-between">
                   <Link
                     href={`/dashboard/student/townhall/${data.upcoming.nextTownHall.id}`}
                     className="font-medium text-gray-900 hover:underline"
                   >
                     {t("student.dashboard.townHall")}
                   </Link>
-                  <span className="text-gray-500 ml-1">
+                  <span className="text-xs text-gray-400">
                     {new Date(data.upcoming.nextTownHall.date).toLocaleDateString(
                       i18n.language === "ja" ? "ja-JP" : "en-US",
                       { month: "short", day: "numeric" }
@@ -189,19 +211,18 @@ export default function StudentDashboard() {
                 </div>
               </li>
             ) : (
-              <li className="text-gray-400">{t("student.dashboard.noTownHall")}</li>
+              <li className="pt-2 text-gray-400">{t("student.dashboard.noTownHall")}</li>
             )}
             {data.upcoming.nextCheckIn && (
-              <li className="flex items-center gap-2">
-                <span>🤝</span>
-                <div>
+              <li className="pt-2">
+                <div className="flex items-center justify-between">
                   <Link
                     href={`/dashboard/student/checkin/${data.upcoming.nextCheckIn.id}`}
                     className="font-medium text-gray-900 hover:underline"
                   >
-                    Submit check-in notes
+                    {t("student.dashboard.checkInNotes")}
                   </Link>
-                  <span className="text-gray-500 ml-1">
+                  <span className="text-xs text-gray-400">
                     {new Date(data.upcoming.nextCheckIn.date).toLocaleDateString(
                       i18n.language === "ja" ? "ja-JP" : "en-US",
                       { month: "short", day: "numeric" }
@@ -212,6 +233,33 @@ export default function StudentDashboard() {
             )}
           </ul>
         </div>
+      </div>
+
+      {/* Town Hall */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+            {t("student.dashboard.townHall")}
+          </h3>
+          {data.upcoming.nextTownHall && (
+            <span className="text-xs text-gray-400">
+              {new Date(data.upcoming.nextTownHall.date).toLocaleDateString(
+                i18n.language === "ja" ? "ja-JP" : "en-US",
+                { month: "short", day: "numeric" }
+              )}
+            </span>
+          )}
+        </div>
+        {data.upcoming.nextTownHall ? (
+          <Link
+            href={`/dashboard/student/townhall/${data.upcoming.nextTownHall.id}`}
+            className="inline-block mt-2 text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 transition-colors rounded-lg px-4 py-2"
+          >
+            {t("common.submit")} reflection
+          </Link>
+        ) : (
+          <p className="text-sm text-gray-400 mt-1">{t("student.dashboard.noTownHall")}</p>
+        )}
       </div>
 
       {/* Group View */}
@@ -245,14 +293,20 @@ export default function StudentDashboard() {
   );
 }
 
-// Import i18n instance for locale-aware date formatting
-import i18n from "@/lib/i18n/config";
-
 function CheckItem({ checked, label }: { checked: boolean; label: string }) {
   return (
-    <li className="flex items-start gap-2 text-gray-700">
-      <span className={`mt-0.5 shrink-0 ${checked ? "text-green-600" : "text-gray-300"}`}>
-        {checked ? "☑" : "☐"}
+    <li className="flex items-start gap-2.5 text-gray-700">
+      <span className="mt-0.5 shrink-0">
+        {checked ? (
+          <svg className="w-4 h-4 text-green-600" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7.5" stroke="currentColor" strokeWidth="1" />
+            <path d="M4.5 8.5L6.5 10.5L11.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <svg className="w-4 h-4 text-gray-300" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7.5" stroke="currentColor" strokeWidth="1" />
+          </svg>
+        )}
       </span>
       <span className={checked ? "text-gray-900" : "text-gray-500"}>{label}</span>
     </li>

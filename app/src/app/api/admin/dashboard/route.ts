@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_COHORT_IDS } from "@/lib/demo";
 
 export async function GET(req: NextRequest) {
   try {
@@ -8,9 +9,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // All cohorts with students
+    // All cohorts with students (exclude demo cohorts)
     const cohorts = await prisma.cohort.findMany({
-      where: { orgId },
+      where: { orgId, id: { notIn: [...DEMO_COHORT_IDS] } },
       include: {
         students: {
           include: {

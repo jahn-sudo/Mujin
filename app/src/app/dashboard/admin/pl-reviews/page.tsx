@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch, loadSession } from "@/lib/auth/client";
+import { useTranslation } from "react-i18next";
 
 interface PLRecord {
   id: string;
@@ -23,6 +24,7 @@ interface PLRecord {
 type ReviewAction = "APPROVED" | "FLAGGED" | "MORE_INFO";
 
 export default function PLReviewsPage() {
+  const { t } = useTranslation();
   const [submissions, setSubmissions] = useState<PLRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export default function PLReviewsPage() {
     apiFetch("/api/admin/pl-submissions?status=SUBMITTED", {}, session)
       .then((r) => r.json())
       .then(setSubmissions)
-      .catch(() => setError("Failed to load submissions"))
+      .catch(() => setError(t("common.error")))
       .finally(() => setLoading(false));
   }
 
@@ -60,17 +62,14 @@ export default function PLReviewsPage() {
       `/api/admin/pl-submissions/${active.id}/review`,
       {
         method: "POST",
-        body: JSON.stringify({
-          action,
-          annotation: annotation || undefined,
-        }),
+        body: JSON.stringify({ action, annotation: annotation || undefined }),
       },
       session
     );
 
     if (!res.ok) {
       const body = await res.json();
-      setActionError(body.error ?? "Action failed");
+      setActionError(body.error ?? t("admin.plReviews.actionFailed"));
       setSubmitting(false);
       return;
     }
@@ -93,17 +92,14 @@ export default function PLReviewsPage() {
       `/api/admin/pl-submissions/${active.id}/override-score`,
       {
         method: "POST",
-        body: JSON.stringify({
-          staffScore: Number(overrideScore),
-          reason: overrideReason,
-        }),
+        body: JSON.stringify({ staffScore: Number(overrideScore), reason: overrideReason }),
       },
       session
     );
 
     if (!res.ok) {
       const body = await res.json();
-      setActionError(body.error ?? "Override failed");
+      setActionError(body.error ?? t("admin.plReviews.overrideFailed"));
       setSubmitting(false);
       return;
     }
@@ -115,101 +111,90 @@ export default function PLReviewsPage() {
     loadSubmissions();
   }
 
-  if (loading) return <div className="text-sm text-gray-400">Loading…</div>;
+  if (loading) return <div className="text-sm text-gray-400">{t("common.loading")}</div>;
   if (error) return <p className="text-sm text-red-600">{error}</p>;
 
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold text-gray-900">
-        P&amp;L Reviews{" "}
+        {t("admin.plReviews.title")}{" "}
         <span className="text-sm font-normal text-gray-500">
-          ({submissions.length} pending)
+          {t("admin.plReviews.pending", { count: submissions.length })}
         </span>
       </h2>
 
       {submissions.length === 0 && (
         <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400">All caught up — no pending reviews.</p>
+          <p className="text-sm text-gray-400">{t("admin.plReviews.allCaughtUp")}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Submission list */}
         <div className="space-y-2">
           {submissions.map((s) => (
             <button
               key={s.id}
-              onClick={() => {
-                setActive(s);
-                setAnnotation("");
-                setActionError(null);
-              }}
+              onClick={() => { setActive(s); setAnnotation(""); setActionError(null); }}
               className={`w-full text-left bg-white border rounded-xl p-4 hover:border-gray-400 transition-colors ${
                 active?.id === s.id ? "border-gray-900" : "border-gray-200"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm font-medium text-gray-900">
-                    {s.email.split("@")[0]}
-                  </span>
-                  {s.venture && (
-                    <span className="text-xs text-gray-400 ml-1">· {s.venture}</span>
-                  )}
+                  <span className="text-sm font-medium text-gray-900">{s.email.split("@")[0]}</span>
+                  {s.venture && <span className="text-xs text-gray-400 ml-1">· {s.venture}</span>}
                 </div>
                 <div className="flex items-center gap-2">
                   {s.spotAudit && (
                     <span className="text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded px-1.5 py-0.5">
-                      Audit
+                      {t("admin.plReviews.audit")}
                     </span>
                   )}
                   <span className="text-xs font-mono text-gray-500">{s.month}</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                <span>Rev: ¥{(s.revenue ?? 0).toLocaleString()}</span>
-                <span>Exp: ¥{(s.expenses ?? 0).toLocaleString()}</span>
+                <span>{t("admin.plReviews.revenue")}: ¥{(s.revenue ?? 0).toLocaleString()}</span>
+                <span>{t("admin.plReviews.expenses")}: ¥{(s.expenses ?? 0).toLocaleString()}</span>
                 <span className={`font-medium ${(s.net ?? 0) >= 0 ? "text-green-700" : "text-red-600"}`}>
-                  Net: ¥{(s.net ?? 0).toLocaleString()}
+                  {t("admin.plReviews.net")}: ¥{(s.net ?? 0).toLocaleString()}
                 </span>
-                <span>Score: {s.finalScore ?? s.autoScore ?? "—"}/100</span>
               </div>
             </button>
           ))}
         </div>
 
-        {/* Review panel */}
         {active && (
           <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4 self-start">
             <h3 className="text-sm font-medium text-gray-900">
-              P&amp;L Review · {active.email.split("@")[0]} · {active.month}
+              {t("admin.plReviews.reviewPanel", { name: active.email.split("@")[0], month: active.month })}
             </h3>
 
             <div className="grid grid-cols-3 gap-2 text-sm">
-              <Stat label="Revenue" value={`¥${(active.revenue ?? 0).toLocaleString()}`} />
-              <Stat label="Expenses" value={`¥${(active.expenses ?? 0).toLocaleString()}`} />
+              <Stat label={t("admin.plReviews.revenue")} value={`¥${(active.revenue ?? 0).toLocaleString()}`} />
+              <Stat label={t("admin.plReviews.expenses")} value={`¥${(active.expenses ?? 0).toLocaleString()}`} />
               <Stat
-                label="Net"
+                label={t("admin.plReviews.net")}
                 value={`¥${(active.net ?? 0).toLocaleString()}`}
                 positive={(active.net ?? 0) >= 0}
               />
             </div>
 
             <div className="text-xs text-gray-500">
-              Auto-score: {active.autoScore ?? "—"}/100
-              {active.staffScore !== null && ` · Staff override: ${active.staffScore}/100`}
+              {t("admin.plReviews.autoScore", { score: active.autoScore ?? "—" })}
+              {active.staffScore !== null && t("admin.plReviews.staffOverride", { score: active.staffScore })}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Staff Note (internal)
+                {t("admin.plReviews.staffNote")}
               </label>
               <textarea
                 value={annotation}
                 onChange={(e) => setAnnotation(e.target.value)}
                 rows={3}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
-                placeholder="Internal note — not visible to student"
+                placeholder={t("admin.plReviews.staffNotePlaceholder")}
               />
             </div>
 
@@ -219,28 +204,27 @@ export default function PLReviewsPage() {
                 disabled={submitting}
                 className="flex-1 bg-green-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
               >
-                ✅ Approve
+                {t("admin.plReviews.approve")}
               </button>
               <button
                 onClick={() => handleAction("FLAGGED")}
                 disabled={submitting}
                 className="flex-1 bg-red-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
               >
-                🚩 Flag
+                {t("admin.plReviews.flag")}
               </button>
               <button
                 onClick={() => handleAction("MORE_INFO")}
                 disabled={submitting}
                 className="flex-1 bg-gray-200 text-gray-900 rounded-lg py-2 text-sm font-medium hover:bg-gray-300 transition-colors disabled:opacity-50"
               >
-                ℹ️ More Info
+                {t("admin.plReviews.moreInfo")}
               </button>
             </div>
 
-            {/* Score override */}
             <details className="border border-gray-200 rounded-lg">
               <summary className="px-3 py-2 text-sm text-gray-500 cursor-pointer hover:text-gray-900">
-                Override Score — requires reason
+                {t("admin.plReviews.overrideLabel")}
               </summary>
               <div className="px-3 pb-3 space-y-2 pt-2 border-t border-gray-100">
                 <input
@@ -250,28 +234,26 @@ export default function PLReviewsPage() {
                   value={overrideScore}
                   onChange={(e) => setOverrideScore(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                  placeholder="New score (0–100)"
+                  placeholder={t("admin.plReviews.overridePlaceholder")}
                 />
                 <input
                   type="text"
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                  placeholder="Written reason (required)"
+                  placeholder={t("admin.plReviews.overrideReasonPlaceholder")}
                 />
                 <button
                   onClick={handleScoreOverride}
                   disabled={submitting || !overrideScore || !overrideReason}
                   className="w-full bg-amber-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-amber-700 transition-colors disabled:opacity-50"
                 >
-                  Apply Override
+                  {t("admin.plReviews.applyOverride")}
                 </button>
               </div>
             </details>
 
-            {actionError && (
-              <p className="text-sm text-red-600">{actionError}</p>
-            )}
+            {actionError && <p className="text-sm text-red-600">{actionError}</p>}
           </div>
         )}
       </div>
@@ -279,27 +261,13 @@ export default function PLReviewsPage() {
   );
 }
 
-function Stat({
-  label,
-  value,
-  positive,
-}: {
-  label: string;
-  value: string;
-  positive?: boolean;
-}) {
+function Stat({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
   return (
     <div className="bg-gray-50 rounded-lg p-2 text-center">
       <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-      <p
-        className={`text-sm font-medium font-mono ${
-          positive !== undefined
-            ? positive
-              ? "text-green-700"
-              : "text-red-600"
-            : "text-gray-900"
-        }`}
-      >
+      <p className={`text-sm font-medium font-mono ${
+        positive !== undefined ? (positive ? "text-green-700" : "text-red-600") : "text-gray-900"
+      }`}>
         {value}
       </p>
     </div>
