@@ -3,20 +3,19 @@ import Link from "next/link";
 const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScp7GNJ9T58mHrY_zfrcPbWj5i51dffLYVaM72xfH02sCghqw/viewform?usp=sharing&ouid=103224701688413762370";
 
-// Placeholder — replace with real photo when available
-const IMG_HERO =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuB5DMFu2wnQisLO-4fRt1P6fAmtG2Wv6V7CNx2WJS6DfAqZbluC0f1pmu4mPA5AO0LZf060bKErc3NJmFqLYcAspxBFwS8Uy0XNoY6yEJWIZV1wcWOmzB5zXTqnBTpRAhONrmSKhqPVwlcvGIYzr7lFKbFJMTds-Y2Z-LjbQ-86sxl_S5BFYoCUDDv6Tz8qrAnWk3tIAtdkjirSzxlCju_gCdMyQOLsPmMbCkzJqj61_UD5sApBx6Qf5zIMhncsXmhExI_PARBZtlQ";
 
 const SG = "var(--font-space-grotesk), sans-serif";
 const NS = "var(--font-noto-serif), serif";
 
 const SIDE_LINKS = [
-  { icon: "dashboard",                label: "Home",     href: "/",        active: true },
+  { icon: "dashboard",                label: "Home",        href: "/",          active: true },
   { icon: "info",                     label: "Mission",     href: "/about" },
   { icon: "settings_input_component", label: "The Program", href: "/program" },
+  { icon: "account_tree",             label: "Protocols",   href: "/protocols" },
+  { icon: "scatter_plot",             label: "Lattice",     href: "/lattice" },
   { icon: "groups",                   label: "Leadership",  href: "/team" },
   { icon: "hub",                      label: "Network",     href: "/alumni" },
-  { icon: "quiz",                     label: "FAQ",   href: "/faq" },
+  { icon: "quiz",                     label: "FAQ",         href: "/faq" },
   { icon: "play_circle",              label: "Demo",        href: "/demo" },
 ];
 
@@ -169,63 +168,64 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right column — visual + floating stats */}
-            <div className="lg:col-span-5 relative aspect-square hidden lg:block">
+            {/* Right column — Recyclable Cycle diagram */}
+            <div className="lg:col-span-5 relative flex items-center justify-center hidden lg:flex" style={{ minHeight: "420px" }}>
+              {/* Outer glow */}
               <div
-                className="absolute inset-0 rounded-full blur-[100px] animate-pulse"
-                style={{ backgroundColor: "rgba(169,208,179,0.05)" }}
+                className="absolute rounded-full blur-[80px] animate-pulse"
+                style={{ width: "340px", height: "340px", backgroundColor: "rgba(169,208,179,0.06)" }}
               />
-              <div
-                className="relative w-full h-full p-8 group"
-                style={{ border: "1px solid rgba(196,236,206,0.2)" }}
-              >
-                <div
-                  className="absolute top-0 left-0 w-8 h-8"
-                  style={{ borderTop: "1px solid #C4ECCE", borderLeft: "1px solid #C4ECCE" }}
-                />
-                <div
-                  className="absolute bottom-0 right-0 w-8 h-8"
-                  style={{ borderBottom: "1px solid #C4ECCE", borderRight: "1px solid #C4ECCE" }}
-                />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={IMG_HERO}
-                  alt="Neural schematic placeholder"
-                  className="w-full h-full object-cover grayscale opacity-60 mix-blend-screen"
-                />
+              {/* Cycle SVG */}
+              <svg viewBox="0 0 320 320" width="340" height="340" style={{ position: "relative", zIndex: 1 }}>
+                {/* Outer circle track */}
+                <circle cx="160" cy="160" r="130" fill="none" stroke="rgba(196,236,206,0.12)" strokeWidth="1" strokeDasharray="4 6" />
+                {/* Inner circle */}
+                <circle cx="160" cy="160" r="60" fill="none" stroke="rgba(196,236,206,0.07)" strokeWidth="1" />
 
-                {/* Floating stat: Trust Score */}
-                <div
-                  className="glass-obsidian absolute -right-8 top-1/4 p-4"
-                  style={{ borderLeft: "2px solid #b4cad6" }}
-                >
-                  <div
-                    className="text-[9px] tracking-widest uppercase mb-1"
-                    style={{ color: "#b4cad6" }}
-                  >
-                    TRUST_SCORE
-                  </div>
-                  <div className="text-lg font-bold" style={{ fontFamily: SG, color: "#e5e2e1" }}>
-                    GRN 84%
-                  </div>
-                </div>
+                {/* Arc arrows — clockwise between nodes */}
+                {/* Grant → Trust (top → right) */}
+                <path d="M 215 65 A 130 130 0 0 1 255 215" fill="none" stroke="rgba(196,236,206,0.3)" strokeWidth="1.5"
+                  markerEnd="url(#arrow)" />
+                {/* Trust → Bank (right → bottom) */}
+                <path d="M 255 215 A 130 130 0 0 1 105 255" fill="none" stroke="rgba(196,236,206,0.3)" strokeWidth="1.5"
+                  markerEnd="url(#arrow)" />
+                {/* Bank → Return (bottom → left) */}
+                <path d="M 105 255 A 130 130 0 0 1 65 105" fill="none" stroke="rgba(196,236,206,0.3)" strokeWidth="1.5"
+                  markerEnd="url(#arrow)" />
+                {/* Return → Grant (left → top) */}
+                <path d="M 65 105 A 130 130 0 0 1 215 65" fill="none" stroke="rgba(196,236,206,0.3)" strokeWidth="1.5"
+                  markerEnd="url(#arrow)" />
 
-                {/* Floating stat: Fund Pool */}
-                <div
-                  className="glass-obsidian absolute -left-4 bottom-1/4 p-4"
-                  style={{ borderLeft: "2px solid #ffddb4" }}
-                >
-                  <div
-                    className="text-[9px] tracking-widest uppercase mb-1"
-                    style={{ color: "#ffddb4" }}
-                  >
-                    FUND_POOL
-                  </div>
-                  <div className="text-lg font-bold" style={{ fontFamily: SG, color: "#e5e2e1" }}>
-                    ¥50,000,000
-                  </div>
-                </div>
-              </div>
+                <defs>
+                  <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L6,3 z" fill="rgba(196,236,206,0.5)" />
+                  </marker>
+                </defs>
+
+                {/* Node: GRANT — top */}
+                <circle cx="160" cy="30" r="22" fill="#131313" stroke="#C4ECCE" strokeWidth="1.5" />
+                <text x="160" y="26" textAnchor="middle" fill="#C4ECCE" fontSize="7" fontFamily="var(--font-space-grotesk)" letterSpacing="1" fontWeight="600">GRANT</text>
+                <text x="160" y="37" textAnchor="middle" fill="#A9D0B3" fontSize="6.5" fontFamily="var(--font-space-grotesk)">¥500k</text>
+
+                {/* Node: TRUST — right */}
+                <circle cx="290" cy="160" r="22" fill="#131313" stroke="rgba(196,236,206,0.5)" strokeWidth="1" />
+                <text x="290" y="156" textAnchor="middle" fill="#b4cad6" fontSize="7" fontFamily="var(--font-space-grotesk)" letterSpacing="1" fontWeight="600">TRUST</text>
+                <text x="290" y="167" textAnchor="middle" fill="#737373" fontSize="6.5" fontFamily="var(--font-space-grotesk)">score</text>
+
+                {/* Node: BANK — bottom */}
+                <circle cx="160" cy="290" r="22" fill="#131313" stroke="rgba(196,236,206,0.5)" strokeWidth="1" />
+                <text x="160" y="286" textAnchor="middle" fill="#b4cad6" fontSize="7" fontFamily="var(--font-space-grotesk)" letterSpacing="1" fontWeight="600">BANK</text>
+                <text x="160" y="297" textAnchor="middle" fill="#737373" fontSize="6.5" fontFamily="var(--font-space-grotesk)">intro</text>
+
+                {/* Node: RETURN — left */}
+                <circle cx="30" cy="160" r="22" fill="#131313" stroke="rgba(196,236,206,0.5)" strokeWidth="1" />
+                <text x="30" y="156" textAnchor="middle" fill="#b4cad6" fontSize="7" fontFamily="var(--font-space-grotesk)" letterSpacing="1" fontWeight="600">REPAY</text>
+                <text x="30" y="167" textAnchor="middle" fill="#737373" fontSize="6.5" fontFamily="var(--font-space-grotesk)">voluntary</text>
+
+                {/* Center label */}
+                <text x="160" y="153" textAnchor="middle" fill="#e5e2e1" fontSize="18" fontFamily="var(--font-noto-serif)" fontWeight="700">無尽</text>
+                <text x="160" y="170" textAnchor="middle" fill="rgba(196,236,206,0.4)" fontSize="6" fontFamily="var(--font-space-grotesk)" letterSpacing="2">RECYCLABLE</text>
+              </svg>
             </div>
           </div>
         </section>
@@ -337,6 +337,69 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── Community ─────────────────────────────────────────────────────── */}
+        <section
+          className="py-20 px-8 md:px-16"
+          style={{ backgroundColor: "#111412", borderTop: "1px solid rgba(196,236,206,0.06)" }}
+        >
+          <div className="max-w-3xl mb-14">
+            <p className="text-[10px] uppercase tracking-[0.3em] mb-4" style={{ color: "#C4ECCE" }}>
+              Community
+            </p>
+            <h2 className="text-3xl md:text-4xl leading-snug mb-4" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+              Social collateral is the new credit score.
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: "#737373" }}>
+              Mujin is not a lending platform. It is a community of practice — where accountability, mentorship, and shared story become the foundation for financial access.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.1)" }}>
+            {[
+              {
+                icon: "church",
+                title: "Ministry Network",
+                body: "Rooted in Japan's ministry ecosystem. Church leaders and community organizations are the connective tissue — vouching for students and walking alongside them.",
+                tag: "Trust anchor",
+              },
+              {
+                icon: "handshake",
+                title: "Peer Mentorship",
+                body: "Every student is paired with a mentor from day one. Bi-weekly check-ins build the transparency and responsiveness signals that define the trust score.",
+                tag: "Bi-weekly",
+              },
+              {
+                icon: "forum",
+                title: "Town Halls",
+                body: "Monthly gatherings where the cohort reflects together — on progress, struggle, and what it means to build a life with integrity. Accountability made human.",
+                tag: "Monthly",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-8"
+                style={{ backgroundColor: "#131313" }}
+              >
+                <span className="material-symbols-outlined mb-6 block text-3xl" style={{ color: "#A9D0B3" }}>
+                  {item.icon}
+                </span>
+                <h3 className="text-sm font-bold tracking-widest uppercase mb-3" style={{ fontFamily: SG, color: "#e5e2e1" }}>
+                  {item.title}
+                </h3>
+                <p className="text-xs leading-relaxed mb-6" style={{ color: "#737373" }}>
+                  {item.body}
+                </p>
+                <span
+                  className="text-[9px] uppercase tracking-widest px-2 py-1"
+                  style={{ border: "1px solid rgba(196,236,206,0.15)", color: "#A9D0B3" }}
+                >
+                  {item.tag}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── Technical Readout ─────────────────────────────────────────────── */}
         <section
           className="py-12 px-8 md:px-16"
@@ -387,6 +450,12 @@ export default function HomePage() {
             <Link href="/program" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
               The Program
             </Link>
+            <Link href="/protocols" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
+              Protocols
+            </Link>
+            <Link href="/lattice" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
+              Lattice
+            </Link>
             <a
               href={APPLY_URL}
               target="_blank"
@@ -396,9 +465,6 @@ export default function HomePage() {
             >
               Apply
             </a>
-            <Link href="/about" className="transition-colors hover:text-[#A9D0B3]" style={{ color: "#525252" }}>
-              About
-            </Link>
           </div>
         </footer>
       </main>
