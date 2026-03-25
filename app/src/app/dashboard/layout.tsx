@@ -62,7 +62,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/" className="text-base font-semibold tracking-tight text-gray-900">
+            <Link
+              href={isAdmin ? "/dashboard/admin" : isMentor ? "/dashboard/mentor" : isAlumni ? "/dashboard/alumni" : "/dashboard/student"}
+              className="text-base font-semibold tracking-tight text-gray-900"
+            >
               Mujin
             </Link>
             {isStudent && (
