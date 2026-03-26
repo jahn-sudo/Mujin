@@ -3,1076 +3,489 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const SG = "var(--font-space-grotesk), sans-serif";
-const NS = "var(--font-noto-serif), serif";
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+const C = {
+  background:              "#f9f9f9",
+  surfaceContainerLowest:  "#ffffff",
+  surfaceContainerLow:     "#f2f4f4",
+  surfaceContainer:        "#ebeeef",
+  surfaceContainerHigh:    "#e4e9ea",
+  surfaceContainerHighest: "#dde4e5",
+  onBackground:            "#2d3435",
+  onSurface:               "#2d3435",
+  onSurfaceVariant:        "#5a6061",
+  outline:                 "#757c7d",
+  outlineVariant:          "#adb3b4",
+  primary:                 "#465f88",
+  primaryContainer:        "#d6e3ff",
+  onPrimary:               "#f6f7ff",
+  onPrimaryContainer:      "#39527b",
+  secondary:               "#486558",
+  secondaryContainer:      "#c9ead9",
+  onSecondaryContainer:    "#3a584b",
+} as const;
 
-// ── Static demo data ───────────────────────────────────────────────────────────
+const SG  = "var(--font-space-grotesk), sans-serif";
+const NS  = "var(--font-noto-serif), serif";
+const IBM = "var(--font-ibm-mono), monospace";
 
-const STUDENT_DATA = {
-  name: "kai.watanabe",
-  venture: "KaiKitchen",
-  cohort: "Cohort A — Spring 2027",
-  trustScore: {
-    score: 82,
-    label: "GREEN",
-    month: "2027-03",
-    responsivenessRaw: 94,
-    transparencyRaw: 78,
-    mutualismRaw: 62,
-    reflectionRaw: 88,
-  },
-  graduation: {
-    ventureExists: true,
-    grantReceived: true,
-    cashFlowStreak: 3,
-    greenStreak: 4,
-    exitInterviewStatus: "INELIGIBLE",
-  },
-  upcoming: [
-    { label: "P&L Due",   date: "2027.04.01 // 23:59", color: "#FFDDB4" },
-    { label: "Town Hall", date: "2027.04.02 // 18:30", color: "#C4ECCE" },
-  ],
-  group: [
-    { id: "USER_771", label: "You",    score: 82, color: "#C4ECCE", isMe: true },
-    { id: "NODE_[A]", label: "NODE_A", score: 79, color: "#b4cad6", isMe: false },
-    { id: "NODE_[B]", label: "NODE_B", score: 88, color: "#b4cad6", isMe: false },
-    { id: "NODE_[C]", label: "NODE_C", score: 64, color: "#FFDDB4", isMe: false },
-    { id: "NODE_[D]", label: "NODE_D", score: 91, color: "#C4ECCE", isMe: false },
-  ],
-};
+const NAV_LINKS = [
+  { label: "Program",    href: "/program" },
+  { label: "Leadership", href: "/team"    },
+  { label: "Network",    href: "/alumni"  },
+  { label: "Mission",    href: "/about"   },
+  { label: "FAQ",        href: "/faq"     },
+  { label: "Partners",   href: "/partners" },
+];
 
-const COHORT_DATA = {
-  name: "Cohort A — Spring 2027",
-  students: [
-    { id: "s1", name: "tanaka.r",  venture: "MedLink AI",  category: "HEALTHTECH",    score: 91, label: "GREEN",  attendance: { attended: 11, total: 12 } },
-    { id: "s2", name: "kim.j",     venture: "YenWise",     category: "FINTECH",       score: 82, label: "GREEN",  attendance: { attended: 10, total: 12 } },
-    { id: "s3", name: "liu.m",     venture: "EduBridge",   category: "EDTECH",        score: 67, label: "YELLOW", attendance: { attended: 8,  total: 12 } },
-    { id: "s4", name: "patel.a",   venture: "ShokuNow",    category: "FOOD_BEVERAGE", score: 78, label: "GREEN",  attendance: { attended: 9,  total: 12 } },
-    { id: "s5", name: "santos.e",  venture: "CraftHub",    category: "CREATIVE_MEDIA",score: 44, label: "RED",    attendance: { attended: 6,  total: 12 } },
-  ],
-};
-
-const MENTOR_DATA = {
-  name: "Cohort A — Spring 2027",
-  sessions: [
-    { id: "cs3", date: "2027.04.02", note: "Q2 kickoff check-in",    submitted: false, upcoming: true },
-    { id: "cs1", date: "2027.03.19", note: "March mid-month",         submitted: true,  upcoming: false },
-    { id: "cs2", date: "2027.03.05", note: "March early check-in",    submitted: true,  upcoming: false },
-  ],
-  students: [
-    {
-      id: "s1", name: "tanaka.r", venture: "MedLink AI", category: "HEALTHTECH", score: 91, label: "GREEN",
-      attendance: { attended: 11, total: 12 },
-      notes: [
-        {
-          id: "n1", date: "2027.03.19",
-          agenda: "Discussed user onboarding funnel and drop-off at step 3.",
-          actions: "A/B test two onboarding variants by Apr 2. Reach out to 5 potential beta users.",
-          reflection: "I realised I've been building features users didn't ask for. This week I'm going to interview 3 users before writing any more code.",
-          grade: { rating: 5, feedback: "Outstanding self-awareness. Action items are specific and measurable." },
-        },
-      ],
-    },
-    {
-      id: "s2", name: "kim.j", venture: "YenWise", category: "FINTECH", score: 82, label: "GREEN",
-      attendance: { attended: 10, total: 12 },
-      notes: [],
-    },
-    {
-      id: "s3", name: "liu.m", venture: "EduBridge", category: "EDTECH", score: 67, label: "YELLOW",
-      attendance: { attended: 8, total: 12 },
-      notes: [
-        {
-          id: "n2", date: "2027.03.19",
-          agenda: "Platform roadmap for Q2. Discussed teacher acquisition strategy.",
-          actions: "Cold email 20 teachers. Set up a simple landing page for teacher sign-ups.",
-          reflection: "Feeling overwhelmed. Hard to balance product work and business development at the same time.",
-          grade: null,
-        },
-      ],
-    },
-    {
-      id: "s4", name: "patel.a", venture: "ShokuNow", category: "FOOD_BEVERAGE", score: 78, label: "GREEN",
-      attendance: { attended: 9, total: 12 },
-      notes: [],
-    },
-    {
-      id: "s5", name: "santos.e", venture: "CraftHub", category: "CREATIVE_MEDIA", score: 44, label: "RED",
-      attendance: { attended: 6, total: 12 },
-      notes: [
-        {
-          id: "n3", date: "2027.03.19",
-          agenda: "No clear agenda set before session.",
-          actions: "Define one goal for April. Write it down and share before next session.",
-          reflection: "Did not submit.",
-          grade: null,
-        },
-      ],
-    },
-  ],
-};
-
-// ── Sub-components ─────────────────────────────────────────────────────────────
-
-const CIRC = 2 * Math.PI * 84; // ≈ 527.8
-
-function TrustGauge({ score, color = "#C4ECCE" }: { score: number; color?: string }) {
-  const offset = CIRC * (1 - score / 100);
+/* ── Traffic light ─────────────────────────────────────────────────────────── */
+function TrafficDot({ label, score, size = "sm" }: { label: string; score?: number | null; size?: "sm" | "lg" }) {
+  const color =
+    label === "GREEN"  ? "#16a34a" :
+    label === "YELLOW" ? "#ca8a04" :
+    label === "RED"    ? "#dc2626" : "#9ca3af";
+  const dot = size === "lg" ? 14 : 9;
   return (
-    <div
-      className="relative w-48 h-48 flex items-center justify-center flex-shrink-0"
-      style={{ borderRadius: "50%", border: "12px solid #2a2a2a" }}
-    >
-      <svg className="absolute inset-0 w-full h-full" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx="96" cy="96" r="84" fill="none"
-          stroke={color}
-          strokeDasharray={CIRC}
-          strokeDashoffset={offset}
-          strokeWidth="12"
-          strokeLinecap="butt"
-        />
-      </svg>
-      <div className="text-center relative z-10">
-        <span className="block text-6xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+    <div className="flex items-center gap-2">
+      <div style={{ width: dot, height: dot, borderRadius: "9999px", backgroundColor: color, flexShrink: 0 }} />
+      {score != null && (
+        <span style={{ fontFamily: IBM, fontWeight: 700, color: C.onSurface, fontSize: size === "lg" ? 28 : 13 }}>
           {score}
         </span>
-        <span className="block text-[10px] tracking-widest uppercase mt-1" style={{ color, fontFamily: SG }}>
-          Trust Score
-        </span>
+      )}
+    </div>
+  );
+}
+
+function ScoreRow({ label, value }: { label: string; value: number }) {
+  const pct = Math.min(100, (value / 25) * 100);
+  const barColor =
+    value < 12.5 ? "#dc2626" :   // red
+    value < 18.75 ? "#ca8a04" :  // yellow
+    "#166534";                    // green
+  return (
+    <div className="flex items-center gap-3">
+      <span className="w-28 text-xs shrink-0" style={{ color: C.onSurfaceVariant, fontFamily: SG }}>{label}</span>
+      <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: C.surfaceContainerHigh }}>
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: barColor }} />
+      </div>
+      <span className="w-8 text-right text-xs" style={{ color: barColor, fontFamily: IBM, fontWeight: 600 }}>{value}</span>
+    </div>
+  );
+}
+
+function DemoBanner() {
+  return (
+    <div className="flex items-center gap-3 px-4 py-3 rounded-xl"
+      style={{ backgroundColor: C.surfaceContainerHigh, border: `1px solid ${C.outlineVariant}40` }}>
+      <span className="text-xs font-bold tracking-widest uppercase" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>Demo</span>
+      <p className="text-sm" style={{ color: C.onSurfaceVariant }}>
+        This is simulated data. No login required. Real dashboards require an account.
+      </p>
+    </div>
+  );
+}
+
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-xl p-6 ${className}`}
+      style={{ backgroundColor: C.surfaceContainerLowest, border: `1px solid ${C.outlineVariant}20` }}>
+      {children}
+    </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-semibold uppercase tracking-widest mb-3"
+      style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>
+      {children}
+    </p>
+  );
+}
+
+/* ── Admin Demo View ───────────────────────────────────────────────────────── */
+
+const ADMIN_COHORTS = [
+  {
+    name: "Cohort Alpha",
+    students: [
+      { name: "kai.watanabe",   venture: "PayRoute",    label: "YELLOW", score: 65, grad: "INELIGIBLE" },
+      { name: "yuki.tanaka",    venture: "SoilSense",   label: "GREEN",  score: 81, grad: "ELIGIBLE" },
+      { name: "lena.fischer",   venture: "StudyBridge", label: "GREEN",  score: 76, grad: "INELIGIBLE" },
+      { name: "omar.hassan",    venture: "HalalEats",   label: "YELLOW", score: 62, grad: "INELIGIBLE" },
+      { name: "sofia.martins",  venture: "ArtPass",     label: "GREEN",  score: 79, grad: "INELIGIBLE" },
+    ],
+  },
+  {
+    name: "Cohort Beta",
+    students: [
+      { name: "nana.kobayashi", venture: "TsunagiNet",  label: "RED",    score: 38, grad: "INELIGIBLE" },
+      { name: "arjun.mehta",    venture: "ClimaCheck",  label: "YELLOW", score: 58, grad: "INELIGIBLE" },
+      { name: "mei.chen",       venture: "NoteFlow",    label: "GREEN",  score: 83, grad: "INELIGIBLE" },
+      { name: "pedro.silva",    venture: "MoveLink",    label: "RED",    score: 41, grad: "INELIGIBLE" },
+      { name: "yuna.park",      venture: "KoreaTaste",  label: "GREEN",  score: 77, grad: "INELIGIBLE" },
+    ],
+  },
+];
+
+const NEEDS_ATTENTION = [
+  { name: "nana.kobayashi", cohort: "Cohort Beta",  venture: "TsunagiNet",  label: "RED",    score: 38 },
+  { name: "pedro.silva",    cohort: "Cohort Beta",  venture: "MoveLink",    label: "RED",    score: 41 },
+];
+
+type AdminStudent = typeof ADMIN_COHORTS[0]["students"][0];
+
+function AdminView() {
+  const [selected, setSelected] = useState<AdminStudent | null>(null);
+
+  const allStudents = ADMIN_COHORTS.flatMap((c) => c.students);
+  const green  = allStudents.filter((s) => s.label === "GREEN").length;
+  const yellow = allStudents.filter((s) => s.label === "YELLOW").length;
+  const red    = allStudents.filter((s) => s.label === "RED").length;
+
+  if (selected) {
+    return (
+      <div className="space-y-5">
+        <DemoBanner />
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-lg font-semibold" style={{ color: C.onSurface }}>{selected.name}</h2>
+            <p className="text-sm mt-0.5" style={{ color: C.onSurfaceVariant }}>
+              {selected.venture}
+              <span className="ml-2 text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: C.surfaceContainer, color: C.onSurfaceVariant, fontFamily: IBM }}>
+                {selected.grad}
+              </span>
+            </p>
+          </div>
+          <button onClick={() => setSelected(null)} className="text-sm" style={{ color: C.onSurfaceVariant }}>← Back</button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Card>
+            <SectionLabel>Trust Score</SectionLabel>
+            <TrafficDot label={selected.label} score={selected.score} size="lg" />
+            <div className="mt-4 space-y-2">
+              <ScoreRow label="Responsiveness" value={Math.round(selected.score * 0.27)} />
+              <ScoreRow label="Transparency"   value={Math.round(selected.score * 0.25)} />
+              <ScoreRow label="Mutualism"       value={Math.round(selected.score * 0.24)} />
+              <ScoreRow label="Reflection"      value={Math.round(selected.score * 0.24)} />
+            </div>
+          </Card>
+          <Card>
+            <SectionLabel>Attendance</SectionLabel>
+            <p className="text-3xl font-bold" style={{ fontFamily: IBM, color: C.onSurface }}>
+              {selected.label === "RED" ? "50%" : selected.label === "YELLOW" ? "75%" : "92%"}
+            </p>
+            <p className="text-xs mt-1" style={{ color: C.onSurfaceVariant }}>of bi-weekly check-ins attended</p>
+          </Card>
+        </div>
+
+        <Card>
+          <SectionLabel>P&L History</SectionLabel>
+          <ul className="space-y-1.5 text-sm">
+            {["2027-01", "2027-02", "2027-03"].map((month, i) => {
+              const net = selected.label === "RED" ? [-12000, -8000, -15000][i] : [42000, 67000, 55000][i];
+              return (
+                <li key={month} className="flex items-center justify-between">
+                  <span style={{ fontFamily: IBM, color: C.onSurfaceVariant }}>{month}</span>
+                  <span style={{ color: net >= 0 ? "#16a34a" : "#dc2626", fontFamily: IBM, fontWeight: 600 }}>
+                    ¥{net.toLocaleString()}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <DemoBanner />
+      <h2 className="text-lg font-semibold" style={{ color: C.onSurface }}>Admin Dashboard</h2>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Card>
+          <SectionLabel>Needs Attention</SectionLabel>
+          <ul className="space-y-2">
+            {NEEDS_ATTENTION.map((s) => (
+              <li key={s.name} className="flex items-center justify-between text-sm">
+                <div>
+                  <button onClick={() => setSelected(ADMIN_COHORTS.flatMap(c=>c.students).find(x=>x.name===s.name)!)}
+                    className="font-medium hover:underline text-left" style={{ color: C.onSurface }}>
+                    {s.name}
+                  </button>
+                  <span className="ml-1.5 text-xs" style={{ color: C.onSurfaceVariant }}>· {s.cohort}</span>
+                </div>
+                <TrafficDot label={s.label} score={s.score} />
+              </li>
+            ))}
+          </ul>
+        </Card>
+        <Card>
+          <SectionLabel>Actions Due</SectionLabel>
+          <ul className="space-y-2 text-sm divide-y" style={{ borderColor: C.outlineVariant + "20" }}>
+            <li className="pt-2 first:pt-0 flex items-center justify-between">
+              <span style={{ color: C.onSurface }}>P&L Reviews Pending</span>
+              <span className="px-2 py-0.5 rounded text-xs" style={{ fontFamily: IBM, backgroundColor: C.surfaceContainerHigh, color: C.onSurface }}>7</span>
+            </li>
+            <li className="pt-2" style={{ color: C.onSurfaceVariant }}>Next check-in: Cohort Alpha — Apr 2, 2027</li>
+            <li className="pt-2" style={{ color: C.onSurfaceVariant }}>2 students in RED — review required</li>
+          </ul>
+        </Card>
+      </div>
+
+      <Card>
+        <SectionLabel>All Students by Cohort</SectionLabel>
+        <div className="space-y-5">
+          {ADMIN_COHORTS.map((cohort) => (
+            <div key={cohort.name}>
+              <p className="text-xs font-medium uppercase mb-2" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>{cohort.name}</p>
+              <div className="flex flex-wrap gap-2">
+                {cohort.students.map((s) => (
+                  <button key={s.name} onClick={() => setSelected(s)}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors"
+                    style={{ border: `1px solid ${C.outlineVariant}30`, backgroundColor: C.surfaceContainerLow }}>
+                    <span className="text-xs font-medium" style={{ color: C.onSurface }}>{s.name.split(".")[0]}</span>
+                    <TrafficDot label={s.label} score={s.score} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: "Total Students", value: String(allStudents.length), color: C.primary },
+          { label: "Green",  value: String(green),  color: "#16a34a" },
+          { label: "Yellow", value: String(yellow), color: "#ca8a04" },
+          { label: "Red",    value: String(red),    color: "#dc2626" },
+        ].map((stat) => (
+          <Card key={stat.label} className="text-center">
+            <p className="text-2xl font-bold" style={{ fontFamily: IBM, color: stat.color }}>{stat.value}</p>
+            <p className="text-xs mt-1" style={{ color: C.onSurfaceVariant }}>{stat.label}</p>
+          </Card>
+        ))}
       </div>
     </div>
   );
 }
 
-function ScoreRow({ label, value, color = "#C4ECCE" }: { label: string; value: number; color?: string }) {
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-[10px] uppercase tracking-wider" style={{ fontFamily: SG }}>
-        <span style={{ color: "#b4cad6" }}>{label}</span>
-        <span style={{ color }}>{value}%</span>
-      </div>
-      <div className="h-1" style={{ backgroundColor: "#353534" }}>
-        <div className="h-full transition-all" style={{ width: `${value}%`, backgroundColor: color }} />
-      </div>
-    </div>
-  );
-}
+/* ── Student Demo View ─────────────────────────────────────────────────────── */
 
-function CheckRow({
-  checked,
-  label,
-  note,
-}: {
-  checked: boolean;
-  label: string;
-  note: string;
-}) {
+function CheckItem({ checked, label }: { checked: boolean; label: string }) {
   return (
-    <li className="flex items-start gap-4">
-      <div
-        className="w-5 h-5 flex-shrink-0 flex items-center justify-center mt-0.5"
-        style={{
-          border: checked ? "1px solid #C4ECCE" : "1px solid rgba(180,202,214,0.4)",
-          backgroundColor: checked ? "rgba(196,236,206,0.2)" : "transparent",
-        }}
-      >
-        {checked && (
-          <span className="material-symbols-outlined text-xs" style={{ color: "#C4ECCE", fontSize: "12px" }}>
-            check
-          </span>
+    <li className="flex items-start gap-2.5">
+      <span className="mt-0.5 shrink-0">
+        {checked ? (
+          <svg className="w-4 h-4" style={{ color: "#16a34a" }} viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7.5" stroke="currentColor" strokeWidth="1" />
+            <path d="M4.5 8.5L6.5 10.5L11.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <svg className="w-4 h-4" style={{ color: C.outlineVariant }} viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7.5" stroke="currentColor" strokeWidth="1" />
+          </svg>
         )}
-      </div>
-      <div className={checked ? "" : "opacity-60"}>
-        <p className="text-sm" style={{ color: "#e5e2e1", fontFamily: SG }}>
-          {label}
-        </p>
-        <p className="text-[9px] uppercase tracking-widest mt-0.5" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-          {note}
-        </p>
-      </div>
+      </span>
+      <span className="text-sm" style={{ color: checked ? C.onSurface : C.onSurfaceVariant }}>{label}</span>
     </li>
   );
 }
 
-function labelColor(label: string) {
-  if (label === "GREEN")  return "#C4ECCE";
-  if (label === "YELLOW") return "#FFDDB4";
-  return "#ffb4ab";
-}
+const KAI = {
+  name: "kai.watanabe",
+  venture: "PayRoute",
+  cohort: "Cohort Alpha",
+  score: { value: 65, label: "YELLOW", month: "2027-03", responsiveness: 23, transparency: 8, mutualism: 20, reflection: 14 },
+  grad: { ventureExists: true, cashFlowStreak: 3, greenStreak: 4, interviewStatus: "INELIGIBLE" },
+  group: [
+    { initial: "K", label: "YELLOW", score: 65, isMe: true },
+    { initial: "Y", label: "GREEN",  score: 81, isMe: false },
+    { initial: "L", label: "GREEN",  score: 76, isMe: false },
+    { initial: "O", label: "YELLOW", score: 62, isMe: false },
+    { initial: "S", label: "GREEN",  score: 79, isMe: false },
+  ],
+};
 
-// ── Town Hall Form ─────────────────────────────────────────────────────────────
-
-function TownHallForm({ onBack }: { onBack: () => void }) {
-  const peers = STUDENT_DATA.group.filter((m) => !m.isMe);
-  const [attendeeIds, setAttendeeIds] = useState<string[]>([]);
-  const [reflectionText, setReflectionText] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const wordCount = reflectionText.trim().split(/\s+/).filter(Boolean).length;
-
-  if (submitted) {
-    return (
-      <div className="space-y-8">
-        <div
-          className="p-8 text-center space-y-4"
-          style={{ backgroundColor: "rgba(196,236,206,0.05)", border: "1px solid rgba(196,236,206,0.2)" }}
-        >
-          <span className="material-symbols-outlined text-4xl block" style={{ color: "#C4ECCE" }}>check_circle</span>
-          <p className="font-bold tracking-widest uppercase text-sm" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Submission_Received
-          </p>
-          <p className="text-sm" style={{ color: "#b4cad6", fontFamily: SG }}>
-            Your reflection will be assessed for quality by the Trust Engine. Anonymity preserved.
-          </p>
-        </div>
-        <button
-          onClick={onBack}
-          className="text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
-          style={{ color: "#b4cad6", fontFamily: SG }}
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back to Dashboard
-        </button>
-        <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.3)", fontFamily: SG }}>
-          Demo only — no data was saved.
-        </p>
-      </div>
-    );
-  }
-
+function StudentView() {
   return (
-    <div className="space-y-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <span className="text-[10px] uppercase tracking-[0.3em] block mb-2" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Monthly Reporting // Town Hall
-          </span>
-          <h2 className="text-3xl font-bold tracking-tighter" style={{ fontFamily: NS }}>
-            Submit Town Hall
-          </h2>
-        </div>
-        <button
-          onClick={onBack}
-          className="text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
-          style={{ color: "#b4cad6", fontFamily: SG }}
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back
-        </button>
+    <div className="space-y-5">
+      <DemoBanner />
+      <div>
+        <h2 className="text-lg font-semibold" style={{ color: C.onSurface }}>{KAI.name} — {KAI.venture}</h2>
+        <p className="text-sm mt-0.5" style={{ color: C.onSurfaceVariant }}>{KAI.cohort}</p>
       </div>
 
-      <form
-        onSubmit={(e) => { e.preventDefault(); if (wordCount >= 50) setSubmitted(true); }}
-        className="space-y-6"
-      >
-        {/* Attendance */}
-        <div className="p-6 space-y-4" style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid rgba(196,236,206,0.2)" }}>
-          <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Part_01 — Attendance
-          </h3>
-          <p className="text-xs" style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}>
-            Mark which group members attended the Town Hall today.
-          </p>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-4 h-4 flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: "#C4ECCE" }}
-              >
-                <span className="material-symbols-outlined" style={{ color: "#143723", fontSize: "10px" }}>check</span>
-              </div>
-              <span className="text-sm font-bold" style={{ color: "#C4ECCE", fontFamily: SG }}>
-                You — kai.watanabe
-              </span>
-            </div>
-            {peers.map((member) => (
-              <label key={member.id} className="flex items-center gap-3 cursor-pointer group">
-                <div
-                  className="w-4 h-4 flex items-center justify-center flex-shrink-0 transition-all"
-                  style={{
-                    border: "1px solid rgba(180,202,214,0.3)",
-                    backgroundColor: attendeeIds.includes(member.id) ? "rgba(196,236,206,0.2)" : "transparent",
-                  }}
-                >
-                  {attendeeIds.includes(member.id) && (
-                    <span className="material-symbols-outlined" style={{ color: "#C4ECCE", fontSize: "10px" }}>check</span>
-                  )}
-                </div>
-                <input
-                  type="checkbox"
-                  checked={attendeeIds.includes(member.id)}
-                  onChange={() =>
-                    setAttendeeIds((prev) =>
-                      prev.includes(member.id) ? prev.filter((x) => x !== member.id) : [...prev, member.id]
-                    )
-                  }
-                  className="sr-only"
-                />
-                <span className="text-sm" style={{ color: "#b4cad6", fontFamily: SG }}>{member.id}</span>
-              </label>
-            ))}
-          </div>
-          <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-            {attendeeIds.length + 1} of {STUDENT_DATA.group.length} members marked present.
-          </p>
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <SectionLabel>Trust Score</SectionLabel>
+          <span className="text-xs" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>{KAI.score.month}</span>
         </div>
-
-        {/* Reflection */}
-        <div className="p-6 space-y-4" style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid rgba(196,236,206,0.2)" }}>
-          <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Part_02 — Monthly Reflection
-          </h3>
-          <p className="text-xs" style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}>
-            What did you learn, struggle with, or discover this month? Minimum 50 words.
-          </p>
-          <textarea
-            value={reflectionText}
-            onChange={(e) => setReflectionText(e.target.value)}
-            rows={6}
-            className="w-full px-4 py-3 text-sm resize-none focus:outline-none"
-            placeholder="Write your reflection here..."
-            style={{
-              backgroundColor: "#131313",
-              border: "1px solid rgba(66,72,66,0.4)",
-              color: "#e5e2e1",
-              fontFamily: SG,
-            }}
-          />
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-widest" style={{ fontFamily: SG }}>
-            <span style={{ color: wordCount >= 50 ? "#C4ECCE" : "rgba(180,202,214,0.4)" }}>
-              {wordCount} words
-            </span>
-            {wordCount >= 50 && <span style={{ color: "#C4ECCE" }}>Minimum_Met</span>}
-          </div>
+        <div className="flex items-center gap-3 mb-4">
+          <TrafficDot label={KAI.score.label} score={KAI.score.value} size="lg" />
         </div>
-
-        <div className="space-y-3">
-          <button
-            type="submit"
-            disabled={wordCount < 50}
-            className="w-full py-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: wordCount >= 50 ? "#C4ECCE" : "#353534",
-              color: wordCount >= 50 ? "#143723" : "#b4cad6",
-              fontFamily: SG,
-            }}
-          >
-            Submit_Report
-          </button>
-          <p className="text-[10px] text-center uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.3)", fontFamily: SG }}>
-            Demo only — no data will be saved.
-          </p>
+        <div className="space-y-2 pt-2">
+          <ScoreRow label="Responsiveness" value={KAI.score.responsiveness} />
+          <ScoreRow label="Transparency"   value={KAI.score.transparency} />
+          <ScoreRow label="Mutualism"       value={KAI.score.mutualism} />
+          <ScoreRow label="Reflection"      value={KAI.score.reflection} />
         </div>
-      </form>
-    </div>
-  );
-}
+      </Card>
 
-// ── Student View ───────────────────────────────────────────────────────────────
-
-function StudentView({ onRoleChange }: { onRoleChange: (r: Role) => void }) {
-  const [showTownHall, setShowTownHall] = useState(false);
-  const { trustScore, graduation, group, upcoming } = STUDENT_DATA;
-
-  if (showTownHall) {
-    return (
-      <div className="relative overflow-hidden seigaiha-pattern p-8 lg:p-12 min-h-screen">
-        <TownHallForm onBack={() => setShowTownHall(false)} />
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative overflow-hidden seigaiha-pattern p-8 lg:p-12">
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-          <div className="max-w-2xl space-y-4">
-            <span
-              className="text-[10px] tracking-[0.3em] uppercase block"
-              style={{ color: "#C4ECCE", fontFamily: SG }}
-            >
-              System Interface
-            </span>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight" style={{ fontFamily: NS }}>
-              Interactive Demo
-            </h1>
-            <p className="text-lg font-light leading-relaxed" style={{ color: "#b4cad6" }}>
-              Explore the platform from every angle —{" "}
-              <em style={{ color: "#C4ECCE" }}>no login required.</em> Access administrative nodes or
-              track operational metrics in real-time.
-            </p>
-          </div>
-          {/* Role selector */}
-          <div className="flex p-1" style={{ backgroundColor: "#201f1f" }}>
-            <button
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all"
-              style={{ backgroundColor: "#C4ECCE", color: "#143723", fontFamily: SG }}
-            >
-              Student
-            </button>
-            <button
-              onClick={() => onRoleChange("mentor")}
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:text-[#C4ECCE]"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Mentor
-            </button>
-            <button
-              onClick={() => onRoleChange("admin")}
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:text-[#C4ECCE]"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Admin
-            </button>
-          </div>
-        </div>
-        <div
-          className="mt-8 p-4 max-w-lg"
-          style={{ backgroundColor: "rgba(196,236,206,0.05)", borderLeft: "2px solid rgba(196,236,206,0.3)" }}
-        >
-          <p className="text-[11px] tracking-wider uppercase" style={{ color: "#A9D0B3", fontFamily: SG }}>
-            Current View: Student. Track your trust score, submit reflections, and monitor graduation progress.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Bento Grid ──────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-12 gap-6">
-
-        {/* Trust Score Module */}
-        <div
-          className="col-span-12 lg:col-span-8 p-8 relative overflow-hidden"
-          style={{ backgroundColor: "#201f1f" }}
-        >
-          <div
-            className="absolute top-0 right-0 p-4 text-[10px]"
-            style={{ color: "rgba(180,202,214,0.2)", fontFamily: SG }}
-          >
-            MODULE_01 // METRIC_DENSITY
-          </div>
-          <div className="flex flex-col md:flex-row gap-12 items-center">
-            <TrustGauge score={trustScore.score} />
-            <div className="flex-1 w-full space-y-6">
-              <h3 className="text-xl" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-                System Vitality Indicators
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                <ScoreRow label="Responsiveness" value={trustScore.responsivenessRaw} />
-                <ScoreRow label="Transparency"   value={trustScore.transparencyRaw} />
-                <ScoreRow label="Mutualism"       value={trustScore.mutualismRaw} />
-                <ScoreRow label="Reflection"      value={trustScore.reflectionRaw} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Graduation Checklist */}
-        <div
-          className="col-span-12 lg:col-span-4 p-8"
-          style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid rgba(196,236,206,0.1)" }}
-        >
-          <h3
-            className="text-sm font-bold tracking-[0.2em] uppercase flex items-center gap-3 mb-8"
-            style={{ color: "#C4ECCE", fontFamily: SG }}
-          >
-            <span className="material-symbols-outlined text-sm">terminal</span>
-            Technical Milestones
-          </h3>
-          <ul className="space-y-6">
-            <CheckRow
-              checked={graduation.ventureExists}
-              label="Company incorporated"
-              note="Registered // Tokyo-03"
-            />
-            <CheckRow
-              checked={graduation.grantReceived}
-              label="Grant tranche received"
-              note="Verified // Ledger_Entry"
-            />
-            <CheckRow
-              checked={graduation.cashFlowStreak >= 3}
-              label={`3 months non-negative cash flow`}
-              note={`Streak: ${graduation.cashFlowStreak} / 3 months`}
-            />
-            <CheckRow
-              checked={graduation.exitInterviewStatus === "INTERVIEW_PASSED" || graduation.exitInterviewStatus === "GRADUATED"}
-              label="Exit interview passed"
-              note="Phase: Locked"
-            />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Card>
+          <SectionLabel>Graduation Progress</SectionLabel>
+          <ul className="space-y-2">
+            <CheckItem checked={KAI.grad.ventureExists}         label="Company incorporated + product live" />
+            <CheckItem checked={KAI.grad.cashFlowStreak >= 3}   label={`3 mo non-negative cash flow (${KAI.grad.cashFlowStreak} mo streak)`} />
+            <CheckItem checked={KAI.grad.greenStreak >= 6}      label={`6 consecutive Green months (${KAI.grad.greenStreak} mo)`} />
+            <CheckItem checked={false}                          label="Exit interview passed" />
           </ul>
-        </div>
-
-        {/* Calendar Feed */}
-        <div
-          className="col-span-12 lg:col-span-3 p-6"
-          style={{ backgroundColor: "#201f1f" }}
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h3
-              className="text-[10px] tracking-[0.2em] uppercase"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Calendar_Feed
-            </h3>
-            <span className="material-symbols-outlined text-sm" style={{ color: "#FFDDB4" }}>schedule</span>
+          <div className="mt-4 px-3 py-2 rounded-lg text-xs" style={{ backgroundColor: C.secondaryContainer, color: C.onSecondaryContainer, fontFamily: IBM }}>
+            Status: INTERVIEW_SCHEDULED
           </div>
-          <div className="space-y-4">
-            {upcoming.map((item) => (
-              <div
-                key={item.label}
-                className="p-4 transition-colors cursor-pointer"
-                style={{ backgroundColor: "#353534" }}
-              >
-                <span
-                  className="block text-[10px] mb-1"
-                  style={{ color: item.color, fontFamily: SG }}
-                >
-                  {item.date}
-                </span>
-                <p className="text-lg leading-tight" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-                  {item.label}
-                </p>
-              </div>
-            ))}
-            <button
-              onClick={() => setShowTownHall(true)}
-              className="w-full py-3 text-[10px] font-bold uppercase tracking-widest transition-all hover:opacity-80"
-              style={{ border: "1px solid rgba(196,236,206,0.2)", color: "#C4ECCE", fontFamily: SG }}
-            >
-              Submit Town Hall
-            </button>
-          </div>
-        </div>
-
-        {/* Lattice Comparison */}
-        <div
-          className="col-span-12 lg:col-span-9 p-8"
-          style={{ backgroundColor: "#1c1b1b" }}
-        >
-          <div className="flex justify-between items-end mb-8">
-            <div>
-              <h3 className="text-2xl italic" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-                Lattice Comparison
-              </h3>
-              <p
-                className="text-[10px] uppercase tracking-[0.2em] mt-1"
-                style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}
-              >
-                Peer_Group_Analysis // Operational_Sync
-              </p>
-            </div>
-            <span
-              className="text-[10px]"
-              style={{ color: "#C4ECCE", fontFamily: SG }}
-            >
-              SCANNING_NODES... [ONLINE]
-            </span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {group.map((member) => (
-              <div
-                key={member.id}
-                className="p-4 transition-all"
-                style={{
-                  backgroundColor: member.isMe ? "#2a2a2a" : "rgba(53,53,52,0.4)",
-                  borderLeft: member.isMe ? `4px solid ${member.color}` : "1px solid rgba(255,255,255,0.05)",
-                }}
-              >
-                <span
-                  className="block text-[9px] mb-3"
-                  style={{ color: member.isMe ? member.color : "#b4cad6", fontFamily: SG }}
-                >
-                  {member.isMe ? `#${member.id} (YOU)` : member.id}
-                </span>
-                <div
-                  className="text-3xl font-bold mb-4"
-                  style={{
-                    fontFamily: NS,
-                    color: "#e5e2e1",
-                    opacity: member.isMe ? 1 : 0.5,
-                  }}
-                >
-                  {member.score}
-                </div>
-                <div className="w-full h-1" style={{ backgroundColor: "#131313" }}>
-                  <div
-                    className="h-full"
-                    style={{ width: `${member.score}%`, backgroundColor: member.color }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer decoration */}
-        <div
-          className="col-span-12 flex flex-col md:flex-row gap-6 pt-8 mt-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
-        >
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="h-px flex-1" style={{ backgroundColor: "rgba(196,236,206,0.2)" }} />
-              <span
-                className="text-[10px] tracking-widest uppercase"
-                style={{ color: "#C4ECCE", fontFamily: SG }}
-              >
-                Legacy Protocol // 00-KYOTO-44
-              </span>
-              <span className="h-px flex-1" style={{ backgroundColor: "rgba(196,236,206,0.2)" }} />
-            </div>
-            <p
-              className="text-[11px] text-center uppercase tracking-widest"
-              style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}
-            >
-              All simulation data is ephemeral and cleared upon node disconnect. Version 1.0 Stable Build.
-            </p>
-          </div>
-        </div>
+        </Card>
+        <Card>
+          <SectionLabel>Upcoming</SectionLabel>
+          <ul className="space-y-3 text-sm divide-y" style={{ borderColor: C.outlineVariant + "20" }}>
+            <li className="pt-2 first:pt-0 flex items-center justify-between">
+              <span className="font-medium" style={{ color: C.onSurface }}>P&L Due</span>
+              <span className="text-xs" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>2027-04-01</span>
+            </li>
+            <li className="pt-2 flex items-center justify-between">
+              <span className="font-medium" style={{ color: C.onSurface }}>Town Hall</span>
+              <span className="text-xs" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>Apr 5, 2027</span>
+            </li>
+          </ul>
+        </Card>
       </div>
+
+      <Card>
+        <SectionLabel>My Group</SectionLabel>
+        <div className="flex flex-wrap gap-3">
+          {KAI.group.map((m, i) => (
+            <div key={i} className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg"
+              style={{ border: `1px solid ${m.isMe ? C.onSurface : C.outlineVariant + "30"}`, backgroundColor: m.isMe ? C.surfaceContainerHigh : C.surfaceContainerLowest }}>
+              <span className="text-xs font-medium" style={{ color: C.onSurface }}>{m.isMe ? "You" : `[${m.initial}]`}</span>
+              <TrafficDot label={m.label} score={m.score} />
+            </div>
+          ))}
+        </div>
+        <p className="text-xs mt-3" style={{ color: C.onSurfaceVariant }}>
+          Scores visible within your cohort group only.
+        </p>
+      </Card>
     </div>
   );
 }
 
-// ── Admin View ─────────────────────────────────────────────────────────────────
+/* ── Mentor Demo View ──────────────────────────────────────────────────────── */
 
-function AdminView({ onRoleChange }: { onRoleChange: (r: Role) => void }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const students = COHORT_DATA.students;
-  const selected = students.find((s) => s.id === selectedId) ?? null;
-  const green  = students.filter((s) => s.label === "GREEN").length;
-  const yellow = students.filter((s) => s.label === "YELLOW").length;
-  const red    = students.filter((s) => s.label === "RED").length;
+const MENTOR_COHORT = {
+  name: "Cohort Alpha — Spring 2027",
+  students: [
+    {
+      id: "s1", name: "tanaka.r", venture: "MedLink AI", category: "HEALTHTECH",
+      score: 91, label: "GREEN", attendance: { attended: 11, total: 12 },
+      notes: [
+        {
+          id: "n1", date: "2027-03-19",
+          agendaRecap: "Discussed user onboarding funnel and drop-off at step 3.",
+          actionItems: "A/B test two onboarding variants by Apr 2. Reach out to 5 potential beta users.",
+          reflection: "I realised I've been building features users didn't ask for. This week I'm going to interview 3 users before writing any more code.",
+          grade: { rating: 5, feedback: "Outstanding self-awareness. Action items are specific and measurable. Keep this up." },
+        },
+        {
+          id: "n2", date: "2027-03-05",
+          agendaRecap: "Revenue model review — freemium vs. subscription.",
+          actionItems: "Model out 12-month revenue for both options. Present comparison next session.",
+          reflection: "Struggling to decide on pricing. I need to talk to more hospitals before committing.",
+          grade: null,
+        },
+      ],
+    },
+    { id: "s2", name: "kim.j",    venture: "YenWise",  category: "FINTECH",        score: 82, label: "GREEN",  attendance: { attended: 10, total: 12 }, notes: [] },
+    { id: "s3", name: "liu.m",    venture: "EduBridge", category: "EDTECH",         score: 67, label: "YELLOW", attendance: { attended: 8,  total: 12 }, notes: [
+      { id: "n3", date: "2027-03-19", agendaRecap: "Platform roadmap for Q2.", actionItems: "Cold email 20 teachers.", reflection: "Feeling overwhelmed.", grade: null },
+    ]},
+    { id: "s4", name: "patel.a",  venture: "ShokuNow", category: "FOOD_BEVERAGE",  score: 78, label: "GREEN",  attendance: { attended: 9,  total: 12 }, notes: [] },
+    { id: "s5", name: "santos.e", venture: "CraftHub", category: "CREATIVE_MEDIA", score: 44, label: "RED",    attendance: { attended: 6,  total: 12 }, notes: [
+      { id: "n4", date: "2027-03-19", agendaRecap: "No clear agenda.", actionItems: "Define one goal for April.", reflection: "Did not submit.", grade: null },
+    ]},
+  ],
+};
 
-  return (
-    <div className="relative overflow-hidden seigaiha-pattern p-8 lg:p-12">
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-          <div className="max-w-2xl space-y-4">
-            <span
-              className="text-[10px] tracking-[0.3em] uppercase block"
-              style={{ color: "#C4ECCE", fontFamily: SG }}
-            >
-              System Interface
-            </span>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight" style={{ fontFamily: NS }}>
-              Interactive Demo
-            </h1>
-            <p className="text-lg font-light leading-relaxed" style={{ color: "#b4cad6" }}>
-              Explore the platform from every angle —{" "}
-              <em style={{ color: "#C4ECCE" }}>no login required.</em> Access administrative nodes or
-              track operational metrics in real-time.
-            </p>
-          </div>
-          {/* Role selector */}
-          <div className="flex p-1" style={{ backgroundColor: "#201f1f" }}>
-            <button
-              onClick={() => onRoleChange("student")}
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:text-[#C4ECCE]"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Student
-            </button>
-            <button
-              onClick={() => onRoleChange("mentor")}
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:text-[#C4ECCE]"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Mentor
-            </button>
-            <button
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all"
-              style={{ backgroundColor: "#C4ECCE", color: "#143723", fontFamily: SG }}
-            >
-              Admin
-            </button>
-          </div>
-        </div>
-        <div
-          className="mt-8 p-4 max-w-lg"
-          style={{ backgroundColor: "rgba(196,236,206,0.05)", borderLeft: "2px solid rgba(196,236,206,0.3)" }}
-        >
-          <p className="text-[11px] tracking-wider uppercase" style={{ color: "#A9D0B3", fontFamily: SG }}>
-            Current View: Admin. Monitor cohort trust scores, flag at-risk students, and manage actions.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Bento Grid ──────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-12 gap-6">
-
-        {/* Stats row */}
-        {[
-          { label: "Total Students", value: String(students.length), color: "#e5e2e1" },
-          { label: "Green",          value: String(green),           color: "#C4ECCE" },
-          { label: "Yellow",         value: String(yellow),          color: "#FFDDB4" },
-          { label: "Red",            value: String(red),             color: "#ffb4ab" },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="col-span-6 lg:col-span-3 p-6 text-center"
-            style={{ backgroundColor: "#1c1b1b" }}
-          >
-            <p className="text-4xl font-bold mb-1" style={{ fontFamily: NS, color: stat.color }}>
-              {stat.value}
-            </p>
-            <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
-              {stat.label}
-            </p>
-          </div>
-        ))}
-
-        {/* Student roster */}
-        <div
-          className="col-span-12 lg:col-span-8 p-8"
-          style={{ backgroundColor: "#201f1f" }}
-        >
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-              {selected ? selected.name : "Cohort Roster"}
-            </h3>
-            {selected && (
-              <button
-                onClick={() => setSelectedId(null)}
-                className="text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
-                style={{ color: "#b4cad6", fontFamily: SG }}
-              >
-                <span className="material-symbols-outlined text-sm">arrow_back</span>
-                All Students
-              </button>
-            )}
-          </div>
-
-          {selected ? (
-            // Detail view
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-6" style={{ backgroundColor: "#1c1b1b" }}>
-                  <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
-                    Trust Score
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <span className="text-4xl font-bold" style={{ fontFamily: NS, color: labelColor(selected.label) }}>
-                      {selected.score}
-                    </span>
-                    <span
-                      className="px-2 py-1 text-[9px] uppercase tracking-widest"
-                      style={{
-                        backgroundColor: `${labelColor(selected.label)}20`,
-                        color: labelColor(selected.label),
-                        fontFamily: SG,
-                      }}
-                    >
-                      {selected.label}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6" style={{ backgroundColor: "#1c1b1b" }}>
-                  <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
-                    Attendance
-                  </p>
-                  <p className="text-4xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-                    {selected.attendance.attended}/{selected.attendance.total}
-                  </p>
-                  <p className="text-[10px] uppercase tracking-widest mt-1" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-                    Check-ins attended
-                  </p>
-                </div>
-              </div>
-              <div className="p-6 space-y-2" style={{ backgroundColor: "#1c1b1b" }}>
-                <div className="flex justify-between text-[10px] uppercase tracking-widest" style={{ fontFamily: SG }}>
-                  <span style={{ color: "rgba(180,202,214,0.5)" }}>Venture</span>
-                  <span style={{ color: "#e5e2e1" }}>{selected.venture}</span>
-                </div>
-                <div className="flex justify-between text-[10px] uppercase tracking-widest" style={{ fontFamily: SG }}>
-                  <span style={{ color: "rgba(180,202,214,0.5)" }}>Category</span>
-                  <span style={{ color: "#b4cad6" }}>{selected.category}</span>
-                </div>
-                <div className="flex justify-between text-[10px] uppercase tracking-widest" style={{ fontFamily: SG }}>
-                  <span style={{ color: "rgba(180,202,214,0.5)" }}>Graduation Status</span>
-                  <span style={{ color: "#FFDDB4" }}>INELIGIBLE</span>
-                </div>
-              </div>
-              <p
-                className="text-[10px] uppercase tracking-widest"
-                style={{ color: "rgba(180,202,214,0.3)", fontFamily: SG }}
-              >
-                * Actions (schedule interview, release tranche, etc.) are disabled in demo mode.
-              </p>
-            </div>
-          ) : (
-            // Roster list
-            <div className="divide-y" style={{ borderColor: "rgba(66,72,66,0.1)" }}>
-              {students.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedId(s.id)}
-                  className="w-full flex items-center justify-between py-4 px-2 text-left transition-colors hover:bg-[#1c1b1b]/50"
-                >
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: "#e5e2e1", fontFamily: SG }}>
-                      {s.name}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-                      {s.venture} · {s.attendance.attended}/{s.attendance.total} check-ins
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span
-                      className="text-2xl font-bold"
-                      style={{ fontFamily: NS, color: labelColor(s.label) }}
-                    >
-                      {s.score}
-                    </span>
-                    <div className="w-16 h-1" style={{ backgroundColor: "#353534" }}>
-                      <div className="h-full" style={{ width: `${s.score}%`, backgroundColor: labelColor(s.label) }} />
-                    </div>
-                    <span className="material-symbols-outlined text-sm" style={{ color: "rgba(180,202,214,0.3)" }}>
-                      chevron_right
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Actions panel */}
-        <div
-          className="col-span-12 lg:col-span-4 space-y-4"
-        >
-          {/* Actions due */}
-          <div className="p-6 space-y-4" style={{ backgroundColor: "#1c1b1b" }}>
-            <h3
-              className="text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-2"
-              style={{ color: "#C4ECCE", fontFamily: SG }}
-            >
-              <span className="material-symbols-outlined text-sm">schedule</span>
-              Actions_Due
-            </h3>
-            <div className="space-y-3">
-              {[
-                { label: "P&L reviews pending", value: "3", color: "#FFDDB4" },
-                { label: "Next check-in", value: "Apr 2", color: "#b4cad6" },
-                { label: "RED student — review required", value: "1", color: "#ffb4ab" },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-between py-3 px-0"
-                  style={{ borderBottom: "1px solid rgba(66,72,66,0.1)" }}
-                >
-                  <span className="text-xs" style={{ color: "#b4cad6", fontFamily: SG }}>
-                    {item.label}
-                  </span>
-                  <span
-                    className="text-xs font-bold px-2 py-0.5"
-                    style={{
-                      backgroundColor: `${item.color}20`,
-                      color: item.color,
-                      fontFamily: SG,
-                    }}
-                  >
-                    {item.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RED alert */}
-          <div
-            className="p-6 space-y-4"
-            style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid #ffb4ab" }}
-          >
-            <h3
-              className="text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-2"
-              style={{ color: "#ffb4ab", fontFamily: SG }}
-            >
-              <span className="material-symbols-outlined text-sm">warning</span>
-              Needs_Attention
-            </h3>
-            {students.filter((s) => s.label === "RED").map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSelectedId(s.id)}
-                className="w-full flex items-center justify-between hover:opacity-80 transition-opacity"
-              >
-                <div className="text-left">
-                  <p className="text-sm font-medium" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</p>
-                  <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-                    {s.venture}
-                  </p>
-                </div>
-                <span className="text-2xl font-bold" style={{ fontFamily: NS, color: "#ffb4ab" }}>
-                  {s.score}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer decoration */}
-        <div
-          className="col-span-12 flex flex-col md:flex-row gap-6 pt-8 mt-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
-        >
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="h-px flex-1" style={{ backgroundColor: "rgba(196,236,206,0.2)" }} />
-              <span
-                className="text-[10px] tracking-widest uppercase"
-                style={{ color: "#C4ECCE", fontFamily: SG }}
-              >
-                Legacy Protocol // 00-KYOTO-44
-              </span>
-              <span className="h-px flex-1" style={{ backgroundColor: "rgba(196,236,206,0.2)" }} />
-            </div>
-            <p
-              className="text-[11px] text-center uppercase tracking-widest"
-              style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}
-            >
-              All simulation data is ephemeral and cleared upon node disconnect. Version 1.0 Stable Build.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Mentor View ───────────────────────────────────────────────────────────────
-
-type MentorStudent = typeof MENTOR_DATA.students[0];
-type MentorNote    = MentorStudent["notes"][0];
+type MentorStudent = typeof MENTOR_COHORT.students[0];
+type MentorNote = MentorStudent["notes"][0];
 
 function GradePanel({ note, onClose }: { note: MentorNote; onClose: () => void }) {
-  const [rating, setRating]     = useState(0);
+  const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   if (submitted) {
     return (
-      <div
-        className="p-8 space-y-4 text-center"
-        style={{ backgroundColor: "rgba(196,236,206,0.05)", border: "1px solid rgba(196,236,206,0.2)" }}
-      >
-        <span className="material-symbols-outlined text-4xl block" style={{ color: "#C4ECCE" }}>check_circle</span>
-        <p className="text-sm font-bold uppercase tracking-widest" style={{ color: "#C4ECCE", fontFamily: SG }}>
-          Grade_Saved
-        </p>
-        <button
-          onClick={onClose}
-          className="text-[10px] uppercase tracking-widest flex items-center gap-2 mx-auto hover:opacity-80 transition-opacity"
-          style={{ color: "#b4cad6", fontFamily: SG }}
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back
-        </button>
-        <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.3)", fontFamily: SG }}>
-          Demo only — no data was saved.
-        </p>
-      </div>
+      <Card>
+        <p className="text-sm font-medium" style={{ color: "#16a34a" }}>Grade submitted (demo — not saved).</p>
+        <button onClick={onClose} className="text-sm mt-3" style={{ color: C.onSurfaceVariant }}>← Back</button>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <Card className="space-y-4">
       <div className="flex items-center justify-between">
+        <h4 className="text-sm font-medium" style={{ color: C.onSurface }}>Grade Note — {note.date}</h4>
+        <button onClick={onClose} className="text-sm" style={{ color: C.onSurfaceVariant }}>← Back</button>
+      </div>
+      <div className="space-y-3 text-sm rounded-lg p-4" style={{ backgroundColor: C.surfaceContainerLow }}>
         <div>
-          <span className="text-[10px] uppercase tracking-[0.3em] block mb-1" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Grade Check-in
-          </span>
-          <p className="text-lg font-bold" style={{ fontFamily: NS }}>{note.date}</p>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>Agenda Recap</p>
+          <p style={{ color: C.onSurface }}>{note.agendaRecap}</p>
         </div>
-        <button
-          onClick={onClose}
-          className="text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
-          style={{ color: "#b4cad6", fontFamily: SG }}
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back
-        </button>
+        <div>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>Action Items</p>
+          <p style={{ color: C.onSurface }}>{note.actionItems}</p>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase mb-1" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>Reflection</p>
+          <p style={{ color: C.onSurface }}>{note.reflection}</p>
+        </div>
       </div>
-
-      {/* Note recap */}
-      <div className="p-6 space-y-4" style={{ backgroundColor: "#1c1b1b" }}>
-        {[
-          { label: "Agenda",     value: note.agenda },
-          { label: "Actions",    value: note.actions },
-          { label: "Reflection", value: note.reflection },
-        ].map((row) => (
-          <div key={row.label}>
-            <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-              {row.label}
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: "#e5e2e1", fontFamily: SG }}>{row.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Rating */}
-      <div className="space-y-3">
-        <p className="text-[10px] uppercase tracking-widest" style={{ color: "#C4ECCE", fontFamily: SG }}>
-          Rating (1–5)
-        </p>
-        <div className="flex gap-3">
+      <div>
+        <p className="text-sm font-medium mb-2" style={{ color: C.onSurface }}>Rating</p>
+        <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((n) => (
-            <button
-              key={n}
-              onClick={() => setRating(n)}
-              className="w-10 h-10 text-sm font-bold transition-all"
+            <button key={n} onClick={() => setRating(n)}
+              className="w-9 h-9 rounded-lg border text-sm font-semibold transition-colors"
               style={{
-                backgroundColor: rating >= n ? "#C4ECCE" : "transparent",
-                color: rating >= n ? "#143723" : "#b4cad6",
-                border: `1px solid ${rating >= n ? "#C4ECCE" : "rgba(180,202,214,0.3)"}`,
-                fontFamily: SG,
-              }}
-            >
+                backgroundColor: rating >= n ? C.onSurface : C.surfaceContainerLowest,
+                borderColor:     rating >= n ? C.onSurface : C.outlineVariant + "60",
+                color:           rating >= n ? C.onPrimary : C.onSurfaceVariant,
+              }}>
               {n}
             </button>
           ))}
         </div>
       </div>
-
-      {/* Feedback */}
-      <div className="space-y-2">
-        <p className="text-[10px] uppercase tracking-widest" style={{ color: "#C4ECCE", fontFamily: SG }}>
-          Feedback
-        </p>
-        <textarea
-          rows={3}
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-          placeholder="Write feedback for the student..."
-          className="w-full px-4 py-3 text-sm resize-none focus:outline-none"
-          style={{
-            backgroundColor: "#131313",
-            border: "1px solid rgba(66,72,66,0.4)",
-            color: "#e5e2e1",
-            fontFamily: SG,
-          }}
-        />
-      </div>
-
-      <div className="space-y-3">
-        <button
-          disabled={rating === 0 || feedback.trim().length === 0}
-          onClick={() => setSubmitted(true)}
-          className="w-full py-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-          style={{
-            backgroundColor: rating > 0 && feedback.trim().length > 0 ? "#C4ECCE" : "#353534",
-            color: rating > 0 && feedback.trim().length > 0 ? "#143723" : "#b4cad6",
-            fontFamily: SG,
-          }}
-        >
-          Save_Grade
+      <textarea rows={3} value={feedback} onChange={(e) => setFeedback(e.target.value)}
+        placeholder="Written feedback for the student…"
+        className="w-full text-sm border rounded-lg px-3 py-2 resize-none focus:outline-none"
+        style={{ borderColor: C.outlineVariant + "60", color: C.onSurface, fontFamily: SG, backgroundColor: C.surfaceContainerLowest }} />
+      <div className="flex items-center gap-3">
+        <button disabled={rating === 0 || feedback.trim().length === 0} onClick={() => setSubmitted(true)}
+          className="text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-40"
+          style={{ backgroundColor: C.onSurface, color: C.onPrimary, fontFamily: SG }}>
+          Save Grade
         </button>
-        <p className="text-[10px] text-center uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.3)", fontFamily: SG }}>
-          Demo only — no data will be saved.
-        </p>
+        <p className="text-xs" style={{ color: C.onSurfaceVariant }}>Not saved — demo only</p>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -1085,782 +498,371 @@ function MentorStudentDetail({ student, onBack }: { student: MentorStudent; onBa
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <div className="flex items-start justify-between">
         <div>
-          <span className="text-[10px] uppercase tracking-[0.3em] block mb-1" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Student Profile
-          </span>
-          <h3 className="text-3xl font-bold tracking-tighter" style={{ fontFamily: NS }}>{student.name}</h3>
-          <p className="text-sm mt-1" style={{ color: "#b4cad6", fontFamily: SG }}>
-            {student.venture}{" "}
-            <span
-              className="px-2 py-0.5 text-[9px] uppercase tracking-widest ml-1"
-              style={{ backgroundColor: "rgba(180,202,214,0.1)", color: "#b4cad6", fontFamily: SG }}
-            >
+          <h3 className="text-lg font-semibold" style={{ color: C.onSurface }}>{student.name}</h3>
+          <p className="text-sm mt-0.5" style={{ color: C.onSurfaceVariant }}>
+            {student.venture}
+            <span className="ml-2 text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: C.surfaceContainerHigh, color: C.onSurfaceVariant, fontFamily: IBM }}>
               {student.category}
             </span>
           </p>
         </div>
-        <button
-          onClick={onBack}
-          className="text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
-          style={{ color: "#b4cad6", fontFamily: SG }}
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          All Students
-        </button>
+        <button onClick={onBack} className="text-sm" style={{ color: C.onSurfaceVariant }}>← Back</button>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-6" style={{ backgroundColor: "#1c1b1b" }}>
-          <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
-            Trust Score
-          </p>
-          <div className="flex items-center gap-4">
-            <span className="text-4xl font-bold" style={{ fontFamily: NS, color: labelColor(student.label) }}>
-              {student.score}
-            </span>
-            <span
-              className="px-2 py-1 text-[9px] uppercase tracking-widest"
-              style={{ backgroundColor: `${labelColor(student.label)}20`, color: labelColor(student.label), fontFamily: SG }}
-            >
-              {student.label}
-            </span>
+        <Card>
+          <SectionLabel>Trust Score</SectionLabel>
+          <div className="flex items-center gap-2">
+            <TrafficDot label={student.label} score={student.score} size="lg" />
           </div>
-        </div>
-        <div className="p-6" style={{ backgroundColor: "#1c1b1b" }}>
-          <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>
-            Attendance
-          </p>
-          <p className="text-4xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>
+        </Card>
+        <Card>
+          <SectionLabel>Attendance</SectionLabel>
+          <p className="text-3xl font-bold" style={{ fontFamily: IBM, color: C.onSurface }}>
             {student.attendance.attended}/{student.attendance.total}
           </p>
-        </div>
+        </Card>
       </div>
 
-      {/* Check-in notes */}
-      <div className="space-y-4">
+      <Card className="space-y-4">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: "#C4ECCE", fontFamily: SG }}>
-            Check-in Notes
-          </p>
+          <SectionLabel>Check-in Notes</SectionLabel>
           {ungraded.length > 0 && (
-            <span
-              className="text-[9px] uppercase tracking-widest px-2 py-1"
-              style={{ backgroundColor: "rgba(255,221,180,0.1)", color: "#FFDDB4", border: "1px solid rgba(255,221,180,0.3)", fontFamily: SG }}
-            >
+            <span className="text-xs px-2 py-0.5 rounded-full border" style={{ color: C.onSurfaceVariant, borderColor: C.outlineVariant + "40", fontFamily: IBM }}>
               {ungraded.length} to grade
             </span>
           )}
         </div>
-
         {student.notes.length === 0 && (
-          <p className="text-sm" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>No notes yet.</p>
+          <p className="text-sm" style={{ color: C.onSurfaceVariant }}>No notes submitted yet.</p>
         )}
-
         {student.notes.map((note) => (
-          <div key={note.id} className="p-6 space-y-4" style={{ backgroundColor: "#1c1b1b" }}>
+          <div key={note.id} className="border rounded-lg p-4 space-y-3" style={{ borderColor: C.outlineVariant + "30" }}>
             <div className="flex items-center justify-between">
-              <p className="text-sm font-bold" style={{ color: "#e5e2e1", fontFamily: SG }}>{note.date}</p>
+              <p className="text-sm font-medium" style={{ color: C.onSurface }}>{note.date}</p>
               {note.grade ? (
-                <span
-                  className="text-[9px] uppercase tracking-widest px-2 py-1"
-                  style={{ backgroundColor: "rgba(196,236,206,0.1)", color: "#C4ECCE", border: "1px solid rgba(196,236,206,0.3)", fontFamily: SG }}
-                >
+                <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0" }}>
                   Graded · {note.grade.rating}/5
                 </span>
               ) : (
-                <button
-                  onClick={() => setGradingNote(note)}
-                  className="text-[9px] uppercase tracking-widest px-2 py-1 transition-all hover:opacity-80"
-                  style={{ border: "1px solid rgba(255,221,180,0.4)", color: "#FFDDB4", fontFamily: SG }}
-                >
+                <button onClick={() => setGradingNote(note)}
+                  className="text-xs px-2 py-0.5 rounded transition-colors"
+                  style={{ backgroundColor: C.surfaceContainerHigh, color: C.onSurface, border: `1px solid ${C.outlineVariant}40` }}>
                   Grade
                 </button>
               )}
             </div>
-            {[
-              { label: "Agenda",  value: note.agenda },
-              { label: "Actions", value: note.actions },
-              { label: "Reflection", value: note.reflection },
-            ].map((row) => (
-              <div key={row.label}>
-                <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>{row.label}</p>
-                <p className="text-sm leading-relaxed" style={{ color: "#b4cad6", fontFamily: SG }}>{row.value}</p>
-              </div>
-            ))}
+            <div className="text-sm space-y-1" style={{ color: C.onSurfaceVariant }}>
+              <p><span className="font-medium" style={{ color: C.onSurface }}>Recap:</span> {note.agendaRecap}</p>
+              <p><span className="font-medium" style={{ color: C.onSurface }}>Actions:</span> {note.actionItems}</p>
+              <p><span className="font-medium" style={{ color: C.onSurface }}>Reflection:</span> {note.reflection}</p>
+            </div>
             {note.grade && (
-              <div
-                className="p-4"
-                style={{ backgroundColor: "rgba(196,236,206,0.05)", borderLeft: "2px solid rgba(196,236,206,0.3)" }}
-              >
-                <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "#C4ECCE", fontFamily: SG }}>Feedback</p>
-                <p className="text-sm" style={{ color: "#e5e2e1", fontFamily: SG }}>{note.grade.feedback}</p>
+              <div className="px-3 py-2 rounded-lg text-sm" style={{ backgroundColor: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0" }}>
+                <span className="font-medium">Feedback:</span> {note.grade.feedback}
               </div>
             )}
           </div>
         ))}
-      </div>
+      </Card>
     </div>
   );
 }
 
-function MentorView({ onRoleChange }: { onRoleChange: (r: Role) => void }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { students, sessions } = MENTOR_DATA;
-  const selected = students.find((s) => s.id === selectedId) ?? null;
-  const green    = students.filter((s) => s.label === "GREEN").length;
-  const yellow   = students.filter((s) => s.label === "YELLOW").length;
-  const red      = students.filter((s) => s.label === "RED").length;
-  const totalPending = students.reduce((acc, s) => acc + s.notes.filter((n) => !n.grade).length, 0);
+function MentorView() {
+  const [selected, setSelected] = useState<MentorStudent | null>(null);
+
+  const ungradedCount = MENTOR_COHORT.students.reduce(
+    (acc, s) => acc + s.notes.filter((n) => !n.grade).length,
+    0
+  );
+
+  const SESSIONS = [
+    { id: "cs3", date: "2027-04-02", note: "Q2 kickoff check-in",    submitted: false, upcoming: true  },
+    { id: "cs1", date: "2027-03-19", note: "March mid-month",        submitted: true,  upcoming: false },
+    { id: "cs2", date: "2027-03-05", note: "March early check-in",   submitted: true,  upcoming: false },
+  ];
+
+  if (selected) {
+    return (
+      <div className="space-y-5">
+        <DemoBanner />
+        <MentorStudentDetail student={selected} onBack={() => setSelected(null)} />
+      </div>
+    );
+  }
 
   return (
-    <div className="relative overflow-hidden seigaiha-pattern p-8 lg:p-12">
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-          <div className="max-w-2xl space-y-4">
-            <span className="text-[10px] tracking-[0.3em] uppercase block" style={{ color: "#C4ECCE", fontFamily: SG }}>
-              System Interface
-            </span>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight" style={{ fontFamily: NS }}>
-              Interactive Demo
-            </h1>
-            <p className="text-lg font-light leading-relaxed" style={{ color: "#b4cad6" }}>
-              Explore the platform from every angle —{" "}
-              <em style={{ color: "#C4ECCE" }}>no login required.</em> Access administrative nodes or
-              track operational metrics in real-time.
-            </p>
-          </div>
-          {/* Role selector */}
-          <div className="flex p-1" style={{ backgroundColor: "#201f1f" }}>
-            <button
-              onClick={() => onRoleChange("student")}
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:text-[#C4ECCE]"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Student
-            </button>
-            <button
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all"
-              style={{ backgroundColor: "#C4ECCE", color: "#143723", fontFamily: SG }}
-            >
-              Mentor
-            </button>
-            <button
-              onClick={() => onRoleChange("admin")}
-              className="px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:text-[#C4ECCE]"
-              style={{ color: "#b4cad6", fontFamily: SG }}
-            >
-              Admin
-            </button>
-          </div>
-        </div>
-        <div
-          className="mt-8 p-4 max-w-lg"
-          style={{ backgroundColor: "rgba(196,236,206,0.05)", borderLeft: "2px solid rgba(196,236,206,0.3)" }}
-        >
-          <p className="text-[11px] tracking-wider uppercase" style={{ color: "#A9D0B3", fontFamily: SG }}>
-            Current View: Mentor. Review student check-ins, grade reflections, and track cohort trust health.
-          </p>
-        </div>
-      </section>
+    <div className="space-y-5">
+      <DemoBanner />
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold" style={{ color: C.onSurface }}>Mentor Dashboard</h2>
+        <span className="text-xs" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>{MENTOR_COHORT.name}</span>
+      </div>
 
-      {/* ── Bento Grid ────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-12 gap-6">
-
-        {/* Stats */}
+      <div className="grid grid-cols-4 gap-3">
         {[
-          { label: "My Students",  value: String(students.length), color: "#e5e2e1" },
-          { label: "Green",        value: String(green),           color: "#C4ECCE" },
-          { label: "Yellow",       value: String(yellow),          color: "#FFDDB4" },
-          { label: "Red",          value: String(red),             color: "#ffb4ab" },
+          { label: "Students", value: "5",   color: C.primary },
+          { label: "Green",    value: "3",   color: "#16a34a" },
+          { label: "Yellow",   value: "1",   color: "#ca8a04" },
+          { label: "Red",      value: "1",   color: "#dc2626" },
         ].map((stat) => (
-          <div key={stat.label} className="col-span-6 lg:col-span-3 p-6 text-center" style={{ backgroundColor: "#1c1b1b" }}>
-            <p className="text-4xl font-bold mb-1" style={{ fontFamily: NS, color: stat.color }}>{stat.value}</p>
-            <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}>{stat.label}</p>
-          </div>
+          <Card key={stat.label} className="text-center">
+            <p className="text-2xl font-bold" style={{ fontFamily: IBM, color: stat.color }}>{stat.value}</p>
+            <p className="text-xs mt-1" style={{ color: C.onSurfaceVariant }}>{stat.label}</p>
+          </Card>
         ))}
-
-        {/* Student roster / detail */}
-        <div className="col-span-12 lg:col-span-8 p-8" style={{ backgroundColor: "#201f1f" }}>
-          {selected ? (
-            <MentorStudentDetail student={selected} onBack={() => setSelectedId(null)} />
-          ) : (
-            <>
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl" style={{ fontFamily: NS, color: "#e5e2e1" }}>My Cohort</h3>
-                {totalPending > 0 && (
-                  <span
-                    className="text-[9px] uppercase tracking-widest px-3 py-1"
-                    style={{ backgroundColor: "rgba(255,221,180,0.1)", color: "#FFDDB4", border: "1px solid rgba(255,221,180,0.3)", fontFamily: SG }}
-                  >
-                    {totalPending} to grade
-                  </span>
-                )}
-              </div>
-              <div className="divide-y" style={{ borderColor: "rgba(66,72,66,0.1)" }}>
-                {students.map((s) => {
-                  const pending = s.notes.filter((n) => !n.grade).length;
-                  return (
-                    <button
-                      key={s.id}
-                      onClick={() => setSelectedId(s.id)}
-                      className="w-full flex items-center justify-between py-4 px-2 text-left transition-colors hover:bg-[#1c1b1b]/50"
-                    >
-                      <div>
-                        <p className="text-sm font-medium" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</p>
-                        <p className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-                          {s.venture} · {s.attendance.attended}/{s.attendance.total} sessions
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        {pending > 0 && (
-                          <span
-                            className="text-[9px] px-2 py-0.5 uppercase tracking-widest"
-                            style={{ backgroundColor: "rgba(255,221,180,0.1)", color: "#FFDDB4", border: "1px solid rgba(255,221,180,0.2)", fontFamily: SG }}
-                          >
-                            {pending} to grade
-                          </span>
-                        )}
-                        <span className="text-2xl font-bold" style={{ fontFamily: NS, color: labelColor(s.label) }}>{s.score}</span>
-                        <div className="w-12 h-1" style={{ backgroundColor: "#353534" }}>
-                          <div className="h-full" style={{ width: `${s.score}%`, backgroundColor: labelColor(s.label) }} />
-                        </div>
-                        <span className="material-symbols-outlined text-sm" style={{ color: "rgba(180,202,214,0.3)" }}>chevron_right</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Sessions panel */}
-        <div className="col-span-12 lg:col-span-4 space-y-4">
-          <div className="p-6" style={{ backgroundColor: "#1c1b1b" }}>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-2" style={{ color: "#C4ECCE", fontFamily: SG }}>
-                <span className="material-symbols-outlined text-sm">event</span>
-                Check-in Sessions
-              </h3>
-            </div>
-            <div className="space-y-3">
-              {sessions.map((s) => (
-                <div
-                  key={s.id}
-                  className="p-4"
-                  style={{
-                    backgroundColor: s.upcoming ? "rgba(196,236,206,0.05)" : "#131313",
-                    borderLeft: s.upcoming ? "2px solid #C4ECCE" : "2px solid rgba(66,72,66,0.3)",
-                  }}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.date}</p>
-                      {s.note && (
-                        <p className="text-[10px] uppercase tracking-widest mt-0.5" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-                          {s.note}
-                        </p>
-                      )}
-                    </div>
-                    {s.upcoming ? (
-                      <span
-                        className="text-[9px] uppercase tracking-widest px-2 py-0.5 shrink-0"
-                        style={{ backgroundColor: "rgba(196,236,206,0.1)", color: "#C4ECCE", fontFamily: SG }}
-                      >
-                        Upcoming
-                      </span>
-                    ) : s.submitted ? (
-                      <span
-                        className="text-[9px] uppercase tracking-widest px-2 py-0.5 shrink-0"
-                        style={{ backgroundColor: "rgba(196,236,206,0.1)", color: "#C4ECCE", border: "1px solid rgba(196,236,206,0.2)", fontFamily: SG }}
-                      >
-                        Logged
-                      </span>
-                    ) : (
-                      <span
-                        className="text-[9px] uppercase tracking-widest px-2 py-0.5 shrink-0 opacity-40"
-                        style={{ border: "1px solid rgba(180,202,214,0.2)", color: "#b4cad6", fontFamily: SG }}
-                      >
-                        Pending
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RED alert */}
-          {red > 0 && (
-            <div className="p-6 space-y-3" style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid #ffb4ab" }}>
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-2" style={{ color: "#ffb4ab", fontFamily: SG }}>
-                <span className="material-symbols-outlined text-sm">warning</span>
-                Needs_Attention
-              </h3>
-              {students.filter((s) => s.label === "RED").map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedId(s.id)}
-                  className="w-full flex items-center justify-between hover:opacity-80 transition-opacity"
-                >
-                  <div className="text-left">
-                    <p className="text-sm font-medium" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</p>
-                    <p className="text-[10px] uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>{s.venture}</p>
-                  </div>
-                  <span className="text-2xl font-bold" style={{ fontFamily: NS, color: "#ffb4ab" }}>{s.score}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Footer decoration */}
-        <div className="col-span-12 flex flex-col md:flex-row gap-6 pt-8 mt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="h-px flex-1" style={{ backgroundColor: "rgba(196,236,206,0.2)" }} />
-              <span className="text-[10px] tracking-widest uppercase" style={{ color: "#C4ECCE", fontFamily: SG }}>
-                Legacy Protocol // 00-KYOTO-44
-              </span>
-              <span className="h-px flex-1" style={{ backgroundColor: "rgba(196,236,206,0.2)" }} />
-            </div>
-            <p className="text-[11px] text-center uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>
-              All simulation data is ephemeral and cleared upon node disconnect. Version 1.0 Stable Build.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Protocols View ─────────────────────────────────────────────────────────────
-
-function ProtocolsView() {
-  const sections = [
-    {
-      num: "01",
-      title: "The Recyclable Grant",
-      icon: "savings",
-      color: "#C4ECCE",
-      rows: [
-        { label: "Tranche 1",  value: "¥300,000 on signing",    note: "Released day one when the Pledge of Honor is signed" },
-        { label: "Tranche 2",  value: "¥200,000 at Month 3",    note: "Conditional: company incorporated + no RED score at months 2–3" },
-        { label: "Return",     value: "Principal + 5% tithe",   note: "Voluntary upon graduating to a bank. Non-binding. Nothing owed on failure." },
-        { label: "Use of Funds", value: "Venture ops only",     note: "Incorporation, tools, hosting, co-working, marketing. No personal living expenses." },
-      ],
-    },
-    {
-      num: "02",
-      title: "The Trust Engine",
-      icon: "analytics",
-      color: "#C4ECCE",
-      rows: [
-        { label: "Responsiveness", value: "25%", note: "Bi-weekly mentor check-in attendance" },
-        { label: "Transparency",   value: "25%", note: "Monthly P&L submitted on time" },
-        { label: "Mutualism",      value: "25%", note: "Monthly Town Hall attendance" },
-        { label: "Reflection",     value: "25%", note: "Written monthly reflection — anonymous, AI-assessed for meaningfulness only" },
-      ],
-      thresholds: [
-        { label: "Green",  range: "75–100", color: "#4ade80", note: "On track. 6 consecutive months triggers bank introduction." },
-        { label: "Yellow", range: "50–74",  color: "#facc15", note: "Automatic mentor review triggered." },
-        { label: "Red",    range: "0–49",   color: "#f87171", note: "Staff intervention. Tranche 2 withheld if RED at months 2–3." },
-      ],
-    },
-    {
-      num: "03",
-      title: "Graduation Gates",
-      icon: "school",
-      color: "#FFDDB4",
-      gates: [
-        { n: "01", title: "Company incorporated",               note: "Legal entity registered in Japan" },
-        { n: "02", title: "3 months non-negative cash flow",    note: "Verified via P&L submissions. No hard revenue floor." },
-        { n: "03", title: "Green Trust Score — 6 consecutive months", note: "Auto-tracked. Cannot be waived. Triggers bank introduction." },
-        { n: "04", title: "Exit interview passed",              note: "Final gate. Mujin issues a warm bank introduction letter." },
-      ],
-    },
-    {
-      num: "04",
-      title: "Privacy Rules",
-      icon: "shield",
-      color: "#b4cad6",
-      rows: [
-        { label: "Reflections",   value: "Anonymous",       note: "Staff see meaningful/not-meaningful only. The text is never accessible to humans." },
-        { label: "Trust Score",   value: "Cohort-scoped",   note: "Visible to your group of 5 and program staff only. Not public, not bank-facing." },
-        { label: "Overrides",     value: "Audited",         note: "All staff score adjustments require a written reason and create a permanent audit trail." },
-        { label: "Bank Dossier",  value: "6-month snapshot", note: "Trust Score history, P&L summary, attendance record, and aggregated staff notes." },
-      ],
-    },
-  ];
-
-  return (
-    <div className="p-8 md:p-12 space-y-16">
-      <div style={{ borderBottom: "1px solid rgba(196,236,206,0.08)", paddingBottom: "2rem" }}>
-        <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: "#C4ECCE", fontFamily: SG }}>
-          System Document // V1.0
-        </p>
-        <h1 className="text-6xl font-bold tracking-tight mb-4" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-          PROTOCOLS
-        </h1>
-        <p className="text-sm max-w-2xl leading-relaxed" style={{ color: "#737373" }}>
-          The operating rules of Mujin — how capital flows, how trust is measured, how graduation works, and what the covenant means. These rules apply to all cohorts.
-        </p>
       </div>
 
-      {sections.map((s) => (
-        <section key={s.num} className="space-y-6">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-bold tracking-[0.3em]" style={{ color: "rgba(196,236,206,0.25)", fontFamily: SG }}>{s.num}</span>
-            <span className="material-symbols-outlined" style={{ color: s.color }}>{s.icon}</span>
-            <h2 className="text-2xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>{s.title}</h2>
-            <div className="flex-1 h-px" style={{ backgroundColor: "rgba(66,72,66,0.3)" }} />
-          </div>
-
-          {"rows" in s && s.rows && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
-              {s.rows.map((r) => (
-                <div key={r.label} className="p-6" style={{ backgroundColor: "#131313" }}>
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-[10px] uppercase tracking-widest" style={{ color: "#525252", fontFamily: SG }}>{r.label}</span>
-                    <span className="text-sm font-bold" style={{ color: s.color, fontFamily: SG }}>{r.value}</span>
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: "#737373" }}>{r.note}</p>
-                </div>
-              ))}
-            </div>
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <SectionLabel>My Cohort</SectionLabel>
+          {ungradedCount > 0 && (
+            <span className="text-xs px-2 py-0.5 rounded-full border" style={{ color: C.onSurfaceVariant, borderColor: C.outlineVariant + "40", fontFamily: IBM }}>
+              {ungradedCount} to grade
+            </span>
           )}
-
-          {"thresholds" in s && s.thresholds && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
-              {s.thresholds.map((t) => (
-                <div key={t.label} className="p-6 flex gap-4" style={{ backgroundColor: "#131313" }}>
-                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: t.color }} />
-                  <div>
-                    <div className="text-xs font-bold mb-1" style={{ color: t.color, fontFamily: SG }}>{t.label} {t.range}</div>
-                    <p className="text-xs leading-relaxed" style={{ color: "#737373" }}>{t.note}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {"gates" in s && s.gates && (
-            <div className="space-y-2">
-              {s.gates.map((g) => (
-                <div key={g.n} className="flex items-start gap-4 p-4" style={{ backgroundColor: "#131313", border: "1px solid rgba(66,72,66,0.2)" }}>
-                  <span className="text-[10px] font-bold pt-0.5 shrink-0" style={{ color: "#404040", fontFamily: "monospace" }}>{g.n}</span>
-                  <div className="flex-1">
-                    <p className="text-sm" style={{ color: "#e5e2e1" }}>{g.title}</p>
-                    <p className="text-[10px] mt-1" style={{ color: "#525252" }}>{g.note}</p>
-                  </div>
-                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#FFDDB4" }} />
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      ))}
-    </div>
-  );
-}
-
-// ── Lattice View ───────────────────────────────────────────────────────────────
-
-function LatticeView() {
-  const cohort = COHORT_DATA.students;
-
-  const mentorships = [
-    { mentor: "Andrew Feng", role: "Director / Programs",   students: ["tanaka.r", "kim.j"],  color: "#C4ECCE" },
-    { mentor: "Keiko Mori",  role: "Community Mentor",      students: ["liu.m", "patel.a"],   color: "#b4cad6" },
-    { mentor: "Yuki Sato",   role: "Advisor / Operations",  students: ["santos.e"],            color: "#FFDDB4" },
-  ];
-
-  const layers = [
-    { label: "Ministry",  icon: "church",      count: "3 partners",    color: "#A9D0B3", desc: "ICF Tokyo · ISM Keio · Rikkyo Fellowship" },
-    { label: "Mentors",   icon: "handshake",   count: "3 active",      color: "#b4cad6", desc: "Bi-weekly 1:1 sessions. Source of Responsiveness signal." },
-    { label: "Cohort",    icon: "groups",      count: "5 students",    color: "#C4ECCE", desc: "Cohort A — Spring 2027. Shared accountability." },
-    { label: "Alumni",    icon: "history_edu", count: "Opens Q2 2027", color: "#525252", desc: "Registry populates as cohorts graduate and enter banking." },
-  ];
-
-  return (
-    <div className="p-8 md:p-12 space-y-16">
-      <div style={{ borderBottom: "1px solid rgba(196,236,206,0.08)", paddingBottom: "2rem" }}>
-        <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: "#C4ECCE", fontFamily: SG }}>
-          Community Network // Cohort A
-        </p>
-        <h1 className="text-6xl font-bold tracking-tight mb-4" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-          LATTICE
-        </h1>
-        <p className="text-sm max-w-2xl leading-relaxed" style={{ color: "#737373" }}>
-          The web of people behind Mujin. Every node is a real relationship. Social collateral is the collateral.
-        </p>
-      </div>
-
-      {/* Network layers */}
-      <section className="space-y-4">
-        <h2 className="text-[10px] uppercase tracking-[0.3em]" style={{ color: "#C4ECCE", fontFamily: SG }}>Network Layers</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
-          {layers.map((l) => (
-            <div key={l.label} className="p-6 space-y-3" style={{ backgroundColor: "#131313" }}>
-              <span className="material-symbols-outlined block" style={{ color: l.color }}>{l.icon}</span>
-              <div className="text-xs font-bold uppercase tracking-widest" style={{ color: l.color, fontFamily: SG }}>{l.label}</div>
-              <div className="text-xl font-bold" style={{ fontFamily: NS, color: "#e5e2e1" }}>{l.count}</div>
-              <p className="text-[10px] leading-relaxed" style={{ color: "#525252" }}>{l.desc}</p>
-            </div>
-          ))}
         </div>
-      </section>
-
-      {/* Mentorship pairs */}
-      <section className="space-y-4">
-        <h2 className="text-[10px] uppercase tracking-[0.3em]" style={{ color: "#C4ECCE", fontFamily: SG }}>Mentorship Pairs</h2>
-        <div className="space-y-2">
-          {mentorships.map((m) => (
-            <div key={m.mentor} className="flex flex-col md:flex-row md:items-center gap-4 p-6" style={{ backgroundColor: "#131313", border: "1px solid rgba(66,72,66,0.2)" }}>
-              <div className="flex items-center gap-3 shrink-0" style={{ minWidth: "200px" }}>
-                <div className="w-8 h-8 flex items-center justify-center text-xs font-bold shrink-0" style={{ backgroundColor: `${m.color}18`, border: `1px solid ${m.color}40`, color: m.color, fontFamily: SG }}>
-                  {m.mentor.split(" ").map((n) => n[0]).join("")}
-                </div>
-                <div>
-                  <p className="text-xs font-bold" style={{ color: m.color, fontFamily: SG }}>{m.mentor}</p>
-                  <p className="text-[9px] uppercase tracking-widest" style={{ color: "#525252" }}>{m.role}</p>
-                </div>
-              </div>
-              <div className="hidden md:flex items-center gap-2 shrink-0">
-                <div style={{ width: "32px", height: "1px", backgroundColor: `${m.color}30` }} />
-                <span className="material-symbols-outlined" style={{ color: `${m.color}40`, fontSize: "14px" }}>arrow_forward</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {m.students.map((sid) => {
-                  const s = cohort.find((c) => c.name === sid);
-                  if (!s) return null;
-                  return (
-                    <div key={sid} className="flex items-center gap-2 px-3 py-2" style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(66,72,66,0.3)" }}>
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: labelColor(s.label) }} />
-                      <span className="text-xs" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</span>
-                      <span className="text-[9px] font-bold" style={{ color: labelColor(s.label), fontFamily: SG }}>{s.score}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Cohort node map */}
-      <section className="space-y-4">
-        <h2 className="text-[10px] uppercase tracking-[0.3em]" style={{ color: "#C4ECCE", fontFamily: SG }}>Cohort A — Node Map</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-px" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
-          {cohort.map((s) => {
-            const c = labelColor(s.label);
+        <div className="divide-y" style={{ borderColor: C.outlineVariant + "20" }}>
+          {MENTOR_COHORT.students.map((s) => {
+            const pending = s.notes.filter((n) => !n.grade).length;
             return (
-              <div key={s.id} className="p-5 space-y-3" style={{ backgroundColor: "#131313" }}>
-                <div className="flex justify-between items-start">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c, boxShadow: `0 0 6px ${c}80` }} />
-                  <span className="text-[9px] uppercase tracking-widest" style={{ color: c, fontFamily: SG }}>{s.label}</span>
-                </div>
+              <button key={s.id} onClick={() => setSelected(s)}
+                className="w-full flex items-center justify-between py-3 rounded-lg -mx-2 px-2 transition-colors text-left"
+                style={{ color: C.onSurface }}>
                 <div>
-                  <p className="text-sm font-bold" style={{ color: "#e5e2e1", fontFamily: SG }}>{s.name}</p>
-                  <p className="text-[9px] uppercase tracking-widest mt-0.5" style={{ color: "#525252" }}>{s.venture}</p>
+                  <p className="text-sm font-medium" style={{ color: C.onSurface }}>{s.name}</p>
+                  <p className="text-xs" style={{ color: C.onSurfaceVariant }}>
+                    {s.venture} · {s.attendance.attended}/{s.attendance.total} check-ins
+                  </p>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold" style={{ fontFamily: NS, color: c }}>{s.score}</div>
-                  <div className="h-1 mt-1 w-full" style={{ backgroundColor: "#2a2a2a" }}>
-                    <div className="h-full" style={{ width: `${s.score}%`, backgroundColor: c }} />
-                  </div>
+                <div className="flex items-center gap-3">
+                  {pending > 0 && (
+                    <span className="text-xs px-2 py-0.5 rounded-full border" style={{ fontFamily: IBM, color: C.onSurfaceVariant, borderColor: C.outlineVariant + "40" }}>
+                      {pending} to grade
+                    </span>
+                  )}
+                  <TrafficDot label={s.label} score={s.score} />
                 </div>
-                <p className="text-[9px]" style={{ color: "#525252" }}>Attendance {s.attendance.attended}/{s.attendance.total}</p>
-              </div>
+              </button>
             );
           })}
         </div>
-      </section>
+      </Card>
+
+      <Card>
+        <SectionLabel>Check-in Sessions</SectionLabel>
+        <div className="divide-y" style={{ borderColor: C.outlineVariant + "20" }}>
+          {SESSIONS.map((s) => (
+            <div key={s.id} className="flex items-center justify-between py-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium" style={{ color: C.onSurface }}>{s.date}</p>
+                  {s.upcoming && (
+                    <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: C.primaryContainer, color: C.onPrimaryContainer, fontFamily: IBM }}>
+                      Upcoming
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs" style={{ color: C.onSurfaceVariant }}>{s.note}</p>
+              </div>
+              {s.submitted ? (
+                <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0" }}>
+                  Attendance Logged
+                </span>
+              ) : (
+                <span className="text-xs px-2 py-0.5 rounded opacity-60" style={{ backgroundColor: C.surfaceContainerHigh, color: C.onSurfaceVariant, border: `1px solid ${C.outlineVariant}40` }}>
+                  Log Attendance
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }
 
-// ── Sidebar nav ────────────────────────────────────────────────────────────────
+/* ── Page ──────────────────────────────────────────────────────────────────── */
 
-const SIDE_LINKS = [
-  { icon: "grid_view",    label: "Dashboard" },
-  { icon: "tsunami",      label: "Protocols" },
-  { icon: "account_tree", label: "Lattice" },
-  { icon: "history_edu",  label: "Archive" },
-  { icon: "memory",       label: "System" },
-];
-
-// ── Page ───────────────────────────────────────────────────────────────────────
-
-type Role = "student" | "mentor" | "admin";
-type View = "dashboard" | "protocols" | "lattice";
-
-const VIEW_LABELS: Record<View, string> = { dashboard: "Dashboard", protocols: "Protocols", lattice: "Lattice" };
+type Tab = "admin" | "student" | "mentor";
 
 export default function DemoPage() {
-  const [role, setRole] = useState<Role>("student");
-  const [view, setView] = useState<View>("dashboard");
+  const [tab, setTab] = useState<Tab>("admin");
 
   return (
-    <div
-      className="overflow-x-hidden"
-      style={{ backgroundColor: "#131313", color: "#e5e2e1", fontFamily: SG }}
-    >
-      {/* ── Top App Bar ───────────────────────────────────────────────────── */}
-      <header
-        className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16"
-        style={{ backgroundColor: "#131313", borderBottom: "none" }}
-      >
-        <div className="flex items-center gap-8">
-          <span
-            className="text-xl font-bold tracking-[0.2em]"
-            style={{ fontFamily: NS, color: "#C4ECCE" }}
-          >
-            MUJIN_CORE
+    <div style={{ backgroundColor: C.background, color: C.onBackground, fontFamily: SG }}
+      className="min-h-screen selection:bg-[#d6e3ff] selection:text-[#39527b]">
+
+      {/* ── Top Nav ────────────────────────────────────────────────────────── */}
+      <nav className="fixed top-0 w-full z-50"
+        style={{
+          backgroundColor: `${C.background}e8`,
+          backdropFilter:   "blur(20px)",
+          boxShadow:        "0 32px 64px -15px rgba(45,52,53,0.06)",
+          borderBottom:     `1px solid ${C.outlineVariant}30`,
+        }}>
+        <div className="flex justify-between items-center px-12 py-6 w-full max-w-screen-2xl mx-auto">
+          <Link href="/" className="text-2xl font-bold tracking-widest" style={{ fontFamily: NS, color: "#1B365D", textDecoration: "none" }}>
+            MUJIN
+          </Link>
+          <div className="hidden md:flex items-center gap-10">
+            {NAV_LINKS.map((l) => (
+              <Link key={l.label} href={l.href} className="font-medium transition-colors duration-300"
+                style={{ color: C.onSurfaceVariant, fontFamily: SG }}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/demo" className="px-8 py-3 font-medium text-sm tracking-wide"
+              style={{ backgroundColor: C.primary, color: C.onPrimary, borderRadius: "0.125rem" }}>
+              Demo
+            </Link>
+            <Link href="/login" className="font-medium text-sm transition-colors duration-200"
+              style={{ color: C.onSurfaceVariant, fontFamily: SG }}>
+              Log In
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <main className="pt-24">
+
+        {/* ── Hero ──────────────────────────────────────────────────────────── */}
+        <section className="px-12 py-20 max-w-screen-2xl mx-auto">
+          <span className="inline-block px-4 py-1 mb-6 text-xs font-bold tracking-[0.2em] uppercase"
+            style={{ backgroundColor: C.secondaryContainer, color: C.onSecondaryContainer, borderRadius: "0.75rem", fontFamily: IBM }}>
+            Platform Preview
           </span>
-          <nav className="hidden md:flex gap-8">
-            {(Object.keys(VIEW_LABELS) as View[]).map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                className="text-xs uppercase tracking-widest py-1 transition-colors"
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tight" style={{ fontFamily: NS, color: C.onSurface }}>
+            Three Views.<br />
+            <em className="font-normal italic" style={{ color: C.primary }}>One Platform.</em>
+          </h1>
+          <p className="text-xl max-w-2xl leading-relaxed" style={{ color: C.onSurfaceVariant }}>
+            Explore the Trust Engine from every angle — as a program administrator
+            overseeing all 50 students, as a student tracking your own graduation
+            progress, or as a mentor guiding your cohort.
+          </p>
+        </section>
+
+        {/* ── Tab Shell ─────────────────────────────────────────────────────── */}
+        <section className="px-12 pb-24 max-w-screen-2xl mx-auto">
+
+          {/* Tab bar */}
+          <div className="flex gap-1 mb-8 p-1 rounded-xl w-fit"
+            style={{ backgroundColor: C.surfaceContainerHigh }}>
+            {(["admin", "student", "mentor"] as Tab[]).map((t) => (
+              <button key={t} onClick={() => setTab(t)}
+                className="px-8 py-3 text-sm font-semibold rounded-lg transition-all duration-200 capitalize"
                 style={{
-                  color: view === v ? "#C4ECCE" : "rgba(180,202,214,0.5)",
-                  borderBottom: view === v ? "2px solid #C4ECCE" : "2px solid transparent",
-                  fontFamily: SG,
-                  background: "none",
-                  cursor: "pointer",
-                }}
-              >
-                {VIEW_LABELS[v]}
+                  backgroundColor: tab === t ? C.surfaceContainerLowest : "transparent",
+                  color:           tab === t ? C.primary : C.onSurfaceVariant,
+                  boxShadow:       tab === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+                  fontFamily:      SG,
+                }}>
+                {t === "admin" ? "Admin View" : t === "student" ? "Student View" : "Mentor View"}
               </button>
             ))}
-          </nav>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="flex gap-4">
-            <span className="material-symbols-outlined cursor-pointer hover:text-[#C4ECCE] transition-colors" style={{ color: "#C4ECCE" }}>
-              sensors
-            </span>
-            <span className="material-symbols-outlined cursor-pointer hover:text-[#C4ECCE] transition-colors" style={{ color: "#C4ECCE" }}>
-              terminal
-            </span>
-            <span className="material-symbols-outlined cursor-pointer hover:text-[#C4ECCE] transition-colors" style={{ color: "#C4ECCE" }}>
-              settings_input_component
-            </span>
           </div>
-          <div
-            className="w-8 h-8 flex items-center justify-center text-xs font-bold"
-            style={{ backgroundColor: "rgba(196,236,206,0.2)", color: "#C4ECCE", border: "1px solid rgba(196,236,206,0.3)", fontFamily: SG }}
-          >
-            KW
-          </div>
-        </div>
-      </header>
 
-      {/* ── Side Nav ──────────────────────────────────────────────────────── */}
-      <aside
-        className="fixed left-0 top-0 h-full z-40 hidden lg:flex flex-col pt-20"
-        style={{ width: "256px", backgroundColor: "#0E0E0E" }}
-      >
-        <div className="px-6 mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-2 h-2" style={{ backgroundColor: "#C4ECCE" }} />
-            <h2 className="text-lg italic" style={{ fontFamily: NS, color: "#A9D0B3" }}>MUJIN_OS</h2>
-          </div>
-          <p
-            className="font-light tracking-[0.1em] text-[10px] uppercase"
-            style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
-          >
-            V.1.0_STABLE
+          {/* Tab description */}
+          <p className="mb-8 text-sm" style={{ color: C.onSurfaceVariant }}>
+            {tab === "admin"   && "Program staff see all 50 students across 10 cohorts. Click any student to drill into their trust score history, P&L, and graduation status."}
+            {tab === "student" && "Students see their own trust score breakdown, graduation gate progress, and peer group. Shown here: Kai Watanabe (PayRoute) — interview scheduled."}
+            {tab === "mentor"  && "Mentors see their assigned cohort of 5. Click a student to review check-in notes and submit grades. Interactive — try grading a note."}
           </p>
-        </div>
-        <nav className="flex-1 space-y-1">
-          {SIDE_LINKS.map((l) => {
-            const key = l.label.toLowerCase() as View | string;
-            const isNav = key === "dashboard" || key === "protocols" || key === "lattice";
-            const isActive = isNav && key === view;
-            return (
-              <div
-                key={l.label}
-                onClick={isNav ? () => setView(key as View) : undefined}
-                className="flex items-center gap-4 py-4 px-6 text-sm tracking-[0.1em] uppercase transition-all"
-                style={
-                  isActive
-                    ? { backgroundColor: "#C4ECCE", color: "#131313", fontFamily: SG, fontWeight: "700", borderLeft: "4px solid #FFDDB4", cursor: "pointer" }
-                    : { color: "#b4cad6", fontFamily: SG, opacity: isNav ? 1 : 0.35, cursor: isNav ? "pointer" : "default" }
-                }
-              >
-                <span className="material-symbols-outlined">{l.icon}</span>
-                {l.label}
-              </div>
-            );
-          })}
-        </nav>
-        <div className="p-6 space-y-4">
-          <Link
-            href="/program"
-            className="block w-full py-3 text-center text-xs font-bold tracking-widest uppercase transition-colors hover:bg-[#FFDDB4]"
-            style={{ backgroundColor: "#C4ECCE", color: "#143723", fontFamily: SG }}
-          >
-            View Program
-          </Link>
-          <div className="pt-4 flex flex-col gap-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-            <Link
-              href="/faq"
-              className="flex items-center gap-2 text-[10px] uppercase tracking-widest hover:text-[#C4ECCE] transition-colors"
-              style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}
-            >
-              <span className="material-symbols-outlined text-sm">contact_support</span>
-              Help / FAQ
-            </Link>
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-[10px] uppercase tracking-widest hover:text-[#ffb4ab] transition-colors"
-              style={{ color: "rgba(180,202,214,0.6)", fontFamily: SG }}
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Exit Demo
-            </Link>
-          </div>
-        </div>
-      </aside>
 
-      {/* ── Main ──────────────────────────────────────────────────────────── */}
-      <main className="lg:pl-64 pt-16 min-h-screen" style={{ backgroundColor: "#0e0e0e" }}>
-        {view === "protocols" ? (
-          <ProtocolsView />
-        ) : view === "lattice" ? (
-          <LatticeView />
-        ) : role === "student" ? (
-          <StudentView onRoleChange={setRole} />
-        ) : role === "mentor" ? (
-          <MentorView onRoleChange={setRole} />
-        ) : (
-          <AdminView onRoleChange={setRole} />
-        )}
+          {/* Dashboard shell */}
+          <div className="rounded-2xl overflow-hidden"
+            style={{ border: `1px solid ${C.outlineVariant}30`, backgroundColor: C.surfaceContainerLowest, boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+            {/* Fake browser chrome */}
+            <div className="flex items-center gap-2 px-5 py-3 border-b" style={{ backgroundColor: C.surfaceContainerLow, borderColor: C.outlineVariant + "30" }}>
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#fc6058" }} />
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#fea429" }} />
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#29cb41" }} />
+              </div>
+              <div className="flex-1 mx-4">
+                <div className="rounded-md px-3 py-1 text-xs" style={{ backgroundColor: C.surfaceContainerHigh, color: C.onSurfaceVariant, fontFamily: IBM, maxWidth: 320 }}>
+                  mujin2.vercel.app / dashboard / {tab} / demo
+                </div>
+              </div>
+            </div>
+
+            {/* Dashboard nav bar */}
+            <div className="border-b px-6 h-14 flex items-center gap-6" style={{ borderColor: C.outlineVariant + "30", backgroundColor: C.surfaceContainerLowest }}>
+              <span className="text-base font-semibold tracking-tight" style={{ color: C.onSurface, fontFamily: SG }}>Mujin</span>
+              <span className="text-sm" style={{ color: C.primary, fontFamily: SG, fontWeight: 600 }}>Dashboard</span>
+              <span className="text-sm" style={{ color: C.onSurfaceVariant, fontFamily: SG }}>Demo</span>
+              <div className="ml-auto flex items-center gap-4">
+                <span className="text-xs px-2 py-1 rounded border" style={{ color: C.onSurfaceVariant, borderColor: C.outlineVariant + "40", fontFamily: IBM }}>EN</span>
+                <span className="text-sm" style={{ color: C.onSurfaceVariant, fontFamily: SG }}>Sign Out</span>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 max-w-3xl">
+              {tab === "admin"   && <AdminView />}
+              {tab === "student" && <StudentView />}
+              {tab === "mentor"  && <MentorView />}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA ──────────────────────────────────────────────────────────── */}
+        <section className="px-12 pb-24 max-w-screen-2xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 px-16 py-14 rounded-2xl"
+            style={{ backgroundColor: C.onSurface }}>
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ fontFamily: NS, color: C.onPrimary }}>
+                Ready for the real platform?
+              </h2>
+              <p className="mt-3 text-base" style={{ color: C.outlineVariant }}>
+                Log in with demo credentials to explore the full dashboard.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 shrink-0 text-center">
+              <Link href="/login" className="px-10 py-4 font-semibold text-sm rounded-sm transition-all"
+                style={{ backgroundColor: C.primary, color: C.onPrimary, fontFamily: SG }}>
+                Log In to Demo
+              </Link>
+              <p className="text-xs" style={{ color: C.outlineVariant, fontFamily: IBM }}>
+                admin@demo.mujin.jp · admin2026!
+              </p>
+            </div>
+          </div>
+        </section>
+
       </main>
 
-      {/* ── Decorative right rail ─────────────────────────────────────────── */}
-      <div className="fixed right-0 top-0 h-full w-12 z-10 hidden xl:flex flex-col items-center py-12 gap-12 pointer-events-none opacity-20">
-        <span
-          className="text-2xl italic tracking-[0.5em]"
-          style={{ fontFamily: NS, color: "#C4ECCE", writingMode: "vertical-rl" }}
-        >
-          無尽
-        </span>
-        <div className="flex-1" style={{ borderRight: "1px solid rgba(196,236,206,0.2)" }} />
-        <span
-          className="text-[10px] uppercase tracking-widest"
-          style={{ color: "#b4cad6", fontFamily: SG, writingMode: "vertical-rl" }}
-        >
-          082-99-44-X
-        </span>
-      </div>
+      {/* ── Footer ─────────────────────────────────────────────────────────────── */}
+      <footer className="w-full py-16 px-12"
+        style={{ backgroundColor: C.surfaceContainerLow, borderTop: `1px solid ${C.outlineVariant}30` }}>
+        <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+          <div>
+            <Link href="/" className="text-2xl font-bold tracking-widest uppercase"
+              style={{ fontFamily: NS, color: "#1B365D" }}>
+              MUJIN
+            </Link>
+            <p className="mt-2 text-xs uppercase tracking-widest" style={{ color: C.onSurfaceVariant, fontFamily: IBM }}>
+              © 2026 · A Frontier Commons Prototype
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-10">
+            {[...NAV_LINKS, { label: "Demo", href: "/demo" }].map((l) => (
+              <Link key={l.label} href={l.href} className="text-sm font-medium hover:text-[#465f88] transition-colors"
+                style={{ color: C.onSurfaceVariant, fontFamily: SG }}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }

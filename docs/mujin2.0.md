@@ -131,10 +131,36 @@ At the start of a new session, tell Claude:
 ---
 
 ## Session State
-> Last updated: 2026-03-19 (session 22) — CLOSED
-> Current phase: **Go-to-market — all documents finalized and exported as .docx, awaiting Canva formatting before pastor send**
+> Last updated: 2026-03-25 (session 25) — OPEN
+> Current phase: **UI rebuild complete — all 6 public pages rebuilt with new light design system**
 
-### Session 22 Summary
+### Session 25 Summary (2026-03-25) — Full UI Rebuild
+
+- **Design system established:** Light Material Design color scheme — primary #465f88 (navy), secondary #486558 (forest green), background #f9f9f9. Font stack: Noto Serif (display headings), Space Grotesk (body/labels), IBM Plex Mono (data/metadata). All tokens stored in per-file `C` constants objects (not Tailwind classes) to avoid purge issues.
+- **Top nav pattern** adopted across all public marketing pages (replaced sidebar on team + about pages).
+- **6 pages rebuilt** from dark prototype to light reference HTML designs — all fictional "Heritage Ledger / crypto" content replaced with real Mujin content:
+  - `page.tsx` — Homepage: Hero ("A grant built on relational trust"), The Model 2-col, Bento metrics (50 students / ¥500K), Founder's Vision, Featured Pillars, ISM Network nodes, dark CTA, footer. Fixed: "Demo" (not "Request a Demo") in nav + CTA.
+  - `team/page.tsx` — Leadership: asymmetric 7/5 grid, ghost initials in Cormorant Garamond, left gradient accent, grain texture, pulse-live indicator, tag chips. Removed nameJP/ID metadata per user correction.
+  - `about/page.tsx` — Mission/About: Hero with 無尽 kanji stats panel, 4-step path cards, bento (Recyclable Loop / ISM Network / Pledge of Honor), Program Phases + Graduation Gates, Eligibility criteria, 5-milestone roadmap, CTA.
+  - `alumni/page.tsx` — Network: ISM network nodes (IFI/KGK/CCC/JCMN) with hover-to-primary, community health stats + Trust Engine bento, framework horizontal scroll cards, alliance grid.
+  - `faq/page.tsx` — FAQ: Server component (no useState), sticky sidebar nav, 5 sections with all real Q&A content (Eligibility / The Grant / Trust Engine / Graduation & Banking / The Commons).
+  - `demo/page.tsx` — Demo: Trust Engine simulation UI, 4 signals explanation, illustrative student scenarios, request demo form (mailto action).
+- **Remaining:** `program/page.tsx` still uses old dark sidebar design — no reference HTML provided yet.
+
+### Session 24 Summary (2026-03-25) — Security + Infra + Deck
+- **Security incident resolved:** `app/vercel.env` was accidentally committed to `jahn-sudo/Mujin` with live Google Service Account private key (base64) and Railway Postgres password
+- Old Google SA key deleted, new key generated (`calm-magpie-490613-n5-e1bfcf8914b0.json`), re-encoded as base64
+- Railway Postgres password rotated to new value
+- `vercel.env` removed from all 32 commits in git history via `git filter-branch`
+- `vercel.env` added to `.gitignore`, force-pushed to GitHub
+- Env vars confirmed present on both Vercel projects (mujin2 + app) via API
+- `mujin2.vercel.app` alias re-confirmed live (was cosmetic dashboard glitch from force-push)
+- `app-chi-three-86.vercel.app` homepage replaced with redirect → `mujin2.vercel.app/about`
+- **11-slide investor deck built** as pixel-accurate PPTX from HTML designs → saved to `~/Desktop/Mujin_Overview.pptx`
+- Fixed broken "Mujin" logo link in dashboard layout — `href="/"` was redirecting users to the marketing site; now routes to role-appropriate dashboard
+- **Next:** Full UI rebuild of the Mujin app
+
+### Session 23 Summary (2026-03-24) — Website Sprint
 - Manifesto revised: consistent short sentence rhythm, all em dashes removed, operational asks stripped, person-to-person register held throughout
 - Fixed "carrying degrees" — students arrive to obtain degrees, not with them. Now reads: "They arrived carrying dreams."
 - Fixed "Founded in Japan" — now reads: "Rooted in Japan. Built for the world." Updated in both manifesto and donor projection.
@@ -155,8 +181,11 @@ At the start of a new session, tell Claude:
 | 3 | 2–3 conversations with ISM network contacts | Andrew | This week |
 | 4 | Secure real domain (replace mujin2.vercel.app) | Jonathan | Before wider sharing |
 | 5 | Explore Taito City multicultural coexistence partner registration | Jonathan + Andrew | Next 30 days |
-| 6 | Draft FAQ one-pager (for second wave, when pastor shares with others) | — | After first send |
-| 7 | Format donor projection in Canva → PDF | Jonathan | Before donor conversations |
-| 8 | Ask Andrew to map IFI donor network (who gave, at what level, why) | Andrew | This week |
-| 9 | Get Andrew's honest read on year 1 pipeline (how many students realistically) | Andrew | This week |
-| 10 | **Migrate demo site** — remove demo from login screen, add as dedicated tab on main page with side panel to switch views (requires re-login to GitHub + Vercel first) | Jonathan | Next sprint |
+| 6 | Format donor projection in Canva → PDF | Jonathan | Before donor conversations |
+| 7 | Ask Andrew to map IFI donor network (who gave, at what level, why) | Andrew | This week |
+| 8 | Get Andrew's honest read on year 1 pipeline (how many students realistically) | Andrew | This week |
+| 9 | Rebuild `program/page.tsx` — only public page not yet redesigned (no reference HTML yet) | Jonathan + Claude | Up next |
+| ~~13~~ | ~~UI rebuild — all 6 public pages (homepage, team, about, alumni/network, faq, demo)~~ | ~~Jonathan + Claude~~ | ✅ Done (session 25) |
+| ~~10~~ | ~~Migrate demo site~~ | ~~Jonathan~~ | ✅ Done (session 23) |
+| ~~11~~ | ~~Security incident — rotate keys, clean git history~~ | ~~Jonathan~~ | ✅ Done (session 24) |
+| ~~12~~ | ~~Build investor deck PPT~~ | ~~Jonathan~~ | ✅ Done (session 24) |

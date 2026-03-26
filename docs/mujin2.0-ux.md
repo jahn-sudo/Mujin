@@ -16,6 +16,43 @@
 
 ---
 
+## Design System — Public Marketing Pages (Session 25)
+
+### Color Palette
+| Token | Hex | Usage |
+| :--- | :--- | :--- |
+| Primary | `#465f88` | Navy — CTAs, active states, headings |
+| Secondary | `#486558` | Forest green — accent chips, tags, borders |
+| Background | `#f9f9f9` | Page background |
+| Surface | `#ffffff` | Card backgrounds |
+| On-Surface | `#1a1a2e` | Body text |
+| Primary Light | `#e8edf5` | Hover fills, tag backgrounds |
+| Secondary Light | `#e8f0ed` | Alternate tag backgrounds |
+
+Implementation: all tokens stored in a per-file `C` constants object using inline styles — **not Tailwind dynamic classes** — to avoid purge issues.
+
+### Typography
+| Role | Font | Usage |
+| :--- | :--- | :--- |
+| Display headings | Noto Serif | Hero h1, section titles |
+| Body / labels | Space Grotesk | Body copy, nav, buttons, cards |
+| Data / metadata | IBM Plex Mono | Stats, scores, tags, metadata |
+| Ghost initials | Cormorant Garamond | Decorative large initials (team page) |
+
+### Navigation
+- **Public marketing pages:** Top nav (horizontal, sticky/transparent-on-scroll). Links: About · Network · FAQ · Demo.
+- **Authenticated dashboard routes:** Sidebar nav retained (existing pattern).
+
+### Recurring UI Patterns
+- **Grain texture overlay:** `opacity: 0.03` noise on hero sections and dark panels
+- **Pulse-live indicator:** Animated green dot (`.pulse-live` class) for "active program" status
+- **Left gradient accent:** Thin left-border gradient strip on cards (navy → transparent)
+- **Ghost initial:** Large faded letter watermark behind team/section headers
+- **Tag chips:** IBM Plex Mono, `#486558` border + `#e8f0ed` bg — used for role tags, signal labels
+- **Bento grid:** Mixed-size card grid for stats + feature highlights (3-col → asymmetric on desktop)
+
+---
+
 ## Student Flow
 
 ```

@@ -161,6 +161,26 @@ Sessions 1–12 were not individually logged by name. Work in this phase is capt
 
 ---
 
+## Session 25 — Completed (2026-03-25) — Full UI Rebuild
+
+**Design system established:**
+- Light Material Design palette: primary `#465f88` (navy), secondary `#486558` (forest green), surface `#f9f9f9`, on-surface `#1a1a2e`. All tokens stored in per-file `C` constants objects (inline styles — not Tailwind classes) to survive purge.
+- Font stack: Noto Serif (display headings), Space Grotesk (body/labels), IBM Plex Mono (data/metadata/code).
+- Top nav pattern adopted for all public marketing pages. Sidebar retained only for authenticated dashboard routes.
+
+**Pages rebuilt (dark → light, fictional → real Mujin content):**
+
+- **`page.tsx` (Homepage):** Hero ("A grant built on relational trust"), The Model 2-col layout, Bento metrics panel (50 students / ¥500K / trust stats), Founder's Vision editorial (Jonathan's quote), Featured Pillars (Recyclable Grant + Trust Score), ISM Network nodes (IFI/KGK/CCC/JCMN), dark gradient CTA, footer. Fix: changed "Request a Demo" → "Demo" in both nav button and CTA section.
+- **`team/page.tsx` (Leadership):** Asymmetric 7/5 grid for Jonathan Ahn + Andrew Feng, ghost initials in Cormorant Garamond, left gradient accent, grain texture, pulse-live status dot, tag chips in IBM Plex Mono, 無尽 mission interlude, "Join the Network" CTA. Fix: removed `nameJP · id` metadata from member cards.
+- **`about/page.tsx` (Mission):** Hero with 無尽 kanji stats panel, 4-step path cards (Apply/Mentor Match/Trust Building/Bank Introduction), bento grid (Recyclable Loop / ISM Network / Pledge of Honor wide card), Program Phases + Graduation Gates panel, Eligibility criteria (student vs partner), 5-milestone roadmap timeline (Q2 2026 → Q4 2027), CTA.
+- **`alumni/page.tsx` (Network):** ISM network node cards (IFI/KGK/CCC/JCMN) with hover-to-primary state, community health stats + Trust Engine bento, framework horizontal-scroll cards, The Alliance partner grid, CTA pill, footer.
+- **`faq/page.tsx` (FAQ):** Rebuilt as pure server component (removed `"use client"` + `useState` accordion). Sticky sidebar nav with category pills, 5 real Q&A sections: Eligibility / The Grant / Trust Engine / Graduation & Banking / The Commons. All fictional content replaced with Mujin-specific answers.
+- **`demo/page.tsx` (Demo):** Trust Engine simulation walkthrough (sidebar state cards + 3-node canvas + dark overlay), 4 Signals explanation rows + 2×2 stat grid, 3 illustrative student scenarios (Green/Yellow/Red arcs), Request Demo Access form (dark rounded panel, mailto action).
+
+**Remaining:** `program/page.tsx` still uses old dark sidebar design — no reference HTML provided.
+
+---
+
 ## Decisions Made
 
 *Complete list of all product, technical, and operational decisions made across sessions 1–20.*

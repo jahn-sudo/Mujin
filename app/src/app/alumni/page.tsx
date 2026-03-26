@@ -1,329 +1,422 @@
+"use client";
+
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 const APPLY_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScp7GNJ9T58mHrY_zfrcPbWj5i51dffLYVaM72xfH02sCghqw/viewform?usp=sharing&ouid=103224701688413762370";
 
-const SG = "var(--font-space-grotesk), sans-serif";
-const NS = "var(--font-noto-serif), serif";
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+const C = {
+  background:              "#f9f9f9",
+  surfaceContainerLowest:  "#ffffff",
+  surfaceContainerLow:     "#f2f4f4",
+  surfaceContainer:        "#ebeeef",
+  surfaceContainerHigh:    "#e4e9ea",
+  surfaceContainerHighest: "#dde4e5",
+  onBackground:            "#2d3435",
+  onSurface:               "#2d3435",
+  onSurfaceVariant:        "#5a6061",
+  outline:                 "#757c7d",
+  outlineVariant:          "#adb3b4",
+  primary:                 "#465f88",
+  primaryDim:              "#3a537c",
+  primaryContainer:        "#d6e3ff",
+  onPrimary:               "#f6f7ff",
+  onPrimaryContainer:      "#39527b",
+  secondary:               "#486558",
+  secondaryContainer:      "#c9ead9",
+  onSecondary:             "#e5fff1",
+  onSecondaryContainer:    "#3a584b",
+} as const;
 
-const SIDE_LINKS = [
-  { icon: "dashboard",   label: "Home",    href: "/" },
-  { icon: "info",        label: "Mission",    href: "/about" },
-  { icon: "settings_input_component", label: "The Program", href: "/program" },
-  { icon: "groups",      label: "Leadership", href: "/team" },
-  { icon: "hub",         label: "Network",    href: "/alumni", active: true },
-  { icon: "quiz",        label: "FAQ",        href: "/faq" },
-  { icon: "play_circle", label: "Demo",       href: "/demo" },
-];
+const SG  = "var(--font-space-grotesk), sans-serif";
+const NS  = "var(--font-noto-serif), serif";
+const IBM = "var(--font-ibm-mono), monospace";
 
-// Illustrative placeholder alumni — will be replaced with real graduates after Q2 2027
-const ILLUSTRATIVE_ALUMNI = [
+
+const NETWORK_NODES = [
   {
-    id: "#OP_0001",
-    name: "Int'l Student, Tokyo",
-    initials: "IS",
-    category: "Edtech",
-    status: "Graduated",
-    statusColor: "#C4ECCE",
-    contributions: "—",
-    activity: "Venture: Online Tutoring Platform",
+    icon: "hub",
+    abbr: "IFI",
+    name: "International Fellowship of Interchange",
+    role: "Primary Deployment Node",
+    node: "Tokyo",
   },
   {
-    id: "#OP_0002",
-    name: "Japanese Founder, 24",
-    initials: "JF",
-    category: "Social Enterprise",
-    status: "In Program",
-    statusColor: "#ffddb4",
-    contributions: "—",
-    activity: "Trust Score: Green · Month 4",
+    icon: "school",
+    abbr: "KGK",
+    name: "Kirisutosha Gakusei Kai",
+    role: "University Campus Network",
+    node: "Nationwide",
   },
   {
-    id: "#OP_0003",
-    name: "Refugee Entrepreneur",
-    initials: "RE",
-    category: "Food & Beverage",
-    status: "Applicant",
-    statusColor: "#b4cad6",
-    contributions: "—",
-    activity: "Status: Pending · Cohort 2",
+    icon: "groups",
+    abbr: "CCC",
+    name: "Campus Crusade for Christ",
+    role: "Student Ministry Relay",
+    node: "Multi-campus",
+  },
+  {
+    icon: "diversity_3",
+    abbr: "JCMN",
+    name: "Japan Christian Missionary Network",
+    role: "Parachurch Alliance",
+    node: "Tokyo",
   },
 ];
 
-const MILESTONE_LOG = [
-  { ts: "Q2 2027", operative: "Cohort 1",     type: "Grant Disbursed",      id: "Grant Tranche 1",   impact: "¥15M",   impactColor: "#C4ECCE" },
-  { ts: "Q4 2027", operative: "Student Avg.", type: "Trust Score Review",   id: "Trust Review Q4",   impact: "+84%",   impactColor: "#C4ECCE" },
-  { ts: "Q2 2028", operative: "Graduate 01",  type: "Bank Intro Triggered", id: "Bank Intro 001",    impact: "Gate 4", impactColor: "#ffddb4" },
-  { ts: "Q4 2028", operative: "Graduate 01",  type: "Pledge Returned",      id: "Pledge Return 001", impact: "¥525K",  impactColor: "#C4ECCE" },
+const FRAMEWORK_CARDS = [
+  {
+    tag:    "Legal Entity",
+    title:  "Religious Corp (Shukyo Hojin)",
+    detail: "Non-binding pledge model",
+    desc:   "Grants are issued under a religious corporation structure — enabling community accountability without triggering FSA lending classification.",
+  },
+  {
+    tag:    "Financial Model",
+    title:  "Non-binding Pledge",
+    detail: "No debt collection, no FSA classification",
+    desc:   "The Pledge of Honor is voluntary. Mujin never pursues repayment through legal channels. The model relies on relational trust, not legal obligation.",
+  },
+  {
+    tag:    "Access Model",
+    title:  "ISM Referral Required",
+    detail: "Ministry endorsement required",
+    desc:   "Every applicant enters through a partnered ministry leader. The referral is the first signal — students are known by name before any grant is issued.",
+  },
+  {
+    tag:    "Bank Partner",
+    title:  "Japan Finance Corp.",
+    detail: "JFC + regional bank MOU in progress",
+    desc:   "Mujin is pursuing a formal MOU with Japan Finance Corporation and regional private banks including Kiraboshi Bank and Tokyo Star Bank.",
+  },
 ];
 
-function InitialsBox({ initials }: { initials: string }) {
-  return (
-    <div
-      className="w-12 h-12 flex items-center justify-center"
-      style={{ backgroundColor: "#131313", border: "1px solid rgba(196,236,206,0.2)" }}
-    >
-      <span className="text-sm font-bold" style={{ fontFamily: NS, color: "rgba(196,236,206,0.3)" }}>
-        {initials}
-      </span>
-    </div>
-  );
-}
+const ALLIANCE_PARTNERS = [
+  { abbr: "IFI",   name: "Int'l Fellowship of Interchange" },
+  { abbr: "KGK",   name: "Kirisutosha Gakusei Kai" },
+  { abbr: "CCC",   name: "Campus Crusade for Christ" },
+  { abbr: "JCMN",  name: "Japan Christian Missionary Network" },
+  { abbr: "TSB",   name: "Tokyo Star Bank" },
+  { abbr: "JFC",   name: "Japan Finance Corporation" },
+];
 
 export default function AlumniPage() {
   return (
-    <div style={{ backgroundColor: "#131313", color: "#e5e2e1", fontFamily: SG }}>
+    <div
+      style={{ backgroundColor: C.background, color: C.onBackground, fontFamily: SG }}
+      className="scroll-smooth selection:bg-[#d6e3ff] selection:text-[#39527b]"
+    >
 
-      {/* ── Top App Bar ─────────────────────────────────────────────────────── */}
-      <header
-        className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4"
-        style={{
-          backgroundColor: "rgba(19,19,19,0.6)",
-          backdropFilter: "blur(24px)",
-          borderBottom: "1px solid rgba(196,236,206,0.1)",
-        }}
-      >
-        <Link href="/" className="text-2xl font-bold tracking-tighter" style={{ fontFamily: NS, color: "#C4ECCE" }}>
-          MUJIN
-        </Link>
-        <div className="flex items-center gap-6">
-          <button className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG, background: "none", border: "none", cursor: "pointer" }}>EN</button>
-          <Link href="/login" className="text-[10px] uppercase tracking-widest transition-colors hover:text-[#C4ECCE]" style={{ color: "#b4cad6", fontFamily: SG }}>Log in</Link>
-        </div>
-      </header>
+      <Navbar />
 
-      {/* ── Side Nav ────────────────────────────────────────────────────────── */}
-      <aside
-        className="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-40"
-        style={{ width: "256px", backgroundColor: "#0E0E0E", borderRight: "1px solid rgba(196,236,206,0.1)" }}
-      >
-        <nav className="flex-1">
-          {SIDE_LINKS.map((l) => {
-            const inner = (
-              <>
-                <span className="material-symbols-outlined">{l.icon}</span>
-                <span className="text-[10px] uppercase tracking-[0.1em]" style={{ fontFamily: SG }}>{l.label}</span>
-              </>
-            );
-            const activeStyle = {
-              color: "#C4ECCE",
-              borderLeft: "4px solid #C4ECCE",
-              backgroundColor: "rgba(196,236,206,0.1)",
-            };
-            const idleStyle = { color: "#b4cad6", opacity: 0.7 };
-
-            return "external" in l && l.external ? (
-              <a
-                key={l.label}
-                href={l.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
-                style={idleStyle}
-              >
-                {inner}
-              </a>
-            ) : (
-              <Link
-                key={l.label}
-                href={l.href}
-                className="flex items-center gap-4 py-4 px-8 hover:bg-[#131313] hover:opacity-100 transition-all"
-                style={"active" in l && l.active ? activeStyle : idleStyle}
-              >
-                {inner}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="px-8 mt-auto">
-          <a
-            href={APPLY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full py-4 text-center text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#C4ECCE]/5 transition-all"
-            style={{ border: "1px solid rgba(196,236,206,0.2)", color: "#C4ECCE", fontFamily: SG }}
-          >
-            Apply to Pilot
-          </a>
-        </div>
-      </aside>
-
-      {/* ── Main ────────────────────────────────────────────────────────────── */}
-      <main className="lg:ml-64 pt-24 pb-12 px-8 min-h-screen relative">
+      <main className="pt-24">
 
         {/* ── Hero ──────────────────────────────────────────────────────────── */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20 items-end">
-          <div className="lg:col-span-7">
-            <span
-              className="text-[10px] tracking-[0.3em] uppercase block mb-4"
-              style={{ color: "#C4ECCE", fontFamily: SG }}
-            >
-              Archive · Registry
-            </span>
-            <h1
-              className="text-5xl md:text-7xl font-bold tracking-tighter leading-tight mb-6"
-              style={{ fontFamily: NS }}
-            >
-              Alumni Registry
-            </h1>
-            <p className="text-lg leading-relaxed max-w-xl" style={{ color: "#b4cad6", opacity: 0.8 }}>
-              The Mujin alumni network will be built by the students who prove the model.
-              As each cohort graduates and receives their bank introduction, their story
-              joins this registry. The first cohort launches Q2 2027.
-            </p>
-          </div>
-          <div className="lg:col-span-5 flex flex-col items-start lg:items-end">
-            <div
-              className="p-6 mb-4 w-full"
-              style={{ backgroundColor: "#1c1b1b", borderLeft: "2px solid #C4ECCE" }}
-            >
-              <div className="flex justify-between items-center mb-2">
-                <span
-                  className="text-[10px] uppercase"
-                  style={{ color: "rgba(196,236,206,0.6)", fontFamily: SG }}
+        <section className="relative min-h-[780px] flex items-center px-12 py-24 overflow-hidden">
+          {/* Subtle gradient hint */}
+          <div
+            className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none"
+            style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.secondary})` }}
+          />
+
+          <div className="max-w-screen-2xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
+
+            {/* Left: Text */}
+            <div className="lg:col-span-7">
+              <span
+                className="inline-block px-4 py-1 mb-6 text-xs font-bold tracking-[0.2em] uppercase"
+                style={{
+                  backgroundColor: C.secondaryContainer,
+                  color:           C.onSecondaryContainer,
+                  borderRadius:    "0.75rem",
+                  fontFamily:      IBM,
+                }}
+              >
+                Operational Infrastructure
+              </span>
+              <h1
+                className="text-6xl md:text-8xl font-bold mb-8 leading-[1.05] tracking-tight"
+                style={{ fontFamily: NS, color: C.onSurface }}
+              >
+                A Network Built on{" "}
+                <em className="font-normal italic" style={{ color: C.secondary }}>
+                  Relational
+                </em>{" "}
+                Trust.
+              </h1>
+              <p
+                className="text-xl max-w-2xl mb-12 leading-relaxed"
+                style={{ color: C.onSurfaceVariant }}
+              >
+                Mujin does not source students from the open market. Every applicant
+                enters through a trusted ministry partner — a person who knows the
+                student by name, has walked with them, and is willing to stake their
+                relational credibility on the referral.
+              </p>
+              <div className="flex flex-wrap gap-6">
+                <a
+                  href={APPLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-10 py-5 font-semibold transition-all"
+                  style={{
+                    backgroundColor: C.primary,
+                    color:           C.onPrimary,
+                    borderRadius:    "0.125rem",
+                  }}
                 >
-                  Cohort Slots
-                </span>
-                <span className="text-[10px]" style={{ color: "#ffddb4", fontFamily: SG }}>
-                  Filling — Q2 2027
-                </span>
-              </div>
-              <div className="text-3xl font-bold tracking-tighter" style={{ color: "#C4ECCE" }}>
-                0 / 50
-              </div>
-              <div className="w-full h-1 mt-4" style={{ backgroundColor: "#131313" }}>
-                <div className="h-full" style={{ width: "0%", backgroundColor: "#C4ECCE" }} />
+                  Apply to Pilot
+                </a>
+                <Link
+                  href="/program"
+                  className="flex items-center gap-3 font-bold group"
+                  style={{ color: C.primary }}
+                >
+                  How It Works
+                  <span
+                    className="material-symbols-outlined transition-transform group-hover:translate-x-1"
+                    style={{ fontSize: "20px" }}
+                  >
+                    arrow_forward
+                  </span>
+                </Link>
               </div>
             </div>
-            <div className="flex gap-4">
-              <span className="text-[10px]" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>Est. 2026</span>
-              <span style={{ color: "rgba(180,202,214,0.4)" }}>|</span>
-              <span className="text-[10px]" style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}>Tokyo, Japan</span>
+
+            {/* Right: Network visual panel */}
+            <div className="lg:col-span-5 flex justify-center items-center">
+              <div
+                className="w-full flex flex-col items-center justify-center gap-8 p-10"
+                style={{
+                  aspectRatio:     "4 / 5",
+                  backgroundColor: C.surfaceContainer,
+                  borderRadius:    "1rem",
+                  overflow:        "hidden",
+                  position:        "relative",
+                }}
+              >
+                {/* Ghost kanji */}
+                <span
+                  className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
+                  style={{
+                    fontFamily: NS,
+                    fontSize:   "200px",
+                    fontStyle:  "italic",
+                    color:      `${C.secondary}10`,
+                    lineHeight: 1,
+                  }}
+                >
+                  無尽
+                </span>
+
+                {/* Label */}
+                <div
+                  className="relative z-10 text-center px-6 py-3 w-full"
+                  style={{
+                    backgroundColor: C.surfaceContainerHighest,
+                    borderRadius:    "0.5rem",
+                  }}
+                >
+                  <span
+                    className="text-sm font-semibold tracking-wide"
+                    style={{ fontFamily: IBM, color: C.primary }}
+                  >
+                    ISM Network · Tokyo, Japan
+                  </span>
+                </div>
+
+                {/* Stats */}
+                <div className="relative z-10 w-full grid grid-cols-1 gap-4">
+                  {[
+                    { value: "4",     label: "Partner Organizations" },
+                    { value: "50+",   label: "Mentors in Network"    },
+                    { value: "350K",  label: "Students in Japan"     },
+                  ].map((s) => (
+                    <div
+                      key={s.label}
+                      className="flex items-center justify-between px-6 py-4"
+                      style={{
+                        backgroundColor: C.surfaceContainerLowest,
+                        borderRadius:    "0.375rem",
+                        border:          `1px solid ${C.outlineVariant}40`,
+                      }}
+                    >
+                      <span
+                        className="text-sm"
+                        style={{ color: C.onSurfaceVariant, fontFamily: SG }}
+                      >
+                        {s.label}
+                      </span>
+                      <span
+                        className="text-2xl font-bold"
+                        style={{ fontFamily: NS, color: C.primary }}
+                      >
+                        {s.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── Network Visualization ─────────────────────────────────────────── */}
-        <section className="mb-20">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="h-px flex-1" style={{ backgroundColor: "rgba(66,72,66,0.3)" }} />
-            <h2
-              className="text-xs tracking-[0.4em] uppercase"
-              style={{ color: "#C4ECCE", fontFamily: SG }}
-            >
-              Heritage Visualization
-            </h2>
-            <div className="h-px flex-1" style={{ backgroundColor: "rgba(66,72,66,0.3)" }} />
-          </div>
-
-          <div
-            className="relative w-full overflow-hidden"
-            style={{ height: "500px", backgroundColor: "#0E0E0E" }}
-          >
-            {/* SVG grid */}
-            <div className="absolute inset-0" style={{ opacity: 0.2 }}>
-              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#c4ecce" strokeWidth="0.5" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-              </svg>
+        {/* ── The Network Nodes ─────────────────────────────────────────────── */}
+        <section
+          className="px-12 py-24"
+          style={{ backgroundColor: C.surfaceContainerLow }}
+        >
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="mb-16">
+              <span
+                className="text-xs font-bold tracking-[0.25em] uppercase block mb-4"
+                style={{ color: C.primary, fontFamily: IBM }}
+              >
+                Deployment Infrastructure
+              </span>
+              <h2
+                className="text-5xl md:text-6xl font-bold tracking-tight"
+                style={{ fontFamily: NS, color: C.onSurface }}
+              >
+                The Network Nodes
+              </h2>
+              <p
+                className="mt-6 text-lg max-w-2xl leading-relaxed"
+                style={{ color: C.onSurfaceVariant }}
+              >
+                Four ministry organizations form the backbone of the Mujin
+                referral network. Each node has its own geographic reach, student
+                profile, and ministry culture — all unified by a shared commitment
+                to relational accountability.
+              </p>
             </div>
 
-            {/* Nodes */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-full max-w-4xl h-full">
-                {/* Node 1 */}
-                <div className="absolute group" style={{ top: "20%", left: "30%" }}>
-                  <div className="w-3 h-3 animate-pulse" style={{ backgroundColor: "#C4ECCE" }} />
-                  <div
-                    className="glass-panel absolute top-4 left-4 p-3 hidden group-hover:block z-10"
-                    style={{ width: "192px", borderLeft: "2px solid #C4ECCE" }}
-                  >
-                    <p className="text-[10px] font-bold mb-1" style={{ color: "#C4ECCE" }}>
-                      Node 001: Cohort 1
-                    </p>
-                    <p className="text-[8px] uppercase tracking-widest" style={{ color: "#b4cad6" }}>
-                      Launching Q2 2027
-                    </p>
-                  </div>
-                </div>
-                {/* Node 2 */}
-                <div className="absolute group" style={{ top: "60%", left: "70%" }}>
-                  <div className="w-3 h-3" style={{ backgroundColor: "#ffddb4" }} />
-                  <div
-                    className="glass-panel absolute top-4 left-4 p-3 hidden group-hover:block z-10"
-                    style={{ width: "192px", borderLeft: "2px solid #ffddb4" }}
-                  >
-                    <p className="text-[10px] font-bold mb-1" style={{ color: "#ffddb4" }}>
-                      Bank Node: JFC Partner
-                    </p>
-                    <p className="text-[8px] uppercase tracking-widest" style={{ color: "#b4cad6" }}>
-                      MOU Pending Q1 2027
-                    </p>
-                  </div>
-                </div>
-                {/* Connection lines */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {NETWORK_NODES.map((node) => (
                 <div
-                  className="absolute"
+                  key={node.abbr}
+                  className="group relative flex flex-col justify-between p-8 overflow-hidden transition-colors duration-500 h-[320px]"
                   style={{
-                    top: "50%",
-                    left: "50%",
-                    width: "400px",
-                    height: "2px",
-                    background: "linear-gradient(to right, rgba(196,236,206,0), rgba(196,236,206,0.4), rgba(196,236,206,0))",
-                    transform: "rotate(35deg) translateX(-50%)",
+                    backgroundColor: C.surfaceContainerLowest,
+                    borderRadius:    "0.5rem",
+                    border:          `1px solid ${C.outlineVariant}40`,
                   }}
-                />
-                <div
-                  className="absolute"
-                  style={{
-                    top: "50%",
-                    left: "50%",
-                    width: "300px",
-                    height: "2px",
-                    background: "linear-gradient(to right, rgba(255,221,180,0), rgba(255,221,180,0.4), rgba(255,221,180,0))",
-                    transform: "rotate(-15deg) translateX(-50%)",
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.backgroundColor = C.primary;
+                    (e.currentTarget as HTMLDivElement).style.borderColor = C.primary;
                   }}
-                />
-                {/* Center placeholder text */}
-                <div
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{ pointerEvents: "none" }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.backgroundColor = C.surfaceContainerLowest;
+                    (e.currentTarget as HTMLDivElement).style.borderColor = `${C.outlineVariant}40`;
+                  }}
                 >
-                  <div className="text-center">
-                    <div
-                      className="text-6xl italic mb-2"
-                      style={{ fontFamily: NS, color: "rgba(196,236,206,0.04)" }}
+                  {/* Icon */}
+                  <div>
+                    <span
+                      className="material-symbols-outlined text-4xl mb-6 block transition-colors duration-500 group-hover:text-white"
+                      style={{ color: C.primary }}
                     >
-                      無尽
-                    </div>
-                    <div
-                      className="text-[10px] uppercase tracking-[0.4em]"
-                      style={{ color: "rgba(196,236,206,0.2)", fontFamily: SG }}
+                      {node.icon}
+                    </span>
+                    <span
+                      className="inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase mb-4 transition-colors duration-500 group-hover:bg-white/20 group-hover:text-white"
+                      style={{
+                        backgroundColor: C.primaryContainer,
+                        color:           C.onPrimaryContainer,
+                        borderRadius:    "0.25rem",
+                        fontFamily:      IBM,
+                      }}
                     >
-                      Registry Populates Q2 2027
-                    </div>
+                      {node.role}
+                    </span>
+                    <h3
+                      className="text-2xl font-bold transition-colors duration-500 group-hover:text-white"
+                      style={{ fontFamily: NS, color: C.onSurface }}
+                    >
+                      {node.abbr}
+                    </h3>
+                    <p
+                      className="text-sm mt-2 leading-snug transition-colors duration-500 group-hover:text-white/80"
+                      style={{ color: C.onSurfaceVariant }}
+                    >
+                      {node.name}
+                    </p>
+                  </div>
+
+                  {/* Footer */}
+                  <div
+                    className="flex items-center gap-2 pt-4 transition-colors duration-500"
+                    style={{ borderTop: `1px solid ${C.outlineVariant}40` }}
+                  >
+                    <span
+                      className="material-symbols-outlined text-base transition-colors duration-500 group-hover:text-white/60"
+                      style={{ color: C.outlineVariant }}
+                    >
+                      location_on
+                    </span>
+                    <span
+                      className="text-xs tracking-widest uppercase transition-colors duration-500 group-hover:text-white/60"
+                      style={{ color: C.onSurfaceVariant, fontFamily: IBM }}
+                    >
+                      {node.node}
+                    </span>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
+          </div>
+        </section>
 
-            {/* Legend */}
-            <div className="absolute bottom-6 left-6 flex flex-col gap-2">
+        {/* ── Community Health ──────────────────────────────────────────────── */}
+        <section className="px-12 py-24">
+          <div className="max-w-screen-2xl mx-auto max-w-2xl space-y-6">
+            <span
+              className="text-xs font-bold tracking-[0.25em] uppercase block mb-4"
+              style={{ color: C.secondary, fontFamily: IBM }}
+            >
+              Program Cadence
+            </span>
+            <h2
+              className="text-5xl font-bold tracking-tight leading-tight"
+              style={{ fontFamily: NS, color: C.onSurface }}
+            >
+              Community Health
+            </h2>
+            <p
+              className="text-base leading-relaxed"
+              style={{ color: C.onSurfaceVariant }}
+            >
+              Accountability is built into the rhythm — not added on top. Two
+              mandatory touchpoints per month create a baseline of visibility
+              across every cohort member.
+            </p>
+
+            <div className="space-y-4 pt-4">
               {[
-                { color: "#C4ECCE", label: "Graduates" },
-                { color: "#ffddb4", label: "Bank Partners" },
-              ].map((l) => (
-                <div key={l.label} className="flex items-center gap-2">
-                  <div className="w-2 h-2" style={{ backgroundColor: l.color }} />
+                { value: "Bi-Weekly Check-ins", meta: "Mandatory",     bg: C.surfaceContainerHigh },
+                { value: "Monthly Town Halls",  meta: "Peer Reported", bg: C.surfaceContainerHighest },
+              ].map((card) => (
+                <div
+                  key={card.value}
+                  className="flex items-center justify-between px-6 py-5"
+                  style={{
+                    backgroundColor: card.bg,
+                    borderRadius:    "0.5rem",
+                  }}
+                >
                   <span
-                    className="text-[10px] uppercase tracking-widest"
-                    style={{ color: l.color, fontFamily: SG }}
+                    className="font-semibold text-base"
+                    style={{ color: C.onSurface, fontFamily: SG }}
                   >
-                    {l.label}
+                    {card.value}
+                  </span>
+                  <span
+                    className="text-xs uppercase tracking-widest"
+                    style={{ color: C.onSurfaceVariant, fontFamily: IBM }}
+                  >
+                    {card.meta}
                   </span>
                 </div>
               ))}
@@ -331,228 +424,249 @@ export default function AlumniPage() {
           </div>
         </section>
 
-        {/* ── Registry Access ───────────────────────────────────────────────── */}
-        <section className="mb-20">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
-            <div className="max-w-md">
-              <h3 className="text-3xl font-bold mb-4" style={{ fontFamily: NS }}>Registry</h3>
-              <p className="text-sm italic" style={{ color: "rgba(180,202,214,0.6)" }}>
-                Illustrative profiles. Real graduate stories replace these when the first cohort graduates.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              {["All", "Graduated", "In Program"].map((tab, i) => (
-                <button
-                  key={tab}
-                  className="px-6 py-2 text-[10px] font-bold tracking-widest uppercase transition-all"
+        {/* ── The Framework ─────────────────────────────────────────────────── */}
+        <section
+          className="py-24 overflow-hidden"
+          style={{ backgroundColor: C.surfaceContainerLow }}
+        >
+          <div className="max-w-screen-2xl mx-auto px-12 mb-12">
+            <span
+              className="text-xs font-bold tracking-[0.25em] uppercase block mb-4"
+              style={{ color: C.primary, fontFamily: IBM }}
+            >
+              Legal & Financial Architecture
+            </span>
+            <h2
+              className="text-5xl md:text-6xl font-bold tracking-tight"
+              style={{ fontFamily: NS, color: C.onSurface }}
+            >
+              The Framework
+            </h2>
+            <p
+              className="mt-6 text-lg max-w-2xl leading-relaxed"
+              style={{ color: C.onSurfaceVariant }}
+            >
+              Mujin was designed from the ground up to operate legally and
+              transparently within Japan&apos;s regulatory environment — without
+              triggering financial services classification.
+            </p>
+          </div>
+
+          {/* Horizontally scrollable cards */}
+          <div className="px-12 overflow-x-auto pb-4">
+            <div className="flex gap-4" style={{ minWidth: "max-content" }}>
+              {FRAMEWORK_CARDS.map((card) => (
+                <div
+                  key={card.title}
+                  className="flex-none w-80 flex flex-col justify-between p-8"
                   style={{
-                    backgroundColor: i === 0 ? "#2a2a2a" : "#1c1b1b",
-                    borderBottom: i === 0 ? "2px solid #C4ECCE" : "none",
-                    color: i === 0 ? "#C4ECCE" : "#b4cad6",
-                    fontFamily: SG,
+                    backgroundColor: C.surfaceContainerLowest,
+                    borderRadius:    "0.5rem",
+                    border:          `1px solid ${C.outlineVariant}40`,
+                    height:          "300px",
                   }}
                 >
-                  {tab}
-                </button>
+                  <div>
+                    <span
+                      className="inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase mb-5"
+                      style={{
+                        backgroundColor: C.primaryContainer,
+                        color:           C.onPrimaryContainer,
+                        borderRadius:    "0.25rem",
+                        fontFamily:      IBM,
+                      }}
+                    >
+                      {card.tag}
+                    </span>
+                    <h3
+                      className="text-xl font-bold mb-2"
+                      style={{ fontFamily: NS, color: C.onSurface }}
+                    >
+                      {card.title}
+                    </h3>
+                    <p
+                      className="text-xs uppercase tracking-widest mb-4"
+                      style={{ color: C.primary, fontFamily: IBM }}
+                    >
+                      {card.detail}
+                    </p>
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: C.onSurfaceVariant }}
+                    >
+                      {card.desc}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px]" style={{ backgroundColor: "rgba(66,72,66,0.15)" }}>
-            {ILLUSTRATIVE_ALUMNI.map((m) => (
-              <div
-                key={m.id}
-                className="p-8 relative overflow-hidden group transition-all duration-500"
-                style={{ backgroundColor: "#1c1b1b" }}
-              >
-                {/* Calligraphy accent line */}
-                <div className="calligraphy-accent absolute left-0 top-8 bottom-8" />
-
-                <div className="flex justify-between items-start mb-8">
-                  <div>
-                    <p className="text-[10px] mb-1" style={{ color: "#C4ECCE", fontFamily: SG }}>
-                      {m.id}
-                    </p>
-                    <h4 className="text-xl" style={{ fontFamily: NS, color: "#e5e2e1" }}>
-                      {m.name}
-                    </h4>
-                  </div>
-                  <InitialsBox initials={m.initials} />
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  {[
-                    { label: "Category",     value: m.category,    valueColor: "#C4ECCE" },
-                    { label: "Status",       value: m.status,      valueColor: m.statusColor },
-                    { label: "Contributions", value: m.contributions, valueColor: "#e5e2e1" },
-                  ].map((row) => (
-                    <div
-                      key={row.label}
-                      className="flex justify-between pb-1"
-                      style={{ borderBottom: "1px solid rgba(66,72,66,0.2)" }}
-                    >
-                      <span
-                        className="text-[10px] uppercase"
-                        style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}
-                      >
-                        {row.label}
-                      </span>
-                      <span
-                        className="text-[10px] uppercase tracking-widest"
-                        style={{ color: row.valueColor, fontFamily: SG }}
-                      >
-                        {row.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div
-                  className="p-4"
-                  style={{ backgroundColor: "rgba(19,19,19,0.5)", border: "1px solid rgba(66,72,66,0.1)" }}
-                >
-                  <p
-                    className="text-[9px] uppercase tracking-[0.2em] mb-2"
-                    style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}
-                  >
-                    Activity
-                  </p>
-                  <p
-                    className="text-[10px] leading-tight"
-                    style={{ color: "#C4ECCE", fontFamily: "monospace" }}
-                  >
-                    {m.activity}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <p
-            className="text-xs mt-4"
-            style={{ color: "rgba(180,202,214,0.4)", fontFamily: SG }}
-          >
-            * Profiles above are illustrative. Real alumni will be added as cohorts graduate.
-          </p>
         </section>
 
-        {/* ── Milestone Log (table) ─────────────────────────────────────────── */}
-        <section className="mb-20">
-          <h3 className="text-3xl font-bold mb-8" style={{ fontFamily: NS }}>Milestone Log</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr style={{ backgroundColor: "#0E0E0E", textAlign: "left" }}>
-                  {["Timestamp", "Event", "Type", "Protocol ID", "Impact"].map((h, i) => (
-                    <th
-                      key={h}
-                      className="py-4 px-6 text-[10px] uppercase tracking-[0.2em]"
-                      style={{
-                        color: "#C4ECCE",
-                        fontFamily: SG,
-                        textAlign: i === 4 ? "right" : "left",
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="text-xs" style={{ fontFamily: "monospace" }}>
-                {MILESTONE_LOG.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="transition-colors"
-                    style={{ borderBottom: "1px solid rgba(66,72,66,0.1)" }}
+        {/* ── The Alliance ──────────────────────────────────────────────────── */}
+        <section className="px-12 py-24">
+          <div className="max-w-screen-2xl mx-auto">
+            <div className="mb-16 text-center">
+              <span
+                className="text-xs font-bold tracking-[0.25em] uppercase block mb-4"
+                style={{ color: C.secondary, fontFamily: IBM }}
+              >
+                Partner Institutions
+              </span>
+              <h2
+                className="text-5xl font-bold tracking-tight"
+                style={{ fontFamily: NS, color: C.onSurface }}
+              >
+                The Alliance
+              </h2>
+              <p
+                className="mt-6 text-lg max-w-xl mx-auto leading-relaxed"
+                style={{ color: C.onSurfaceVariant }}
+              >
+                Ministry networks, banking institutions, and missional
+                organizations working together to make the Mujin model possible.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              {ALLIANCE_PARTNERS.map((p) => (
+                <div
+                  key={p.abbr}
+                  className="group flex flex-col items-center justify-center gap-3 p-8 transition-all duration-300"
+                  style={{
+                    backgroundColor: C.surfaceContainerLow,
+                    borderRadius:    "0.5rem",
+                    border:          `1px solid ${C.outlineVariant}30`,
+                    opacity:         0.6,
+                    filter:          "grayscale(1)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.opacity = "1";
+                    (e.currentTarget as HTMLDivElement).style.filter = "grayscale(0)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.opacity = "0.6";
+                    (e.currentTarget as HTMLDivElement).style.filter = "grayscale(1)";
+                  }}
+                >
+                  <span
+                    className="text-xl font-bold"
+                    style={{ fontFamily: NS, color: C.primary }}
                   >
-                    <td className="py-4 px-6" style={{ color: "rgba(180,202,214,0.6)" }}>{row.ts}</td>
-                    <td className="py-4 px-6" style={{ color: "#e5e2e1" }}>{row.operative}</td>
-                    <td className="py-4 px-6 uppercase" style={{ color: "#b4cad6" }}>{row.type}</td>
-                    <td className="py-4 px-6" style={{ color: "#b4cad6" }}>{row.id}</td>
-                    <td className="py-4 px-6 text-right font-bold" style={{ color: row.impactColor }}>{row.impact}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    {p.abbr}
+                  </span>
+                  <span
+                    className="text-[10px] text-center leading-tight"
+                    style={{ color: C.onSurfaceVariant, fontFamily: SG }}
+                  >
+                    {p.name}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="text-[10px] mt-4 uppercase tracking-widest" style={{ color: "rgba(180,202,214,0.3)", fontFamily: SG }}>
-            * Projected milestones. Actual log populates as program runs.
-          </p>
         </section>
 
         {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-        <section
-          className="p-12 text-center relative overflow-hidden"
-          style={{ backgroundColor: "#0E0E0E", border: "1px solid rgba(196,236,206,0.1)" }}
-        >
-          <div className="absolute inset-0 seigaiha-pattern pointer-events-none" style={{ opacity: 0.05 }} />
-          <div className="relative z-10">
-            <span className="material-symbols-outlined text-4xl mb-6 block" style={{ color: "#C4ECCE" }}>
-              history_edu
-            </span>
-            <h2 className="text-3xl italic mb-4" style={{ fontFamily: NS }}>
-              Write the first story.
-            </h2>
-            <p className="mb-8 max-w-md mx-auto" style={{ color: "#c1c8c0" }}>
-              Be part of the founding cohort. 50 students. Q2 2027.
-              Applications are open now.
-            </p>
-            <a
-              href={APPLY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-10 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all"
-              style={{ backgroundColor: "#C4ECCE", color: "#143723", fontFamily: SG }}
+        <section className="px-12 py-24">
+          <div className="max-w-screen-2xl mx-auto">
+            <div
+              className="flex flex-col md:flex-row items-center justify-between gap-8 px-16 py-16"
+              style={{
+                backgroundColor: C.onSurface,
+                borderRadius:    "9999px",
+              }}
             >
-              Apply Now
-            </a>
+              <div>
+                <h2
+                  className="text-4xl md:text-5xl font-bold tracking-tight"
+                  style={{ fontFamily: NS, color: C.onPrimary }}
+                >
+                  Become a Network Partner.
+                </h2>
+                <p
+                  className="mt-4 text-base"
+                  style={{ color: C.outlineVariant }}
+                >
+                  Ministry leaders, banks, and organizations — reach out directly.
+                </p>
+              </div>
+              <a
+                href="mailto:hello@mujin.jp"
+                className="shrink-0 px-10 py-5 font-semibold text-base transition-all duration-200 active:scale-95 hover:brightness-110"
+                style={{
+                  backgroundColor: C.primary,
+                  color:           C.onPrimary,
+                  borderRadius:    "9999px",
+                  fontFamily:      SG,
+                }}
+              >
+                hello@mujin.jp
+              </a>
+            </div>
           </div>
         </section>
+
       </main>
 
-      {/* ── Footer ────────────────────────────────────────────────────────── */}
+      {/* ── Footer ────────────────────────────────────────────────────────────── */}
       <footer
-        className="lg:ml-64 w-full py-12 px-8 flex flex-col md:flex-row justify-between items-center"
-        style={{ borderTop: "1px solid rgba(196,236,206,0.05)", backgroundColor: "#0E0E0E" }}
+        className="w-full py-16 px-12"
+        style={{ backgroundColor: C.surfaceContainerLow, borderTop: `1px solid ${C.outlineVariant}30` }}
       >
-        <div className="mb-8 md:mb-0">
-          <span className="text-lg italic" style={{ fontFamily: NS, color: "#C4ECCE" }}>
-            MUJIN
-          </span>
-          <p
-            className="text-[10px] tracking-widest uppercase mt-2"
-            style={{ color: "rgba(180,202,214,0.5)", fontFamily: SG }}
-          >
-            © 2026 · A Frontier Commons Prototype
-          </p>
-        </div>
-        <div className="flex gap-8">
-          {[
-            { label: "The Program", href: "/program" },
-            { label: "Team",        href: "/team" },
-            { label: "FAQ",         href: "/faq" },
-          ].map((l) => (
+        <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+          <div>
             <Link
-              key={l.label}
-              href={l.href}
-              className="text-[10px] tracking-widest uppercase hover:text-[#ffddb4] transition-colors"
-              style={{ color: "#b4cad6", fontFamily: SG }}
+              href="/"
+              className="text-2xl font-bold tracking-widest uppercase"
+              style={{ fontFamily: NS, color: "#1B365D" }}
             >
-              {l.label}
+              MUJIN
             </Link>
-          ))}
+            <p
+              className="mt-2 text-xs uppercase tracking-widest"
+              style={{ color: C.onSurfaceVariant, fontFamily: IBM }}
+            >
+              © 2026 · A Frontier Commons Prototype
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-10">
+            {[
+              { label: "Program",    href: "/program" },
+              { label: "Leadership", href: "/team"    },
+              { label: "Network",    href: "/alumni"  },
+              { label: "Mission",    href: "/about"   },
+              { label: "FAQ",        href: "/faq"     },
+            ].map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="text-sm font-medium transition-colors duration-200 hover:text-[#465f88]"
+                style={{ color: C.onSurfaceVariant, fontFamily: SG }}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+
+          <a
+            href={APPLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-4 font-semibold text-sm transition-all duration-200 active:scale-95"
+            style={{
+              backgroundColor: C.primary,
+              color:           C.onPrimary,
+              borderRadius:    "0.125rem",
+              fontFamily:      SG,
+            }}
+          >
+            Apply to Pilot
+          </a>
         </div>
-        <a
-          href="#"
-          className="mt-8 md:mt-0 text-[10px] hover:text-[#ffddb4] transition-all flex items-center gap-2 group"
-          style={{ color: "#C4ECCE", fontFamily: SG }}
-        >
-          Back to Top
-          <span className="material-symbols-outlined group-hover:-translate-y-1 transition-transform">
-            arrow_upward
-          </span>
-        </a>
       </footer>
+
     </div>
   );
 }
