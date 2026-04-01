@@ -114,7 +114,7 @@ const STUDENT_CRITERIA = [
 ];
 
 const PARTNER_CRITERIA = [
-  { icon: "account_balance", label: "Established ISM Org",   desc: "IFI, KGK, CCC, JCMN or recognized equivalent" },
+  { icon: "account_balance", label: "Established ISM Org",   desc: "IFI, KGK, CCC, JCFN or recognized equivalent" },
   { icon: "person_check",    label: "Personal Knowledge",    desc: "Endorsing leader must know the student personally" },
   { icon: "handshake",       label: "Ongoing Accountability", desc: "Organization commits to continued relational support" },
 ];
@@ -747,7 +747,7 @@ export default function ProgramPage() {
                     Recognized ISM Organizations
                   </p>
                   <p className="text-sm" style={{ color: C.onSurfaceVariant }}>
-                    IFI · KGK · CCC · JCMN · or recognized equivalent
+                    IFI · KGK · CCC · JCFN · or recognized equivalent
                   </p>
                 </div>
               </div>

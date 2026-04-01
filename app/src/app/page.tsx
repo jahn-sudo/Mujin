@@ -560,7 +560,7 @@ export default function HomePage() {
                 style={{ color: C.onSurfaceVariant }}
               >
                 Mujin operates through Japan&rsquo;s International Student Ministry
-                network — IFI, KGK, CCC, and JCMN — where students are already
+                network — IFI, KGK, CCC, and JCFN — where students are already
                 known by name, mentored for years. The church is the distribution
                 channel and the trust pipeline.
               </p>

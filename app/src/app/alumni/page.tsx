@@ -59,8 +59,8 @@ const NETWORK_NODES = [
   },
   {
     icon: "diversity_3",
-    abbr: "JCMN",
-    name: "Japan Christian Missionary Network",
+    abbr: "JCFN",
+    name: "Japanese Christian Fellowship Network",
     role: "Parachurch Alliance",
     node: "Tokyo",
   },
@@ -97,7 +97,7 @@ const ALLIANCE_PARTNERS = [
   { abbr: "IFI",   name: "Int'l Fellowship of Interchange" },
   { abbr: "KGK",   name: "Kirisutosha Gakusei Kai" },
   { abbr: "CCC",   name: "Campus Crusade for Christ" },
-  { abbr: "JCMN",  name: "Japan Christian Missionary Network" },
+  { abbr: "JCFN",  name: "Japanese Christian Fellowship Network" },
   { abbr: "TSB",   name: "Tokyo Star Bank" },
   { abbr: "JFC",   name: "Japan Finance Corporation" },
 ];

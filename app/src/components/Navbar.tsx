@@ -27,9 +27,31 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
+    <>
+      {/* ── Dev banner ── */}
+      <div
+        style={{
+          backgroundColor: "#1a2a1a",
+          color: "#a3c9a8",
+          fontFamily: "var(--font-ibm-mono), monospace",
+          fontSize: "11px",
+          letterSpacing: "0.12em",
+          textAlign: "center",
+          padding: "6px 16px",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 51,
+        }}
+      >
+        PRE-RELEASE BETA — This site is under active development. Content and features are subject to change.
+      </div>
+
     <nav
-      className="fixed top-0 w-full z-50"
+      className="fixed w-full z-50"
       style={{
+        top:             "29px",
         backgroundColor: `${C.background}e8`,
         backdropFilter:  "blur(20px)",
         boxShadow:       "0 32px 64px -15px rgba(45,52,53,0.06)",
@@ -85,5 +107,6 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+    </>
   );
 }

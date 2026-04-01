@@ -894,7 +894,7 @@ export default function PartnersPage() {
                   bg:      C.secondary,
                   textFg:  C.onSecondary,
                   title:   "Proven Network",
-                  desc:    "Operating inside IFI, KGK, CCC, and JCMN — networks with 50+ years of student ministry presence in Japan. The referral pipeline is not theoretical. It is active, trusted, and already producing students who are ready.",
+                  desc:    "Operating inside IFI, KGK, CCC, and JCFN — networks with 50+ years of student ministry presence in Japan. The referral pipeline is not theoretical. It is active, trusted, and already producing students who are ready.",
                   wide:    false,
                 },
                 {
