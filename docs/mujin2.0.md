@@ -2,7 +2,7 @@
 
 A "Redemptive Fintech" platform that modernizes Japan's historical mutual aid systems. Mujin leverages a **Recyclable Grant Model** to provide capital and community to international students excluded from Japan's mainstream financial system.
 
-**Owner:** Jonathan Ahn (Founder) + Andrew Feng (Director of Programs)
+**Owner:** Jonathan Ahn (Founder) + Andrew Feng (Advisor)
 **Status:** MVP complete — go-to-market phase
 
 ---
@@ -51,7 +51,7 @@ At the start of a new session, tell Claude:
 **Pilot:** International students in Christian student ministry with entrepreneurial vision
 **Second cohort:** Refugees (steepest credit invisibility; same product, same model)
 
-**Key insight:** The church/ministry is the distribution channel and trust pipeline. Andrew Feng is already known to the ISM network (IFI, KGK, CCC, JCMN). Parachurch orgs are the side door — not individual cold church outreach. Tokyo wards (Taito City model) actively seek community partners under their Multicultural Coexistence plans, creating a government alignment and registration pathway.
+**Key insight:** The church/ministry is the distribution channel and trust pipeline. Andrew Feng is already known to the ISM network (IFI, KGK, CCC, JCFN). Parachurch orgs are the side door — not individual cold church outreach. Tokyo wards (Taito City model) actively seek community partners under their Multicultural Coexistence plans, creating a government alignment and registration pathway.
 
 ---
 
@@ -131,8 +131,14 @@ At the start of a new session, tell Claude:
 ---
 
 ## Session State
-> Last updated: 2026-03-25 (session 25) — OPEN
-> Current phase: **UI rebuild complete — all 6 public pages rebuilt with new light design system**
+> Last updated: 2026-04-07 (session 27) — OPEN
+> Current phase: **Go-to-market — all documents sent to Andrew, awaiting feedback and legal contact**
+
+### Session 27 Summary (2026-04-07) — Document Send + Website Cleanup
+- All documents finalized and sent to Andrew (manifesto, report, donor projection, investor deck, andrew-brief)
+- Andrew is now primary distribution channel — ISM/church outreach + legal expert search in progress
+- Working doc session state updated; task #2 marked done
+- Website pages reviewed and confirmed complete (all public pages including program + partners)
 
 ### Session 25 Summary (2026-03-25) — Full UI Rebuild
 
@@ -142,7 +148,7 @@ At the start of a new session, tell Claude:
   - `page.tsx` — Homepage: Hero ("A grant built on relational trust"), The Model 2-col, Bento metrics (50 students / ¥500K), Founder's Vision, Featured Pillars, ISM Network nodes, dark CTA, footer. Fixed: "Demo" (not "Request a Demo") in nav + CTA.
   - `team/page.tsx` — Leadership: asymmetric 7/5 grid, ghost initials in Cormorant Garamond, left gradient accent, grain texture, pulse-live indicator, tag chips. Removed nameJP/ID metadata per user correction.
   - `about/page.tsx` — Mission/About: Hero with 無尽 kanji stats panel, 4-step path cards, bento (Recyclable Loop / ISM Network / Pledge of Honor), Program Phases + Graduation Gates, Eligibility criteria, 5-milestone roadmap, CTA.
-  - `alumni/page.tsx` — Network: ISM network nodes (IFI/KGK/CCC/JCMN) with hover-to-primary, community health stats + Trust Engine bento, framework horizontal scroll cards, alliance grid.
+  - `alumni/page.tsx` — Network: ISM network nodes (IFI/KGK/CCC/JCFN) with hover-to-primary, community health stats + Trust Engine bento, framework horizontal scroll cards, alliance grid.
   - `faq/page.tsx` — FAQ: Server component (no useState), sticky sidebar nav, 5 sections with all real Q&A content (Eligibility / The Grant / Trust Engine / Graduation & Banking / The Commons).
   - `demo/page.tsx` — Demo: Trust Engine simulation UI, 4 signals explanation, illustrative student scenarios, request demo form (mailto action).
 - **Remaining:** `program/page.tsx` still uses old dark sidebar design — no reference HTML provided yet.
@@ -176,16 +182,18 @@ At the start of a new session, tell Claude:
 ### Open Task List
 | # | Task | Owner | Priority |
 |---|------|-------|----------|
-| 1 | Format manifesto in Canva → PDF (A4, serif, white, dual-language) | Jonathan | This week |
-| 2 | Send PDF + cover email to pastor contact in Japan | Jonathan | This week |
-| 3 | 2–3 conversations with ISM network contacts | Andrew | This week |
-| 4 | Secure real domain (replace mujin2.vercel.app) | Jonathan | Before wider sharing |
-| 5 | Explore Taito City multicultural coexistence partner registration | Jonathan + Andrew | Next 30 days |
-| 6 | Format donor projection in Canva → PDF | Jonathan | Before donor conversations |
-| 7 | Ask Andrew to map IFI donor network (who gave, at what level, why) | Andrew | This week |
-| 8 | Get Andrew's honest read on year 1 pipeline (how many students realistically) | Andrew | This week |
-| 9 | Rebuild `program/page.tsx` — only public page not yet redesigned (no reference HTML yet) | Jonathan + Claude | Up next |
+| ~~1~~ | ~~Format manifesto in Canva → PDF (A4, serif, white, dual-language)~~ | ~~Jonathan~~ | ✅ Done (session 27) |
+| 3 | Andrew: Share manifesto PDF with 2–3 ISM/church contacts | Andrew | In Progress |
+| 4 | Andrew: Identify legal expert (Shukyo Hojin / FSA-adjacent) + share report + deck | Andrew | In Progress |
+| 5 | Andrew: Map IFI donor network (who gave, at what level, why) | Andrew | In Progress |
+| 6 | Andrew: Honest year 1 pipeline count (how many students realistically) | Andrew | In Progress |
+| 7 | Secure real domain (replace mujin2.vercel.app) | Jonathan | Before wider sharing |
+| 8 | Explore Taito City multicultural coexistence partner registration | Jonathan + Andrew | Next 30 days |
+| ~~9~~ | ~~Format donor projection in Canva → PDF~~ | ~~Jonathan~~ | ✅ Done (session 27) |
+| ~~2-old~~ | ~~Send PDF + cover email to pastor contact in Japan~~ | ~~Jonathan~~ | ~~Closed — contact unresponsive; routing through Andrew~~ |
+| ~~2~~ | ~~Send Andrew brief — ask him to distribute to ISM contacts + find legal expert~~ | ~~Jonathan~~ | ✅ Done (session 27) |
+| ~~10~~ | ~~Rebuild `program/page.tsx`~~ | ~~Jonathan + Claude~~ | ✅ Done (session 27) |
 | ~~13~~ | ~~UI rebuild — all 6 public pages (homepage, team, about, alumni/network, faq, demo)~~ | ~~Jonathan + Claude~~ | ✅ Done (session 25) |
-| ~~10~~ | ~~Migrate demo site~~ | ~~Jonathan~~ | ✅ Done (session 23) |
+| ~~10-old~~ | ~~Migrate demo site~~ | ~~Jonathan~~ | ✅ Done (session 23) |
 | ~~11~~ | ~~Security incident — rotate keys, clean git history~~ | ~~Jonathan~~ | ✅ Done (session 24) |
 | ~~12~~ | ~~Build investor deck PPT~~ | ~~Jonathan~~ | ✅ Done (session 24) |

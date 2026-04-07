@@ -91,6 +91,13 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           <Link
+            href="/feedback"
+            className="px-8 py-3 font-medium text-sm tracking-wide active:scale-95 transition-all duration-200"
+            style={{ backgroundColor: "#2d3435", color: "#f9f9f9", borderRadius: "0.25rem", fontFamily: SG }}
+          >
+            Share Feedback
+          </Link>
+          <Link
             href="/demo"
             className="px-8 py-3 font-medium text-sm tracking-wide active:scale-95 transition-all duration-200"
             style={{ backgroundColor: C.primary, color: C.onPrimary, borderRadius: "0.25rem", fontFamily: SG }}
